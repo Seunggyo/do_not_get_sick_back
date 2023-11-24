@@ -60,6 +60,7 @@ public class MemberController {
     @GetMapping("/view")
     public Member memberView(String id) {
         //TODO 권한 설정
+        System.out.println("id = " + id);
         return service.selectById(id);
     }
 
