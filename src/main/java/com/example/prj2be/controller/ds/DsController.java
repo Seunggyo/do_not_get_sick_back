@@ -1,9 +1,8 @@
-package com.example.prj2be.drugStore.controller;
+package com.example.prj2be.controller.ds;
 
-import com.example.prj2be.drugStore.domain.Ds;
-import com.example.prj2be.drugStore.service.DsService;
+import com.example.prj2be.domain.Ds;
+import com.example.prj2be.service.DsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,4 +55,8 @@ public class DsController {
            return ResponseEntity.badRequest().build();
         }
     }
+
+//    public ResponseEntity<List<Ds>> asdf() {
+//        return ResponseEntity.ok(service.getDs())
+//    }
 }

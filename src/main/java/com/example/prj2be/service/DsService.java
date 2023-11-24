@@ -1,7 +1,7 @@
-package com.example.prj2be.drugStore.service;
+package com.example.prj2be.service;
 
-import com.example.prj2be.drugStore.domain.Ds;
-import com.example.prj2be.drugStore.mapper.DsMapper;
+import com.example.prj2be.domain.Ds;
+import com.example.prj2be.mapper.DsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class DsService {
         if ( ds == null ){
             return false;
         }
-        if (ds.getName().isBlank()) {
+        if (ds.getName().isBlank() || ds.getName().) {
             return false;
         }
         if (ds.getAddress().isBlank()) {
@@ -25,28 +25,7 @@ public class DsService {
         if (ds.getPhone().isBlank()) {
             return false;
         }
-        if (ds.getOpenHour() == null) {
-            return false;
-        }
-        if (ds.getOpenHour() < 0 || ds.getOpenHour() > 23){
-            return false;
-        }
-        if (ds.getOpenMin() == null){
-            return false;
-        }
-        if (ds.getOpenMin() < 0 || ds.getOpenMin() > 60){
-            return false;
-        }
-        if (ds.getCloseHour() == null) {
-            return false;
-        }
-        if (ds.getCloseHour() < 0 || ds.getCloseHour() > 23){
-            return false;
-        }
-        if (ds.getCloseMin() == null){
-            return false;
-        }
-        if (ds.getCloseMin() < 0 || ds.getCloseMin() > 60){
+        if (ds.getContent().isBlank()) {
             return false;
         }
 

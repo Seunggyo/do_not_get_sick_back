@@ -1,6 +1,7 @@
-package com.example.prj2be.drugStore.domain;
+package com.example.prj2be.domain;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class Ds {
@@ -10,18 +11,17 @@ public class Ds {
     private String name;
     private String address;
     private String phone;
-    private Integer openHour;
-    private Integer openMin;
-    private Integer closeHour;
-    private Integer closeMin;
+    private String openHour;
+    private String openMin;
+    private String closeHour;
+    private String closeMin;
     private String content;
+    private Boolean nightCare;
 
     // update 란
-    private String homePage;
     private String lat;
     private String lng;
-    private Boolean nightCare;
     private String category;
 
-    private String file;
+    private MultipartFile file;
 }

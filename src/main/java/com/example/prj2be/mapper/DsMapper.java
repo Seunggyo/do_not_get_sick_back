@@ -1,6 +1,6 @@
-package com.example.prj2be.drugStore.mapper;
+package com.example.prj2be.mapper;
 
-import com.example.prj2be.drugStore.domain.Ds;
+import com.example.prj2be.domain.Ds;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
