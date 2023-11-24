@@ -57,4 +57,9 @@ public class DsService {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
         return mapper.insertById(ds) == 1;
     }
+
+    public boolean update(Ds ds) {
+        // 유저가 정보 수정 할려 할 떄 보내는 코드
+        return mapper.updateById(ds) == 1;
+    }
 }
