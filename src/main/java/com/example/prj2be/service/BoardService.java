@@ -1,7 +1,7 @@
-package com.example.prj2be.board.service;
+package com.example.prj2be.service;
 
-import com.example.prj2be.board.board.Board;
-import com.example.prj2be.board.mapper.BoardMapper;
+import com.example.prj2be.domain.Board;
+import com.example.prj2be.mapper.BoardMapper;
 import java.lang.reflect.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

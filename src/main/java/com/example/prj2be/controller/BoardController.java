@@ -1,8 +1,8 @@
-package com.example.prj2be.board.controller;
+package com.example.prj2be.controller;
 
 
-import com.example.prj2be.board.board.Board;
-import com.example.prj2be.board.service.BoardService;
+import com.example.prj2be.domain.Board;
+import com.example.prj2be.service.BoardService;
 import java.lang.reflect.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

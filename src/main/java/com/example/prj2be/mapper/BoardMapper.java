@@ -1,6 +1,6 @@
-package com.example.prj2be.board.mapper;
+package com.example.prj2be.mapper;
 
-import com.example.prj2be.board.board.Board;
+import com.example.prj2be.domain.Board;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
