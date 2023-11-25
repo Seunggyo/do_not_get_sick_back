@@ -2,7 +2,6 @@ package com.example.prj2be.board.board;
 
 import java.time.LocalDateTime;
 import lombok.Data;
-import org.apache.ibatis.annotations.Insert;
 
 @Data
 public class Board {

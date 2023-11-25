@@ -5,7 +5,6 @@ import com.example.prj2be.board.board.Board;
 import com.example.prj2be.board.service.BoardService;
 import java.lang.reflect.Member;
 import java.util.List;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,9 @@ public class BoardController {
    private final BoardService service;
 
    @PostMapping("add")
-   public ResponseEntity add(@RequestBody Board board, @SessionAttribute("login") Member login) {
+   public ResponseEntity add(
+      @RequestBody Board board,
+      @SessionAttribute(value = "login", required = false) Member login) {
 //      System.out.println("board = " + board);
 
       if (login == null) {
@@ -58,7 +59,7 @@ public class BoardController {
    @DeleteMapping("remove/{id}")
    public ResponseEntity remove(
       @PathVariable Integer id,
-      @SessionAttribute("login") Member login) {
+      @SessionAttribute(value = "login") Member login) {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
