@@ -1,8 +1,8 @@
 package com.example.prj2be.service;
 
 import com.example.prj2be.domain.Board;
+import com.example.prj2be.domain.Member;
 import com.example.prj2be.mapper.BoardMapper;
-import java.lang.reflect.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

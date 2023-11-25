@@ -1,9 +1,8 @@
 package com.example.prj2be.controller;
 
-
 import com.example.prj2be.domain.Board;
+import com.example.prj2be.domain.Member;
 import com.example.prj2be.service.BoardService;
-import java.lang.reflect.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("/api/board")
 
 public class BoardController {
 
