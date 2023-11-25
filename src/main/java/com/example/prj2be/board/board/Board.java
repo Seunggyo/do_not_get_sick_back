@@ -1,5 +1,6 @@
 package com.example.prj2be.board.board;
 
+import java.time.LocalDateTime;
 import lombok.Data;
 import org.apache.ibatis.annotations.Insert;
 
@@ -11,5 +12,6 @@ public class Board {
    private String content;
    private String writer;
    private String category;
+   private LocalDateTime inserted;
 
 }

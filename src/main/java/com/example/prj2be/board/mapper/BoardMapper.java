@@ -25,11 +25,12 @@ public interface BoardMapper {
    List<Board> selectAll();
 
    @Select("""
-      SELECT id, title, content, writer, category
+      SELECT id, title, content, writer, category, inserted
       FROM board
       WHERE id = #{id}
       """)
    Board selectById(Integer id);
+
 
    @Delete("""
       DELETE FROM board
@@ -44,6 +45,7 @@ public interface BoardMapper {
       content = #{content},
       writer = #{writer},
       category = #{category}
+     
       WHERE id = #{id}
       """)
    int update(Board board);
