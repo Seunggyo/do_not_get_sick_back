@@ -22,4 +22,10 @@ public interface BoardMapper {
       """)
    List<Board> selectAll();
 
+   @Select("""
+      SELECT id, title, content, writer, category
+      FROM board
+      WHERE id = #{id}
+      """)
+   Board selectById(Integer id);
 }
