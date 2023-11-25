@@ -2,6 +2,7 @@ package com.example.prj2be.board.service;
 
 import com.example.prj2be.board.board.Board;
 import com.example.prj2be.board.mapper.BoardMapper;
+import java.lang.reflect.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,9 @@ public class BoardService {
 
    private final BoardMapper mapper;
 
-   public boolean save(Board board) {
+   public boolean save(Board board, Member login) {
+      board.setWriter(login.getId());
+
       return mapper.insert(board) == 1;
    }
 
