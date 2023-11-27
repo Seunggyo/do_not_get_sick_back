@@ -6,7 +6,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +31,21 @@ public class HsController {
     public ResponseEntity add(@RequestBody Hs hs) {
         System.out.println("hs = " + hs);
         if (service.add(hs)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("id/{id}")
+    public Hs get(@PathVariable Integer id) {
+        return service.get(id);
+    }
+
+    @PutMapping("edit")
+    public ResponseEntity edit(@RequestBody Hs hs) {
+        System.out.println("hs = " + hs);
+        if (service.update(hs)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
