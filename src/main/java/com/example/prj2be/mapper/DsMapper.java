@@ -28,7 +28,9 @@ public interface DsMapper {
                 openMin = #{openMin},
                 closeHour = #{closeHour},
                 closeMin = #{closeMin},
-                content = #{content}
+                content = #{content},
+                nightCare = #{nightCare}
+            WHERE id = #{id}
             """)
     int updateById(Ds ds);
 

@@ -49,14 +49,13 @@ public class DsController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(Ds ds/*,
+    public ResponseEntity edit(@RequestBody Ds ds/*,
                                @SessionAttribute(value = "login",required = false) Member login*/){
         // 약국 정보 수정
         // TODO : 멤버 테이블 추가 시 로그인 제약 추가
 //        if (!service.hasAccess(ds.getId(), login)) {
 //            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 //        }
-
         if (service.validate(ds)) {
             if (service.update(ds)){
                 return ResponseEntity.ok().build();
