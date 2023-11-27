@@ -53,4 +53,12 @@ public class DrugService {
        }
        return true;
     }
+
+    public List<Drug> drugList() {
+        return mapper.selectDrugList();
+    }
+
+    public Drug drugGet(Integer id) {
+        return mapper.selectById(id);
+    }
 }

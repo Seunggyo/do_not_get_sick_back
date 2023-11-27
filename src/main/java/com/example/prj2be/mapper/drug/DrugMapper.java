@@ -18,9 +18,28 @@ public interface DrugMapper {
     List<Drug> selectByFunction(String function);
 
     @Insert("""
-            INSERT INTO drug (name,function,content,price,inserted )
-            VALUES (#{name}, #{func},#{content},#{price},#{inserted})
+            INSERT INTO drug (name,function,content,price)
+            VALUES (#{name}, #{func},#{content},#{price})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Drug drug);
+
+
+    @Select("""
+            select d.id, d.name, d.function, d.content, d.price, d.inserted, f.name fileName
+            FROM drug d
+            JOIN drugFile f
+            ON d.id = f.drugId
+            where d.id > 0;
+            """)
+    List<Drug> selectDrugList();
+
+    @Select("""
+            select d.id, d.name, d.function, d.content, d.price, d.inserted, f.name fileName
+            FROM drug d
+            JOIN drugFile f
+            ON d.id = f.drugId
+            WHERE d.id = #{id}
+            """)
+    Drug selectById(Integer id);
 }

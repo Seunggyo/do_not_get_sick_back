@@ -16,24 +16,35 @@ import java.util.List;
 public class DrugController {
 
     private final DrugService service;
+
     @GetMapping("list")
-    public List<Drug> first (String function) {
-       return service.selectByFunction(function);
+    public List<Drug> first(String function) {
+        return service.selectByFunction(function);
 
     }
 
     @PostMapping("add")
     public ResponseEntity add(Drug drug,
-                              @RequestParam(value = "uploadFiles[]", required = false)MultipartFile[] files){
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files) {
 
 
-        if (!service.validate(drug)){
+        if (!service.validate(drug)) {
             return ResponseEntity.badRequest().build();
         }
-        if (service.save(drug, files)){
+        if (service.save(drug, files)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("drugList")
+    public List<Drug> list() {
+        return service.drugList();
+    }
+
+    @GetMapping("id/{id}")
+    public Drug get(@PathVariable Integer id) {
+        return service.drugGet(id);
     }
 }

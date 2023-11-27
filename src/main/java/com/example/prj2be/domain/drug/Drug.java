@@ -12,4 +12,5 @@ public class Drug {
     private String content;
     private Integer price;
     private LocalDateTime inserted;
+    private String fileName;
 }
