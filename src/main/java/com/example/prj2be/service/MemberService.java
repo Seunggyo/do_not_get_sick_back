@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 
 @Service
@@ -70,6 +71,17 @@ public class MemberService {
    }
 
    public boolean login(Member member, WebRequest request) {
+      Member dbMember = mapper.selectById(member.getId());
+
+      if (member != null) {
+         if (dbMember.getPassword().equals(member.getPassword())) {
+            String auth = mapper.selectAuthById(member.getId());
+            dbMember.setAuth(auth);
+            dbMember.setPassword("");
+            request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
+            return true;
+         }
+      }
       return false;
    }
 }

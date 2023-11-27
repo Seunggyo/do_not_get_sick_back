@@ -66,9 +66,10 @@ public class MemberController {
       return service.selectById(id);
    }
 
-   @GetMapping("/login")
+   @PostMapping("/login")
    public ResponseEntity login(@RequestBody Member member,
       WebRequest request) {
+      System.out.println("MemberController.login");
       if (service.login(member, request)) {
          return ResponseEntity.ok().build();
       }

@@ -26,19 +26,14 @@ public class BoardController {
    private final BoardService service;
 
    @PostMapping("add")
-   public ResponseEntity add(
-      @RequestBody Board board,
-      @SessionAttribute(value = "login", required = false) Member login) {
+   public ResponseEntity add(@RequestBody Board board) {
 //      System.out.println("board = " + board);
 
-      if (login == null) {
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-      }
       if (!service.validate(board)) {
          return ResponseEntity.badRequest().build();
       }
 
-      if (service.save(board, login)) {
+      if (service.save(board)) {
          return ResponseEntity.ok().build();
       } else {
          return ResponseEntity.internalServerError().build();
@@ -56,16 +51,8 @@ public class BoardController {
    }
 
    @DeleteMapping("remove/{id}")
-   public ResponseEntity remove(
-      @PathVariable Integer id,
-      @SessionAttribute(value = "login") Member login) {
+   public ResponseEntity remove(@PathVariable Integer id) {
 
-      if (login == null) {
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-      }
-      if (!service.hasAccess(id, login)) {
-         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-      }
       if (service.remove(id)) {
          return ResponseEntity.ok().build();
       } else {

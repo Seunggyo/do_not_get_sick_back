@@ -12,13 +12,13 @@ import org.apache.ibatis.annotations.Update;
 public interface BoardMapper {
 
    @Insert("""
-      INSERT INTO board(title, content, writer)
-      VALUES (#{title}, #{content}, #{writer})
+      INSERT INTO board(title, content, writer,category)
+      VALUES (#{title}, #{content}, #{writer}, #{category})
       """)
    int insert(Board board);
 
    @Select("""
-      SELECT id, title, writer, category
+      SELECT id, title, writer, category, inserted
       FROM board
       ORDER BY id DESC
       """)

@@ -14,8 +14,7 @@ public class BoardService {
 
    private final BoardMapper mapper;
 
-   public boolean save(Board board, Member login) {
-      board.setWriter(login.getId());
+   public boolean save(Board board) {
 
       return mapper.insert(board) == 1;
    }
@@ -55,11 +54,5 @@ public class BoardService {
    public boolean update(Board board) {
       return mapper.update(board) == 1;
 
-   }
-
-   public boolean hasAccess(Integer id, Member login) {
-      Board board = mapper.selectById(id);
-
-      return board.getWriter().equals(login.getId());
    }
 }
