@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.web.context.request.WebRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +67,9 @@ public class MemberService {
 
    public Member selectById(String id) {
       return mapper.selectById(id);
+   }
+
+   public boolean login(Member member, WebRequest request) {
+      return false;
    }
 }

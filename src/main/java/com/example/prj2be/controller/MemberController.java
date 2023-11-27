@@ -3,10 +3,12 @@ package com.example.prj2be.controller;
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.context.request.WebRequest;
 
 @RequiredArgsConstructor
 @RestController
@@ -65,8 +67,13 @@ public class MemberController {
    }
 
    @GetMapping("/login")
-   public Member login(@SessionAttribute(value = "login", required = false) Member login) {
-      return login;
+   public ResponseEntity login(@RequestBody Member member,
+      WebRequest request) {
+      if (service.login(member, request)) {
+         return ResponseEntity.ok().build();
+      }
+
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
    }
 }
 
