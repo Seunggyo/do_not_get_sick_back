@@ -1,7 +1,7 @@
-package com.example.prj2be.controller;
+package com.example.prj2be.controller.hs;
 
-import com.example.prj2be.domain.Hs;
-import com.example.prj2be.service.HsService;
+import com.example.prj2be.domain.hs.Hs;
+import com.example.prj2be.service.hs.HsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

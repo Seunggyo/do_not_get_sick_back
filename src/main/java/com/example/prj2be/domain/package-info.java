@@ -1,1 +1,0 @@
-package com.example.prj2be.domain;

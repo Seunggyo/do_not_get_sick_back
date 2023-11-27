@@ -1,7 +1,7 @@
 package com.example.prj2be.controller.ds;
 
-import com.example.prj2be.domain.Ds;
-import com.example.prj2be.service.DsService;
+import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.service.ds.DsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

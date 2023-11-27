@@ -1,11 +1,9 @@
-package com.example.prj2be.controller;
+package com.example.prj2be.controller.board;
 
-import com.example.prj2be.domain.Board;
-import com.example.prj2be.domain.Member;
-import com.example.prj2be.service.BoardService;
+import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.service.board.BoardService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequiredArgsConstructor

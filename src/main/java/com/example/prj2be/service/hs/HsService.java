@@ -1,7 +1,7 @@
-package com.example.prj2be.service;
+package com.example.prj2be.service.hs;
 
-import com.example.prj2be.domain.Hs;
-import com.example.prj2be.mapper.HsMapper;
+import com.example.prj2be.domain.hs.Hs;
+import com.example.prj2be.mapper.hs.HsMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

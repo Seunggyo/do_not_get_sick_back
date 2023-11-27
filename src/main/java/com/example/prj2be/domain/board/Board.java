@@ -1,4 +1,4 @@
-package com.example.prj2be.domain;
+package com.example.prj2be.domain.board;
 
 import java.time.LocalDateTime;
 import lombok.Data;

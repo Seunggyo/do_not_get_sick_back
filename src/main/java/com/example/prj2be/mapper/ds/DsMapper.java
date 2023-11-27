@@ -1,6 +1,6 @@
-package com.example.prj2be.mapper;
+package com.example.prj2be.mapper.ds;
 
-import com.example.prj2be.domain.Ds;
+import com.example.prj2be.domain.ds.Ds;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
