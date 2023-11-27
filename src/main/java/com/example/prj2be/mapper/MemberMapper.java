@@ -49,4 +49,10 @@ public interface MemberMapper {
         where id = #{id}
 """)
     Member selectById(String id);
+
+    @Select(("""
+        select auth from member
+        where id = #{id}
+"""))
+    String selectAuthById(String id);
 }
