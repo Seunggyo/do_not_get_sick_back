@@ -1,4 +1,5 @@
 package com.example.prj2be.controller;
+
 import com.example.prj2be.domain.Member;
 import com.example.prj2be.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -68,5 +69,4 @@ public class MemberController {
       return login;
    }
 }
-
 
