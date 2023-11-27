@@ -17,6 +17,7 @@ public class Hs {
     private String lat;
     private String lng;
     private String category;
+    private String homePage;
     private Integer nightCare;
 
 

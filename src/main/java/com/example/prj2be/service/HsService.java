@@ -20,5 +20,14 @@ public class HsService {
         return mapper.insert(hs) == 1;
     }
 
+    public boolean update(Hs hs) {
+        return mapper.update(hs) == 1;
+    }
+
+    public Hs get(Integer id) {
+        Hs hs = mapper.selectById(id);
+        return hs;
+    }
+
     ;
 }
