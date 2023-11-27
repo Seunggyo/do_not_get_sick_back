@@ -34,7 +34,14 @@ public interface DsMapper {
 
     @Select("""
             SELECT * FROM business
-            WHERE category = #{category}
+            WHERE category = 'drugStore'
             """)
-    List<Ds> selectByCategory(String category);
+    List<Ds> selectByCategory( );
+
+    @Select("""
+            SELECT id, name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare
+            FROM business
+            WHERE id = #{id};
+            """)
+    Ds selectById(Integer id);
 }

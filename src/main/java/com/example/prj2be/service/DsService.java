@@ -44,7 +44,11 @@ public class DsService {
         return mapper.updateById(ds) == 1;
     }
 
-    public List<Ds> list(String category) {
-        return mapper.selectByCategory(category);
+    public List<Ds> list( ) {
+        return mapper.selectByCategory();
+    }
+
+    public Ds get(Integer id) {
+        return mapper.selectById(id);
     }
 }

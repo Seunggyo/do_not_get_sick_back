@@ -39,12 +39,17 @@ public class DsController {
     }
 
     @GetMapping("list")
-    public List<Ds> list (String category){
-        return service.list(category);
+    public List<Ds> list (){
+        return service.list();
+    }
+
+    @GetMapping("id/{id}")
+    public Ds get(@PathVariable Integer id){
+        return service.get(id);
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Ds ds/*,
+    public ResponseEntity edit(Ds ds/*,
                                @SessionAttribute(value = "login",required = false) Member login*/){
         // 약국 정보 수정
         // TODO : 멤버 테이블 추가 시 로그인 제약 추가
