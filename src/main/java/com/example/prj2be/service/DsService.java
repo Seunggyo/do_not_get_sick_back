@@ -16,7 +16,7 @@ public class DsService {
         if ( ds == null ){
             return false;
         }
-        if (ds.getName().isBlank() || ds.getName().) {
+        if (ds.getName().isBlank()) {
             return false;
         }
         if (ds.getAddress().isBlank()) {
