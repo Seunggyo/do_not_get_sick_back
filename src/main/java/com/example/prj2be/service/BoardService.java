@@ -52,8 +52,9 @@ public class BoardService {
       return mapper.deleteById(id) == 1;
    }
 
-   public void update(Board board) {
-      mapper.update(board);
+   public boolean update(Board board) {
+      return mapper.update(board) == 1;
+
    }
 
    public boolean hasAccess(Integer id, Member login) {
