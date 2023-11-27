@@ -1,7 +1,7 @@
-package com.example.prj2be.service;
+package com.example.prj2be.service.member;
 
-import com.example.prj2be.domain.Member;
-import com.example.prj2be.mapper.MemberMapper;
+import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
