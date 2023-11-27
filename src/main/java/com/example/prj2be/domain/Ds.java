@@ -11,10 +11,10 @@ public class Ds {
     private String name;
     private String address;
     private String phone;
-    private String openHour;
-    private String openMin;
-    private String closeHour;
-    private String closeMin;
+    private Integer openHour;
+    private Integer openMin;
+    private Integer closeHour;
+    private Integer closeMin;
     private String content;
     private Boolean nightCare;
 
