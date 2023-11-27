@@ -5,6 +5,8 @@ import com.example.prj2be.mapper.DsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DsService {
@@ -40,5 +42,9 @@ public class DsService {
     public boolean update(Ds ds) {
         // 유저가 정보 수정 할려 할 떄 보내는 코드
         return mapper.updateById(ds) == 1;
+    }
+
+    public List<Ds> list(String category) {
+        return mapper.selectByCategory(category);
     }
 }

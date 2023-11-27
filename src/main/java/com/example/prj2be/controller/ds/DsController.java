@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -34,6 +36,11 @@ public class DsController {
             return ResponseEntity.internalServerError().build();
         }
 
+    }
+
+    @GetMapping("list")
+    public List<Ds> list (String category){
+        return service.list(category);
     }
 
     @PutMapping("edit")

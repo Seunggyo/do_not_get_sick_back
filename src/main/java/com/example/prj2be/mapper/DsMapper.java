@@ -3,7 +3,10 @@ package com.example.prj2be.mapper;
 import com.example.prj2be.domain.Ds;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import java.util.List;
 
 @Mapper
 public interface DsMapper {
@@ -28,4 +31,10 @@ public interface DsMapper {
                 content = #{content}
             """)
     int updateById(Ds ds);
+
+    @Select("""
+            SELECT * FROM business
+            WHERE category = #{category}
+            """)
+    List<Ds> selectByCategory(String category);
 }
