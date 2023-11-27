@@ -4,6 +4,7 @@ import com.example.prj2be.domain.Member;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -55,4 +56,12 @@ public interface MemberMapper {
         where id = #{id}
 """))
     String selectAuthById(String id);
+
+    @Update("""
+        update member
+        set nickName=#{nickName}, phone=#{phone},
+        email=#{email}, address=#{address}
+        where id = #{id}
+""")
+    int update(Member member);
 }

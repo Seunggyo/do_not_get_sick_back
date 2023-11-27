@@ -80,5 +80,23 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
+    @PutMapping("edit")
+    public ResponseEntity edit(@RequestBody Member member,
+                               @SessionAttribute(value = "login",required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hsAccess(member.getId(), login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        if (service.update(member)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
 

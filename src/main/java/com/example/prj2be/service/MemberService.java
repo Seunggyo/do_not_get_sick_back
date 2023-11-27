@@ -85,4 +85,13 @@ public class MemberService {
 
         return false;
     }
+
+    public boolean hsAccess(String id, Member login) {
+        //TODO: 권한 설정
+        return true;
+    }
+
+    public boolean update(Member member) {
+        return mapper.update(member) == 1;
+    }
 }
