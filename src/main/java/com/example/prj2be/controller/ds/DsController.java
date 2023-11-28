@@ -20,7 +20,7 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add (Ds ds,
-                               @RequestParam(value = "businessLicense") MultipartFile file
+                               @RequestParam(value = "businessLi") MultipartFile file
                                /*,@SessionAttribute(value = "login", required = false) Member login*/) throws IOException {
         // 약국 정보 기입
         // TODO : 멤버 테이블 추가 시 로그인 제약 추가
