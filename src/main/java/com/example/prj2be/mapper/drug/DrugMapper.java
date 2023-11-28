@@ -26,7 +26,7 @@ public interface DrugMapper {
 
 
     @Select("""
-            select d.id, d.name, d.function, d.content, d.price, d.inserted, f.name fileName
+            select d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
@@ -35,7 +35,7 @@ public interface DrugMapper {
     List<Drug> selectDrugList();
 
     @Select("""
-            select d.id, d.name, d.function, d.content, d.price, d.inserted, f.name fileName
+            select d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
