@@ -67,7 +67,14 @@ public class DsController {
         }
     }
 
-//    public ResponseEntity<List<Ds>> asdf() {
-//        return ResponseEntity.ok(service.getDs())
-//    }
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity delete(@PathVariable Integer id){
+
+        if (service.delete(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

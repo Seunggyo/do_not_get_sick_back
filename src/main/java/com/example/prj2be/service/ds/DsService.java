@@ -3,6 +3,7 @@ package com.example.prj2be.service.ds;
 import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.mapper.ds.DsMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,5 +51,10 @@ public class DsService {
 
     public Ds get(Integer id) {
         return mapper.selectById(id);
+    }
+
+
+    public boolean delete(Integer id) {
+        return mapper.deleteById(id) == 1;
     }
 }
