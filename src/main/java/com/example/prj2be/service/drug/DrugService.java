@@ -1,15 +1,22 @@
 package com.example.prj2be.service.drug;
 
 import com.example.prj2be.domain.drug.Drug;
+import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.mapper.drug.DrugMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -18,11 +25,17 @@ public class DrugService {
     private final DrugMapper mapper;
     private final FileMapper fileMapper;
 
+    private final S3Client s3;
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
+
     public List<Drug> selectByFunction(String function) {
        return mapper.selectByFunction(function);
     }
 
-    public boolean save(Drug drug, MultipartFile[] files) {
+    public boolean save(Drug drug, MultipartFile[] files) throws IOException {
 
         int cdt = mapper.insert(drug);
 
@@ -40,20 +53,17 @@ public class DrugService {
         return cdt == 1;
     }
 
-    private void upload(int drugId, MultipartFile file) {
+    private void upload(Integer drugId, MultipartFile file) throws IOException {
 
-        try{
-            File folder = new File("C:\\Temp\\prj2\\" + drugId);
-            if (!folder.exists()){
-                folder.mkdirs();
-            }
+        String key = "prj2/" + drugId + "/" + file.getOriginalFilename();
 
-            String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-            File des = new File(path);
-            file.transferTo(des);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
+
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
     }
 
     public boolean validate(Drug drug) {
@@ -80,6 +90,17 @@ public class DrugService {
     }
 
     public Drug drugGet(Integer id) {
-        return mapper.selectById(id);
+
+        Drug drug = mapper.selectById(id);
+
+        List<DrugFile> drugFiles = fileMapper.selectNamesBydrugId(id);
+
+        for (DrugFile drugFile : drugFiles) {
+            String url = urlPrefix + "prj2/" + id + "/" + drugFile.getName();
+            drugFile.setUrl(url);
+        }
+
+        drug.setFiles(drugFiles);
+        return drug;
     }
 }
