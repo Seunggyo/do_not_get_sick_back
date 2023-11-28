@@ -17,11 +17,12 @@ public class Ds {
     private Integer closeMin;
     private String content;
     private Boolean nightCare;
+    private String businessLicense;
 
     // update 란
     private String lat;
     private String lng;
     private String category;
 
-    private MultipartFile file;
+
 }

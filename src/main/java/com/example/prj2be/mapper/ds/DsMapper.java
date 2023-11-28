@@ -8,13 +8,13 @@ import java.util.List;
 @Mapper
 public interface DsMapper {
     @Insert("""
-            INSERT INTO business(name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare)
-            VALUES (#{name}, #{address}, #{phone},
-                    #{openHour}, #{openMin}, #{closeHour},
-                    #{closeMin}, #{content},'drugStore', #{nightCare}
+            INSERT INTO business(name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare, businessLicense)
+            VALUES (#{ds.name}, #{ds.address}, #{ds.phone},
+                    #{ds.openHour}, #{ds.openMin}, #{ds.closeHour},
+                    #{ds.closeMin}, #{ds.content},'drugStore', #{ds.nightCare}, #{path}
                     )
             """)
-    int insertById(Ds ds);
+    int insertById(Ds ds,String path);
 
     @Update("""
             UPDATE business
