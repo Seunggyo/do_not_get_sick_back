@@ -38,4 +38,14 @@ public class CommentService {
       return mapper.selectByBoardId(boardId);
    }
 
+   public boolean remove(Integer id) {
+      return mapper.deleteById(id);
+   }
+
+
+   public boolean hasAccess(Integer id, Member login) {
+      Comment comment = mapper.selectById(id);
+
+      return comment.getMemberId().equals(login.getId());
+   }
 }

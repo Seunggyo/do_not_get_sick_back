@@ -1,6 +1,7 @@
 package com.example.prj2be.mapper.comment;
 import com.example.prj2be.domain.comment.Comment;
 import java.util.List;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -22,4 +23,18 @@ public interface CommentMapper {
       """
    )
    List<Comment> selectByBoardId(Integer boardId);
+
+
+   @Delete("""
+      DELETE FROM comment
+      WHERE id = #{id}
+      """)
+   boolean deleteById(Integer id);
+
+   @Select("""
+      SELECT *
+      FROM comment
+      WHERE id = #{id}
+      """)
+   Comment selectById(Integer id);
 }
