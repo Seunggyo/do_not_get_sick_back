@@ -1,5 +1,6 @@
 package com.example.prj2be.service.comment;
 
+import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.comment.CommentMapper;
@@ -47,5 +48,25 @@ public class CommentService {
       Comment comment = mapper.selectById(id);
 
       return comment.getMemberId().equals(login.getId());
+   }
+
+   public boolean update(Comment comment) {
+      return mapper.update(comment) == 1;
+   }
+
+   public boolean updateValidate(Comment comment) {
+      if (comment == null) {
+         return false;
+      }
+
+      if (comment.getId() == null) {
+         return false;
+      }
+
+      if (comment.getComment() == null || comment.getComment().isBlank()) {
+         return false;
+      }
+
+      return true;
    }
 }
