@@ -1,5 +1,6 @@
 package com.example.prj2be.service.ds;
 
+import com.example.prj2be.domain.business.BusinessPicture;
 import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
@@ -9,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -84,8 +85,35 @@ public class DsService {
 
     }
 
-    public boolean update(Ds ds) {
+    public boolean update(Ds ds, MultipartFile[] uploadFile, List<Integer> deleteFileIds) throws IOException {
         // 유저가 정보 수정 할려 할 떄 보내는 코드
+
+        // 파일 삭제
+        if (deleteFileIds != null) {
+            for (Integer id : deleteFileIds) {
+                BusinessPicture picture = businessFileMapper.selectById(id);
+                String key = "prj2/Ds/" + ds.getId() + "/" + picture.getName();
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
+                s3.deleteObject(objectRequest);
+
+                // db에서 삭제
+                businessFileMapper.deleteById(id);
+            }
+        }
+
+        // 파일 업데이트
+        if ( uploadFile != null) {
+            // 미리 작성한 upload를 사용하여 aws 저장
+            for (MultipartFile file : uploadFile){
+                upload(ds.getId(), file);
+                // db에 추가
+                businessFileMapper.insert(ds.getId(), file.getOriginalFilename());
+            }
+        }
+
         return mapper.updateById(ds) == 1;
     }
 
@@ -94,11 +122,28 @@ public class DsService {
     }
 
     public Ds get(Integer id) {
-        return mapper.selectById(id);
+        Ds ds = mapper.selectById(id);
+
+        List<BusinessPicture> businessPictures = businessFileMapper.selectNamesByDsId(id);
+
+        for (BusinessPicture businessPicture : businessPictures){
+            String url = urlPrefix + "prj2/Ds/" + id + "/" + businessPicture.getName();
+            businessPicture.setUrl(url);
+        }
+
+        ds.setFiles(businessPictures);
+
+        return ds;
     }
 
 
     public boolean delete(Integer id) {
+
+
+        // 파일 레코드 삭제
+        businessFileMapper.deleteByDsId(id);
+
+
         return mapper.deleteById(id) == 1;
     }
 }
