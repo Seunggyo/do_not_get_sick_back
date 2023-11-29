@@ -20,7 +20,7 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add (Ds ds,
-                               @RequestParam(value = "businessLi") MultipartFile file
+                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files
                                /*,@SessionAttribute(value = "login", required = false) Member login*/) throws IOException {
         // 약국 정보 기입
         // TODO : 멤버 테이블 추가 시 로그인 제약 추가
@@ -28,12 +28,14 @@ public class DsController {
 //        if ( login != null) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 //        }
+        System.out.println(ds.getId());
+        System.out.println(ds);
 
         if ( !service.validate(ds)) {
             return  ResponseEntity.badRequest().build();
         }
 
-        if ( service.save(ds, file)) {
+        if ( service.save(ds, files)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();

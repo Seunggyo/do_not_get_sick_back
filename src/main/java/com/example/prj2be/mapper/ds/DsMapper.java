@@ -8,13 +8,14 @@ import java.util.List;
 @Mapper
 public interface DsMapper {
     @Insert("""
-            INSERT INTO business(name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare, businessLicense)
-            VALUES (#{ds.name}, #{ds.address}, #{ds.phone},
-                    #{ds.openHour}, #{ds.openMin}, #{ds.closeHour},
-                    #{ds.closeMin}, #{ds.content},'drugStore', #{ds.nightCare}, #{path}
+            INSERT INTO business(name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare)
+            VALUES (#{name}, #{address}, #{phone},
+                    #{openHour}, #{openMin}, #{closeHour},
+                    #{closeMin}, #{content},'drugStore', #{nightCare}
                     )
             """)
-    int insertById(Ds ds,String path);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(Ds ds);
 
     @Update("""
             UPDATE business
@@ -49,4 +50,5 @@ public interface DsMapper {
             WHERE id = #{id}
             """)
     int deleteById(Integer id);
+
 }
