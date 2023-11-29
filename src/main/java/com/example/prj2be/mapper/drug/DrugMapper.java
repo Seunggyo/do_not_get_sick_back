@@ -18,8 +18,8 @@ public interface DrugMapper {
     List<Drug> selectByFunction(String function);
 
     @Insert("""
-            INSERT INTO drug (name,function,content,price,mainFile)
-            VALUES (#{name}, #{func},#{content},#{price},#{mainFile})
+            INSERT INTO drug (name,function,content,price)
+            VALUES (#{name}, #{func},#{content},#{price})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Drug drug);

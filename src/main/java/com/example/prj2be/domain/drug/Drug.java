@@ -16,7 +16,6 @@ public class Drug {
     private Integer price;
     private LocalDateTime inserted;
     private String fileName;
-    private String mainFile;
 
     private List<DrugFile> files;
 }

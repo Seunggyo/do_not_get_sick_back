@@ -15,9 +15,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DrugService {
@@ -32,7 +32,7 @@ public class DrugService {
     private String bucket;
 
     public List<Drug> selectByFunction(String function) {
-       return mapper.selectByFunction(function);
+        return mapper.selectByFunction(function);
     }
 
     public boolean save(Drug drug, MultipartFile[] files) throws IOException {
@@ -40,12 +40,12 @@ public class DrugService {
         int cdt = mapper.insert(drug);
 
         //drugFile 테이블에 files 정보 저장.
-        if ( files != null){
+        if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 // drugId, name
                 fileMapper.insert(drug.getId(), files[i].getOriginalFilename());
 
-                upload(drug.getId(),files[i]);
+                upload(drug.getId(), files[i]);
             }
         }
 
@@ -70,25 +70,36 @@ public class DrugService {
         if (drug == null) {
             return false;
         }
-        if (drug.getName() == null || drug.getName().isBlank()){
+        if (drug.getName() == null || drug.getName().isBlank()) {
             return false;
         }
-        if (drug.getFunc() == null || drug.getFunc().isBlank()){
+        if (drug.getFunc() == null || drug.getFunc().isBlank()) {
             return false;
         }
-        if (drug.getPrice() == null || drug.getPrice() == 0){
-           return false;
-       }
-        if (drug.getContent() == null || drug.getContent().isBlank()){
-           return false;
-       }
+        if (drug.getPrice() == null || drug.getPrice() == 0) {
+            return false;
+        }
+        if (drug.getContent() == null || drug.getContent().isBlank()) {
+            return false;
+        }
 
 
-       return true;
+        return true;
     }
 
     public List<Drug> drugList() {
-        return mapper.selectDrugList();
+        List<Drug> drugList = mapper.selectDrugList();
+        for (Drug drug : drugList) {
+
+            List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(drug.getId());
+
+            for (DrugFile drugFile : drugFiles) {
+                String url = urlPrefix + "prj2/drug/" + drug.getId() + "/" + drugFile.getName();
+                drugFile.setUrl(url);
+            }
+            drug.setFiles(drugFiles);
+        }
+        return drugList;
     }
 
     public Drug drugGet(Integer id) {
