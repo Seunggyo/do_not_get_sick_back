@@ -1,6 +1,7 @@
 package com.example.prj2be.service.board;
 
 import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,8 @@ public class BoardService {
 
    private final BoardMapper mapper;
 
-   public boolean save(Board board) {
+   public boolean save(Board board, Member login) {
+      board.setWriter(login.getId());
 
       return mapper.insert(board) == 1;
    }
