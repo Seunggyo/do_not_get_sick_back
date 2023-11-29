@@ -6,5 +6,6 @@ import lombok.Data;
 public class BusinessPicture {
     private Integer id;
     private String name;
-    private Integer businessId;
+
+    private String url;
 }

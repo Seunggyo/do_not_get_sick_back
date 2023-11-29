@@ -1,7 +1,7 @@
-package com.example.prj2be.service.ds;
+package com.example.prj2be.service.business;
 
-import com.example.prj2be.domain.ds.DsLike;
-import com.example.prj2be.mapper.ds.DsLikeMapper;
+import com.example.prj2be.domain.business.BusinessLike;
+import com.example.prj2be.mapper.business.BusinessLikeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,11 +9,11 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class DsLikeService {
+public class BusinessLikeService {
 
-    private final DsLikeMapper mapper;
+    private final BusinessLikeMapper mapper;
 
-    public Map<String, Object> update(DsLike like) {
+    public Map<String, Object> update(BusinessLike like) {
 
         int count = 0;
 
