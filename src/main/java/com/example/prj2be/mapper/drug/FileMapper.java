@@ -21,5 +21,5 @@ public interface FileMapper {
             FROM drugFile
             WHERE drugId = #{drigId}
             """)
-    List<DrugFile> selectNamesBydrugId(Integer id);
+    List<DrugFile> selectNamesByDrugId(Integer id);
 }

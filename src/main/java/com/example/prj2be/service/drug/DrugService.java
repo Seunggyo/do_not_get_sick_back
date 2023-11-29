@@ -55,7 +55,7 @@ public class DrugService {
 
     private void upload(Integer drugId, MultipartFile file) throws IOException {
 
-        String key = "prj2/" + drugId + "/" + file.getOriginalFilename();
+        String key = "prj2/drug/" + drugId + "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
@@ -82,6 +82,8 @@ public class DrugService {
         if (drug.getContent() == null || drug.getContent().isBlank()){
            return false;
        }
+
+
        return true;
     }
 
@@ -93,10 +95,10 @@ public class DrugService {
 
         Drug drug = mapper.selectById(id);
 
-        List<DrugFile> drugFiles = fileMapper.selectNamesBydrugId(id);
+        List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(id);
 
         for (DrugFile drugFile : drugFiles) {
-            String url = urlPrefix + "prj2/" + id + "/" + drugFile.getName();
+            String url = urlPrefix + "prj2/drug/" + id + "/" + drugFile.getName();
             drugFile.setUrl(url);
         }
 

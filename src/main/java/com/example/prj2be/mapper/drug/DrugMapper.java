@@ -12,9 +12,9 @@ import java.util.List;
 public interface DrugMapper {
 
     @Select("""
-        select * from drug
-        where function=#{function}
-            """)
+            select * from drug
+            where function=#{function}
+                """)
     List<Drug> selectByFunction(String function);
 
     @Insert("""
@@ -26,19 +26,16 @@ public interface DrugMapper {
 
 
     @Select("""
-            select d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
+            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
-            where d.id > 0;
             """)
     List<Drug> selectDrugList();
 
     @Select("""
-            select d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
+            select d.id, d.name, d.function func, d.content, d.price, d.inserted
             FROM drug d
-            JOIN drugFile f
-            ON d.id = f.drugId
             WHERE d.id = #{id}
             """)
     Drug selectById(Integer id);
