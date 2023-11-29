@@ -1,10 +1,13 @@
 package com.example.prj2be.service.ds;
 
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.mapper.business.BusinessPictureMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +19,15 @@ import java.util.List;
 public class DsService {
 
     private final DsMapper mapper;
+    private final BusinessPictureMapper businessFileMapper;
+    private final S3Client s3;
+
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
+
+
     public boolean validate(Ds ds) {
         // 약국 기입시 필수적으로 적어야 하는 목록
 
@@ -38,43 +50,47 @@ public class DsService {
         return true;
     }
 
-    public boolean save(Ds ds, MultipartFile file) throws IOException {
+    public boolean save(Ds ds, MultipartFile[] files) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
 
-        // 사업자등록증 하나만 관리하는 코드
+        int cnt = mapper.insert(ds);
+        System.out.println(ds.getId());
+        System.out.println(ds);
+
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                businessFileMapper.insert(ds.getId(), files[i].getOriginalFilename());
+
+                upload(ds.getId(), files[i]);
+            }
+        }
+
+        return cnt == 1;
+    }
+
+    private void upload(Integer dsId, MultipartFile file) throws IOException {
+        // aws 저장 코드
+//        String key = "prj2/Ds" + dsId + "/" + file.getOriginalFilename();
+//        PutObjectRequest objectRequest = PutObjectRequest.builder()
+//                .bucket(bucket)
+//                .key(key)
+//                .acl(ObjectCannedACL.PUBLIC_READ)
+//                .build();
+//
+//        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
         // local 시험용 저장
-        File folder = new File("C:\\Temp\\prj2\\" + ds.getName());
-        System.out.println(folder);
+        File folder = new File("C:\\Temp\\prj2\\" + dsId);
         if (!folder.exists()) {
             folder.mkdirs();
         }
 
         String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-
         File des = new File(path);
 
         file.transferTo(des);
 
-
-
-        return mapper.insertById(ds, path) == 1;
     }
-
-//    private void upload(String name, MultipartFile file) throws IOException {
-//        // local 시험용 저장
-//        File folder = new File("C:\\Temp\\prj2\\" + name);
-//        System.out.println(folder);
-//        if (!folder.exists()) {
-//            folder.mkdirs();
-//        }
-//
-//        String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-//        File des = new File(path);
-//        System.out.println(des);
-//
-//        file.transferTo(des);
-//        System.out.println(file);
-//    }
 
     public boolean update(Ds ds) {
         // 유저가 정보 수정 할려 할 떄 보내는 코드
