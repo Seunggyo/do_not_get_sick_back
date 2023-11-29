@@ -3,7 +3,6 @@ package com.example.prj2be.controller.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.board.BoardService;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

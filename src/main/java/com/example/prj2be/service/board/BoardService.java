@@ -3,6 +3,7 @@ package com.example.prj2be.service.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
+import com.example.prj2be.service.member.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
 
-
+   private final MemberService memberService;
    private final BoardMapper mapper;
 
    public boolean save(Board board, Member login) {
@@ -54,6 +55,11 @@ public class BoardService {
    }
 
    public boolean hasAccess(Integer id, Member login) {
+
+//      if (memberService.isAdmin(login)) {
+//         return true;
+//      }
+
       Board board = mapper.selectById(id);
       // mapper 에서 해당 게시물정보를 얻기
 
