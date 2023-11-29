@@ -12,8 +12,7 @@ public class MailController {
     private final MailService mailService;
 
     @GetMapping("/mail")
-    public void mailSend(@RequestParam String email) {
-        mailService.senMail(email);
-
+    public int mailSend(@RequestParam String email) {
+        return mailService.senMail(email);
     }
 }

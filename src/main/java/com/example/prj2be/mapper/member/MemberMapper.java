@@ -31,13 +31,14 @@ public interface MemberMapper {
 
     @Insert("""
         insert into member (
-        id, password, nickName, phone,
-        email, address, auth)
+        id, password, nickName, birthday, phone,
+        email, address, auth, fileName)
         values (
-        #{id}, #{password}, #{nickName}, #{phone},
-        #{email}, #{address}, #{auth})
+        #{member.id}, #{member.password}, #{member.nickName}, #{member.birthday},
+        #{member.phone}, #{member.email}, #{member.address},
+        #{member.auth}, #{fileName})
 """)
-    int insertMember(Member member);
+    int insertMember(Member member, String fileName);
 
     @Select("""
         select * from member

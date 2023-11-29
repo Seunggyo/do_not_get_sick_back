@@ -34,8 +34,9 @@ public class MailService {
         return simpleMailMessage;
     }
 
-    public void senMail(String mail) {
+    public int senMail(String mail) {
         javaMailSender.send(createMail(mail));
+        return num;
     }
 
 }
