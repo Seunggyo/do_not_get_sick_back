@@ -38,6 +38,11 @@ public class DrugController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @PutMapping("edit")
+    public void edit(@RequestBody Drug drug) {
+        System.out.println("drug = " + drug);
+    }
+
 
     @GetMapping("drugList")
     public List<Drug> list() {
@@ -58,4 +63,6 @@ public class DrugController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+
 }

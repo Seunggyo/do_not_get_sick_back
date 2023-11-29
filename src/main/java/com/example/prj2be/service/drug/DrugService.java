@@ -140,4 +140,6 @@ public class DrugService {
       }
       fileMapper.deleteByBoardId(id);
     }
+
+
 }
