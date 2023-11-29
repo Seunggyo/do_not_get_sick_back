@@ -1,0 +1,50 @@
+package com.example.prj2be.controller.comment;
+import com.example.prj2be.domain.comment.Comment;
+import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.service.comment.CommentService;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/comment")
+public class CommentController {
+
+   private final CommentService service;
+
+   @PostMapping("add")
+   public ResponseEntity add(
+      @RequestBody Comment comment,
+      @SessionAttribute(value = "login", required = false) Member login) {
+
+      if (login == null) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+
+      if (service.validate(comment)) {
+         if (service.add(comment, login)) {
+            return ResponseEntity.ok().build();
+         } else {
+            return ResponseEntity.internalServerError().build();
+         }
+      } else {
+         return ResponseEntity.badRequest().build();
+      }
+   }
+
+   @GetMapping("list")
+   public List<Comment> list(@RequestParam("id") Integer boardId) {
+      return service.list(boardId);
+   }
+
+}

@@ -65,4 +65,15 @@ public class BoardService {
 
       return board.getWriter().equals(login.getId());
    }
+
+   // TODO: admin 권한부여.. 아직 미완성..
+//   public boolean isAdmin(Member login) {
+//
+//      if (login.getAuth() != null) {
+//         return login.getAuth()
+//            .stream()
+//            .map(e -> e.getName())
+//            .anyMatch(n -> n.equals("admin"));
+//      }
+//   }
 }
