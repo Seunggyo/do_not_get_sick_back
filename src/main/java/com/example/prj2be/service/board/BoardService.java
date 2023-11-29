@@ -52,4 +52,11 @@ public class BoardService {
       return mapper.update(board) == 1;
 
    }
+
+   public boolean hasAccess(Integer id, Member login) {
+      Board board = mapper.selectById(id);
+      // mapper 에서 해당 게시물정보를 얻기
+
+      return board.getWriter().equals(login.getId());
+   }
 }
