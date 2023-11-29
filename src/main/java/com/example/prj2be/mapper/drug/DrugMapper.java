@@ -18,18 +18,19 @@ public interface DrugMapper {
     List<Drug> selectByFunction(String function);
 
     @Insert("""
-            INSERT INTO drug (name,function,content,price)
-            VALUES (#{name}, #{func},#{content},#{price})
+            INSERT INTO drug (name,function,content,price,mainFile)
+            VALUES (#{name}, #{func},#{content},#{price},#{mainFile})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Drug drug);
 
 
     @Select("""
-            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, f.name fileName
+            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
+            
             """)
     List<Drug> selectDrugList();
 

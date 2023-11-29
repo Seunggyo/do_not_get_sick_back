@@ -26,7 +26,8 @@ public class DrugController {
 
     @PostMapping("add")
     public ResponseEntity add(Drug drug,
-                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files) throws IOException {
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files
+                              ) throws IOException {
 
 
         if (!service.validate(drug)) {
