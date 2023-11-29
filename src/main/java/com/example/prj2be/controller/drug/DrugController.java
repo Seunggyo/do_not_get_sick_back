@@ -48,4 +48,14 @@ public class DrugController {
     public Drug get(@PathVariable Integer id) {
         return service.drugGet(id);
     }
+
+    @DeleteMapping("remove/{id}")
+    public ResponseEntity remove(@PathVariable Integer id){
+
+        if (service.remove(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

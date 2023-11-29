@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper.drug;
 
 import com.example.prj2be.domain.drug.Drug;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -40,4 +37,10 @@ public interface DrugMapper {
             WHERE d.id = #{id}
             """)
     Drug selectById(Integer id);
+
+    @Delete("""
+            DELETE FROM drug
+            WHERE id = #{id}
+            """)
+    int deleteById(Integer id);
 }

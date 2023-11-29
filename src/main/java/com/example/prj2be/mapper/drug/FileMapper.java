@@ -1,6 +1,7 @@
 package com.example.prj2be.mapper.drug;
 
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -21,5 +22,11 @@ public interface FileMapper {
             FROM drugFile
             WHERE drugId = #{drigId}
             """)
-    List<DrugFile> selectNamesByDrugId(Integer id);
+    List<DrugFile> selectNamesByDrugId(Integer drugId);
+
+    @Delete("""
+            DELETE FROM drugfile
+            WHERE drugId = #{drugId}
+            """)
+    int deleteByBoardId(Integer drugId);
 }
