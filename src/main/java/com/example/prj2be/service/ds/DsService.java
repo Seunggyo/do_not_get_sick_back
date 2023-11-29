@@ -7,7 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,26 +72,15 @@ public class DsService {
     }
 
     private void upload(Integer dsId, MultipartFile file) throws IOException {
-        // aws 저장 코드
-//        String key = "prj2/Ds" + dsId + "/" + file.getOriginalFilename();
-//        PutObjectRequest objectRequest = PutObjectRequest.builder()
-//                .bucket(bucket)
-//                .key(key)
-//                .acl(ObjectCannedACL.PUBLIC_READ)
-//                .build();
-//
-//        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+//         aws 저장 코드
+        String key = "prj2/Ds/" + dsId + "/" + file.getOriginalFilename();
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
 
-        // local 시험용 저장
-        File folder = new File("C:\\Temp\\prj2\\" + dsId);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-
-        String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-        File des = new File(path);
-
-        file.transferTo(des);
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
     }
 
