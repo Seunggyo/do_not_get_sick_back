@@ -27,7 +27,8 @@ public class BoardController {
    private final BoardService service;
 
    @PostMapping("add")
-   public ResponseEntity add(@RequestBody Board board,
+   public ResponseEntity add(
+      @RequestBody Board board,
       @SessionAttribute(value = "login", required = false) Member login) {
 //      System.out.println("login = " + login);
 
@@ -63,7 +64,7 @@ public class BoardController {
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러(비로그인상태)
       }
-      if (service.hasAccess(id,login)) {
+      if (!service.hasAccess(id,login)) {
          return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러(본인인지 모름)
       }
       if (service.remove(id)) {
@@ -74,8 +75,16 @@ public class BoardController {
    }
 
    @PutMapping("edit")
-   public ResponseEntity edit(@RequestBody Board board) {
+   public ResponseEntity edit(
+      @RequestBody Board board,
+      @SessionAttribute(value = "login", required = false) Member login) {
 
+      if (login == null) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러
+      }
+      if (!service.hasAccess(board.getId(), login)) {
+         return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
+      }
       if (service.validate(board)) {
          if (service.update(board)) {
             return ResponseEntity.ok().build();
