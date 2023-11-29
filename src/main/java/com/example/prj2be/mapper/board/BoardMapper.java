@@ -18,9 +18,17 @@ public interface BoardMapper {
    int insert(Board board);
 
    @Select("""
-      SELECT b.id, b.title, b.writer, m.nickName, b.category, b.inserted
-      FROM board b JOIN member m ON b.writer = m.id
-      ORDER BY b.id DESC
+      SELECT b.id,
+               b.title,
+               b.writer,
+               m.nickName,
+               b.category,
+               b.inserted,
+               COUNT(c.id) countComment
+        FROM board b JOIN member m ON b.writer = m.id
+                     LEFT JOIN comment c on b.id = c.boardId
+        GROUP BY b.id
+        ORDER BY b.id DESC
       """)
    List<Board> selectAll();
 
@@ -30,6 +38,7 @@ public interface BoardMapper {
       WHERE b.id = #{id}
       """)
    Board selectById(Integer id);
+
 
 
    @Delete("""

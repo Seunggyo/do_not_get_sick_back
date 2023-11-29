@@ -1,6 +1,5 @@
 package com.example.prj2be.service.comment;
 
-import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.comment.CommentMapper;
@@ -40,7 +39,7 @@ public class CommentService {
    }
 
    public boolean remove(Integer id) {
-      return mapper.deleteById(id);
+      return mapper.deleteById(id) == 1;
    }
 
 
