@@ -91,7 +91,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (!service.hsAccess(member.getId(), login)) {
+        if (!service.hasAccess(member.getId(), login)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

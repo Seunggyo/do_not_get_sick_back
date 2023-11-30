@@ -149,6 +149,9 @@ public class MemberService {
     }
 
     public boolean hasAccess(String id, Member login) {
+        if (isAdmin(login)) {
+            return true;
+        }
         return login.getId().equals(id);
     }
 
