@@ -127,9 +127,29 @@ public class MemberService {
         return false;
     }
 
-    public boolean hsAccess(String id, Member login) {
-        //TODO: 권한 설정
-        return true;
+    public boolean isAdmin(Member login) {
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("admin");
+        }
+        return false;
+    }
+
+    public boolean isHs(Member login) {
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("hs");
+        }
+        return false;
+    }
+
+    public boolean isDs(Member login) {
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("ds");
+        }
+        return false;
+    }
+
+    public boolean hasAccess(String id, Member login) {
+        return login.getId().equals(id);
     }
 
     public boolean update(Member member) {
