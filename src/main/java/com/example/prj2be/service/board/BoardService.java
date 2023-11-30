@@ -3,6 +3,8 @@ package com.example.prj2be.service.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
+import com.example.prj2be.mapper.comment.CommentMapper;
+import com.example.prj2be.mapper.drug.FileMapper;
 import com.example.prj2be.service.member.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ public class BoardService {
 
    private final MemberService memberService;
    private final BoardMapper mapper;
+   private CommentMapper commentMapper;
 
    public boolean save(Board board, Member login) {
       board.setWriter(login.getId());
@@ -46,6 +49,9 @@ public class BoardService {
    }
 
    public boolean remove(Integer id) {
+
+      commentMapper.deleteByBoardId(id);
+
       return mapper.deleteById(id) == 1;
    }
 
