@@ -4,6 +4,7 @@ import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.service.drug.DrugService;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,11 +39,6 @@ public class DrugController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @PutMapping("edit")
-    public void edit(@RequestBody Drug drug) {
-        System.out.println("drug = " + drug);
-    }
-
 
     @GetMapping("drugList")
     public List<Drug> list() {
@@ -64,5 +60,22 @@ public class DrugController {
         }
     }
 
+    @PutMapping("edit")
+    public ResponseEntity edit(Drug drug,
+                               @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles) throws IOException {
 
+        if (service.validate(drug)) {
+            if (service.update(drug)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
+
+
+

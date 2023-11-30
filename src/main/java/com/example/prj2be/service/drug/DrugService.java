@@ -142,4 +142,7 @@ public class DrugService {
     }
 
 
+    public boolean update(Drug drug) {
+        return mapper.update(drug) == 1;
+    }
 }

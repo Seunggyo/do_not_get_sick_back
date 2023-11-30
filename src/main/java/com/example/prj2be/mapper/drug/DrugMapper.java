@@ -44,5 +44,14 @@ public interface DrugMapper {
             """)
     int deleteById(Integer id);
 
-
+    @Update("""
+            UPDATE drug
+            SET 
+            name = #{name},
+            func = #{func},
+            content = #{content},
+            price = #{price}
+            WHERE id = #{id}
+            """)
+    int update(Drug drug);
 }
