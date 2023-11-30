@@ -4,7 +4,6 @@ import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
 import com.example.prj2be.mapper.comment.CommentMapper;
-import com.example.prj2be.service.member.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
 
-   private final MemberService memberService;
    private final BoardMapper mapper;
-   private CommentMapper commentMapper;
+   private final CommentMapper commentMapper;
 
    public boolean save(Board board, Member login) {
       board.setWriter(login.getId());

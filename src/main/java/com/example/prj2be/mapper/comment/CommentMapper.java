@@ -53,10 +53,13 @@ public interface CommentMapper {
       """)
    int update(Comment comment);
 
+   // 게시물 삭제시 댓글들도 삭제
    @Delete("""
       DELETE FROM comment
       WHERE boardId = #{BoardId}
       """)
    int deleteByBoardId(Integer boardId);
 
+
+   // TODO: 멤버탈퇴시 쿼리 넣어야댐..
 }
