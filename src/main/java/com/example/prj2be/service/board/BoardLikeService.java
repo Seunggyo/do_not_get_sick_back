@@ -32,4 +32,17 @@ public class BoardLikeService {
       // 처음 좋아요 누를 때 : insert
       // 다시 누르면 : delete
    }
+
+   public Map<String, Object> get(Integer boardId, Member login) {
+
+      int countLike = likeMapper.countByBoardId(boardId);
+
+      BoardLike like = null;
+
+      if (login != null) {
+         like = likeMapper.selectByBoardIdAndMemberId(boardId, login.getId());
+
+      }
+      return Map.of("Like", like != null, "countLike", countLike);
+   }
 }
