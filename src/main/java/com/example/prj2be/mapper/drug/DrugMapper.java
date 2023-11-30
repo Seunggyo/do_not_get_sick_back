@@ -48,7 +48,7 @@ public interface DrugMapper {
             UPDATE drug
             SET 
             name = #{name},
-            func = #{func},
+            function = #{func},
             content = #{content},
             price = #{price}
             WHERE id = #{id}

@@ -66,7 +66,7 @@ public class DrugController {
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles) throws IOException {
 
         if (service.validate(drug)) {
-            if (service.update(drug)) {
+            if (service.update(drug, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();

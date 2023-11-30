@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Stack;
 
 @Service
 @RequiredArgsConstructor
@@ -142,7 +143,34 @@ public class DrugService {
     }
 
 
-    public boolean update(Drug drug) {
+    public boolean update(Drug drug, List<Integer> removeFileIds, MultipartFile[] uploadFiles ) throws IOException {
+
+        // 파일 지우기
+        if (removeFileIds != null) {
+            for (Integer id : removeFileIds){
+                // s3 지우기
+                DrugFile file = fileMapper.selectById(id);
+                String key = "prj2/drug" + drug.getId() + "/" + file.getName();
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
+                s3.deleteObject(objectRequest);
+
+                fileMapper.deleteById(id);
+            }
+        }
+
+        if (uploadFiles != null) {
+            for (MultipartFile file :  uploadFiles) {
+
+                upload(drug.getId(), file);
+
+                fileMapper.insert(drug.getId(), file.getOriginalFilename());
+            }
+        }
+
+        System.out.println("drug = " + drug);
         return mapper.update(drug) == 1;
     }
 }
