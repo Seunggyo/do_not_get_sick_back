@@ -18,18 +18,27 @@ public interface BoardMapper {
    int insert(Board board);
 
    @Select("""
-      SELECT id, title, writer, category, inserted
-      FROM board
-      ORDER BY id DESC
+      SELECT b.id,
+               b.title,
+               b.writer,
+               m.nickName,
+               b.category,
+               b.inserted,
+               COUNT(c.id) countComment
+        FROM board b JOIN member m ON b.writer = m.id
+                     LEFT JOIN comment c on b.id = c.boardId
+        GROUP BY b.id
+        ORDER BY b.id DESC
       """)
    List<Board> selectAll();
 
    @Select("""
-      SELECT id, title, content, writer, category, inserted
-      FROM board
-      WHERE id = #{id}
+      SELECT b.id, b.title, b.content, b.writer, m.nickName, b.category, b.inserted
+      FROM board b JOIN member m ON b.writer = m.id
+      WHERE b.id = #{id}
       """)
    Board selectById(Integer id);
+
 
 
    @Delete("""
@@ -49,4 +58,11 @@ public interface BoardMapper {
       WHERE id = #{id}
       """)
    int update(Board board);
+
+   @Delete("""
+        DELETE FROM board
+        WHERE writer = #{writer}
+        """)
+
+   int deleteByWriter(String writer);
 }

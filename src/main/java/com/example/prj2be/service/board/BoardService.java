@@ -1,7 +1,9 @@
 package com.example.prj2be.service.board;
 
 import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
+import com.example.prj2be.service.member.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,10 +12,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
 
-
+   private final MemberService memberService;
    private final BoardMapper mapper;
 
-   public boolean save(Board board) {
+   public boolean save(Board board, Member login) {
+      board.setWriter(login.getId());
 
       return mapper.insert(board) == 1;
    }
@@ -28,10 +31,6 @@ public class BoardService {
       }
 
       if (board.getTitle() == null || board.getTitle().isBlank()) {
-         return false;
-      }
-
-      if (board.getWriter() == null || board.getWriter().isBlank()) {
          return false;
       }
 
@@ -54,4 +53,27 @@ public class BoardService {
       return mapper.update(board) == 1;
 
    }
+
+   public boolean hasAccess(Integer id, Member login) {
+
+//      if (memberService.isAdmin(login)) {
+//         return true;
+//      }
+
+      Board board = mapper.selectById(id);
+      // mapper 에서 해당 게시물정보를 얻기
+
+      return board.getWriter().equals(login.getId());
+   }
+
+   // TODO: admin 권한부여.. 아직 미완성..
+//   public boolean isAdmin(Member login) {
+//
+//      if (login.getAuth() != null) {
+//         return login.getAuth()
+//            .stream()
+//            .map(e -> e.getName())
+//            .anyMatch(n -> n.equals("admin"));
+//      }
+//   }
 }
