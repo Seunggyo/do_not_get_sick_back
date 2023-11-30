@@ -30,14 +30,14 @@ public class BusinessLikeService {
         return Map.of("like", count == 1, "countLike", countLike);
     }
 
-    public Map<String, Object> get(Integer dsId, Member login) {
+    public Map<String, Object> get(Integer id, Member login) {
 
-        int countLike = mapper.countByMemberId(dsId);
+        int countLike = mapper.countByMemberId(id);
 
         BusinessLike like = null;
 
         if ( login != null){
-            like = mapper.selectByDsIdAndMemberId(dsId, login.getId());
+            like = mapper.selectByDsIdAndMemberId(id, login.getId());
         }
 
         return Map.of("like", like != null, "countLike", countLike);

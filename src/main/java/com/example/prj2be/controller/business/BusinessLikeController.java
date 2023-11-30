@@ -28,10 +28,10 @@ public class BusinessLikeController {
         return ResponseEntity.ok(service.update(like, login));
     }
 
-    @GetMapping("dsId/{dsId}")
-    public ResponseEntity<Map<String, Object>> get(@PathVariable Integer dsId,
+    @GetMapping("dsId/{id}")
+    public ResponseEntity<Map<String, Object>> get(@PathVariable Integer id,
                                    @SessionAttribute(value = "login", required = false)Member login) {
-        return ResponseEntity.ok(service.get(dsId, login));
+        return ResponseEntity.ok(service.get(id, login));
     }
 
 }
