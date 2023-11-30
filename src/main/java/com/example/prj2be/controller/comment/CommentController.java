@@ -1,8 +1,8 @@
-package com.example.prj2be.controller.board;
+package com.example.prj2be.controller.comment;
 
-import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.service.board.BoardService;
+import com.example.prj2be.service.comment.CommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,78 +14,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/board")
+@RequestMapping("/api/comment")
+public class CommentController {
 
-public class BoardController {
-
-   private final BoardService service;
+   private final CommentService service;
 
    @PostMapping("add")
    public ResponseEntity add(
-      @RequestBody Board board,
+      @RequestBody Comment comment,
       @SessionAttribute(value = "login", required = false) Member login) {
-//      System.out.println("login = " + login);
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
-      if (!service.validate(board)) {
-         return ResponseEntity.badRequest().build();
-      }
 
-      if (service.save(board, login)) {
-         return ResponseEntity.ok().build();
-      } else {
-         return ResponseEntity.internalServerError().build();
-      }
-   }
-
-   @GetMapping("list")
-   public List<Board> list() {
-      return service.list();
-   }
-
-   @GetMapping("id/{id}")
-   public Board get(@PathVariable Integer id) {
-      return service.get(id);
-   }
-
-   @DeleteMapping("remove/{id}")
-   public ResponseEntity remove(
-      @PathVariable Integer id,
-      @SessionAttribute(value = "login", required = false) Member login) {
-
-      if (login == null) {
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러(비로그인상태)
-      }
-      if (!service.hasAccess(id,login)) {
-         return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러(본인인지 모름)
-      }
-      if (service.remove(id)) {
-         return ResponseEntity.ok().build();
-      } else {
-         return ResponseEntity.internalServerError().build();
-      }
-   }
-
-   @PutMapping("edit")
-   public ResponseEntity edit(
-      @RequestBody Board board,
-      @SessionAttribute(value = "login", required = false) Member login) {
-
-      if (login == null) {
-         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러
-      }
-      if (!service.hasAccess(board.getId(), login)) {
-         return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
-      }
-      if (service.validate(board)) {
-         if (service.update(board)) {
+      if (service.validate(comment)) {
+         if (service.add(comment, login)) {
             return ResponseEntity.ok().build();
          } else {
             return ResponseEntity.internalServerError().build();
@@ -95,4 +45,50 @@ public class BoardController {
       }
    }
 
+   @GetMapping("list")
+   public List<Comment> list(@RequestParam("id") Integer boardId) {
+      return service.list(boardId);
+   }
+
+   @DeleteMapping("{id}")
+   public ResponseEntity remove(
+      @PathVariable Integer id,
+      @SessionAttribute(value = "login", required = false) Member login) {
+
+      if (login == null) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러
+      }
+
+      if (service.hasAccess(id, login)) {
+         if (service.remove(id)) {
+            return ResponseEntity.ok().build();
+         } else {
+            return ResponseEntity.internalServerError().build();
+         }
+      } else {
+         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      }
+   }
+   @PutMapping("edit")
+   public ResponseEntity update(@RequestBody Comment comment,
+      @SessionAttribute(value = "login", required = false) Member login) {
+      if (login == null) {
+         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+
+      if (service.hasAccess(comment.getId(), login)) {
+         if (!service.updateValidate(comment)) {
+            return ResponseEntity.badRequest().build();
+         }
+
+         if (service.update(comment)) {
+            return ResponseEntity.ok().build();
+         } else {
+            return ResponseEntity.internalServerError().build();
+         }
+      } else {
+
+         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      }
+   }
 }

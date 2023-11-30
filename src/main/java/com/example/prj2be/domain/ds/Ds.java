@@ -1,7 +1,9 @@
 package com.example.prj2be.domain.ds;
 
+import com.example.prj2be.domain.business.BusinessPicture;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 public class Ds {
@@ -23,5 +25,6 @@ public class Ds {
     private String lng;
     private String category;
 
-    private MultipartFile file;
+    private List<BusinessPicture> files;
+
 }

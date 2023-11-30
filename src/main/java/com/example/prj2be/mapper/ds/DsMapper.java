@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper.ds;
 
 import com.example.prj2be.domain.ds.Ds;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -17,7 +14,8 @@ public interface DsMapper {
                     #{closeMin}, #{content},'drugStore', #{nightCare}
                     )
             """)
-    int insertById(Ds ds);
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(Ds ds);
 
     @Update("""
             UPDATE business
@@ -41,9 +39,16 @@ public interface DsMapper {
     List<Ds> selectByCategory( );
 
     @Select("""
-            SELECT id, name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare
+            SELECT *
             FROM business
             WHERE id = #{id};
             """)
     Ds selectById(Integer id);
+
+    @Delete("""
+            DELETE FROM business
+            WHERE id = #{id}
+            """)
+    int deleteById(Integer id);
+
 }

@@ -1,6 +1,6 @@
 package com.example.prj2be.domain.board;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Data;
 
 @Data
@@ -10,7 +10,9 @@ public class Board {
    private String title;
    private String content;
    private String writer;
+   private String nickName;
    private String category;
-   private LocalDateTime inserted;
+   private LocalDate inserted;
+   private Integer countComment;
 
 }

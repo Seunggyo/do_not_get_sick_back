@@ -9,10 +9,12 @@ public class Member {
     private String id;
     private String password;
     private String nickName;
+    private String birthday;
     private String phone;
     private String email;
     private String address;
     private String auth;
+    private String fileName;
     private LocalDateTime inserted;
 
     public boolean isAdmin() {
