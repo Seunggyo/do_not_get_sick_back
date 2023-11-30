@@ -158,4 +158,8 @@ public class MemberService {
     public boolean update(Member member) {
         return mapper.update(member) == 1;
     }
+
+    public String findIdByEmail(String email) {
+        return mapper.findIdByEmail(email);
+    }
 }

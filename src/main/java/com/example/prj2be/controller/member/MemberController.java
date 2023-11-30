@@ -109,5 +109,10 @@ public class MemberController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @PostMapping("/findId")
+    public String findId(@RequestBody Member member) {
+        return service.findIdByEmail(member.getEmail());
+    }
 }
 

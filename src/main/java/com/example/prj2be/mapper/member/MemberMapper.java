@@ -65,4 +65,10 @@ public interface MemberMapper {
         where id = #{id}
 """)
     int update(Member member);
+
+    @Select("""
+        select id from member
+        where email = #{email}
+""")
+    String findIdByEmail(String email);
 }
