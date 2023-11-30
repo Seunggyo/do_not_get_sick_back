@@ -1,6 +1,5 @@
 package com.example.prj2be.domain.ds;
 
-import com.example.prj2be.domain.business.BusinessPicture;
 import lombok.Data;
 
 import java.util.List;
@@ -25,6 +24,6 @@ public class Ds {
     private String lng;
     private String category;
 
-    private List<BusinessPicture> files;
+    private List<DsPicture> files;
 
 }

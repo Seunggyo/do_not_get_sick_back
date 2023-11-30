@@ -1,6 +1,6 @@
 package com.example.prj2be.service.ds;
 
-import com.example.prj2be.domain.business.BusinessPicture;
+import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
@@ -91,7 +91,7 @@ public class DsService {
         // 파일 삭제
         if (deleteFileIds != null) {
             for (Integer id : deleteFileIds) {
-                BusinessPicture picture = businessFileMapper.selectById(id);
+                DsPicture picture = businessFileMapper.selectById(id);
                 String key = "prj2/Ds/" + ds.getId() + "/" + picture.getName();
                 DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                         .bucket(bucket)
@@ -124,14 +124,14 @@ public class DsService {
     public Ds get(Integer id) {
         Ds ds = mapper.selectById(id);
 
-        List<BusinessPicture> businessPictures = businessFileMapper.selectNamesByDsId(id);
+        List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(id);
 
-        for (BusinessPicture businessPicture : businessPictures){
-            String url = urlPrefix + "prj2/Ds/" + id + "/" + businessPicture.getName();
-            businessPicture.setUrl(url);
+        for (DsPicture dsPicture : dsPictures){
+            String url = urlPrefix + "prj2/Ds/" + id + "/" + dsPicture.getName();
+            dsPicture.setUrl(url);
         }
 
-        ds.setFiles(businessPictures);
+        ds.setFiles(dsPictures);
 
         return ds;
     }

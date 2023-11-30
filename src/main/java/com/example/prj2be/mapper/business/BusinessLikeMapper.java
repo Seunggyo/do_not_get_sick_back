@@ -1,6 +1,6 @@
 package com.example.prj2be.mapper.business;
 
-import com.example.prj2be.domain.business.BusinessLike;
+import com.example.prj2be.domain.ds.DsLike;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,13 +13,13 @@ public interface BusinessLikeMapper {
             WHERE memberId = #{memberId}
             AND businessId = #{businessId}
             """)
-    int delete(BusinessLike like);
+    int delete(DsLike like);
 
     @Insert("""
             INSERT INTO businesslike (memberId, businessId)
             VALUES (#{memberId}, #{businessId})
             """)
-    int insert(BusinessLike like);
+    int insert(DsLike like);
 
     @Select("""
             SELECT COUNT(id)
@@ -33,5 +33,5 @@ public interface BusinessLikeMapper {
             WHERE businessId = #{businessId}
               AND memberId = #{memberId}
             """)
-    BusinessLike selectByDsIdAndMemberId(Integer businessId, String memberId);
+    DsLike selectByDsIdAndMemberId(Integer businessId, String memberId);
 }
