@@ -25,7 +25,7 @@ public class BusinessLikeService {
             count = mapper.insert(like);
         }
 
-        int countLike = mapper.countByMemberId(like.getDsId());
+        int countLike = mapper.countByMemberId(like.getBusinessId());
 
         return Map.of("like", count == 1, "countLike", countLike);
     }

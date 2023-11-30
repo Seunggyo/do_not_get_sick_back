@@ -6,5 +6,5 @@ import lombok.Data;
 public class BusinessLike {
     private Integer id;
     private String memberId;
-    private Integer dsId;
+    private Integer businessId;
 }

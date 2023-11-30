@@ -20,6 +20,7 @@ public class BusinessLikeController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> like(@RequestBody BusinessLike like,
                         @SessionAttribute(value = "login", required = false) Member login) {
+
         if ( login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

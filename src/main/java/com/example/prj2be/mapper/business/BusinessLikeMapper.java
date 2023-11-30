@@ -26,12 +26,12 @@ public interface BusinessLikeMapper {
             FROM businesslike
             WHERE businessId = #{businessId}
             """)
-    int countByMemberId(Integer dsId);
+    int countByMemberId(Integer businessId);
 
     @Select("""
             SELECT * FROM businesslike
             WHERE businessId = #{businessId}
               AND memberId = #{memberId}
             """)
-    BusinessLike selectByDsIdAndMemberId(Integer dsId, String memberId);
+    BusinessLike selectByDsIdAndMemberId(Integer businessId, String memberId);
 }
