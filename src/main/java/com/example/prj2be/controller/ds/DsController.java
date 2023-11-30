@@ -1,8 +1,10 @@
 package com.example.prj2be.controller.ds;
 
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.ds.DsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,16 +22,13 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add(Ds ds,
-                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files
-            /*,@SessionAttribute(value = "login", required = false) Member login*/) throws IOException {
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
+                    @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 기입
-        // TODO : 멤버 테이블 추가 시 로그인 제약 추가
 
-//        if ( login != null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-        System.out.println(ds.getId());
-        System.out.println(ds);
+        if ( login != null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         if (!service.validate(ds)) {
             return ResponseEntity.badRequest().build();

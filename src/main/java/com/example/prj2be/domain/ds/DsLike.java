@@ -1,9 +1,9 @@
-package com.example.prj2be.domain.business;
+package com.example.prj2be.domain.ds;
 
 import lombok.Data;
 
 @Data
-public class BusinessLike {
+public class DsLike {
     private Integer id;
     private String memberId;
     private Integer businessId;
