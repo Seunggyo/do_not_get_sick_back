@@ -1,10 +1,10 @@
-package com.example.prj2be.domain.comment;
+package com.example.prj2be.domain.board;
 
 import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class Comment {
+public class BoardComment {
 
    private Integer id;
    private Integer boardId;

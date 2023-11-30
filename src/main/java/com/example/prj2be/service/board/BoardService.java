@@ -3,7 +3,7 @@ package com.example.prj2be.service.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
-import com.example.prj2be.mapper.comment.CommentMapper;
+import com.example.prj2be.mapper.board.BoardCommentMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class BoardService {
 
    private final BoardMapper mapper;
-   private final CommentMapper commentMapper;
+   private final BoardCommentMapper commentMapper;
 
    public boolean save(Board board, Member login) {
       board.setWriter(login.getId());

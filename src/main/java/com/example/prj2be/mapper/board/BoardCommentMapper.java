@@ -1,6 +1,6 @@
-package com.example.prj2be.mapper.comment;
+package com.example.prj2be.mapper.board;
 
-import com.example.prj2be.domain.comment.Comment;
+import com.example.prj2be.domain.board.BoardComment;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -9,14 +9,13 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 @Mapper
-public interface CommentMapper {
-
+public interface BoardCommentMapper {
    @Insert("""
-      INSERT INTO comment(boardId, comment, memberId)
+      INSERT INTO boardComment(boardId, comment, memberId)
       VALUES (#{boardId}, #{comment}, #{memberId})
      
       """)
-   int insert(Comment comment);
+   int insert(BoardComment comment);
 
    @Select("""
       SELECT
@@ -26,11 +25,11 @@ public interface CommentMapper {
           c.boardId,
           c.memberId,
           m.nickName memberNickName
-      FROM comment c JOIN member m ON c.memberId = m.id
+      FROM boardComment c JOIN member m ON c.memberId = m.id
       WHERE boardId = #{boardId}
       ORDER BY c.id DESC
       """)
-   List<Comment> selectByBoardId(Integer boardId);
+   List<BoardComment> selectByBoardId(Integer boardId);
 
 
    @Delete("""
@@ -44,14 +43,14 @@ public interface CommentMapper {
       FROM comment
       WHERE id = #{id}
       """)
-   Comment selectById(Integer id);
+   BoardComment selectById(Integer id);
 
    @Update("""
       UPDATE comment
       SET comment = #{comment}
       WHERE id = #{id}
       """)
-   int update(Comment comment);
+   int update(BoardComment comment);
 
    // 게시물 삭제시 댓글들도 삭제
    @Delete("""
