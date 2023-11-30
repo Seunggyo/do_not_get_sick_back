@@ -1,5 +1,6 @@
 package com.example.prj2be.controller.drug;
 
+import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.service.drug.DrugService;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,7 @@ public class DrugController {
             return ResponseEntity.badRequest().build();
         }
     }
+
 }
 
 
