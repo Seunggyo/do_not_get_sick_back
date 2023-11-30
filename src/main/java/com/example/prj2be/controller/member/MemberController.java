@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -42,9 +44,10 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity signup(@RequestBody Member member) {
-        if (service.validate(member)) {
-            if (service.add(member)) {
+    public ResponseEntity signup( Member member,
+                                 @RequestParam(value = "uploadFile[]",required = false)MultipartFile file) throws IOException {
+        if (service.validate(member, file)) {
+            if (service.add(member, file)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.badRequest().build();
@@ -88,7 +91,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (!service.hsAccess(member.getId(), login)) {
+        if (!service.hasAccess(member.getId(), login)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
