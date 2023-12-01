@@ -1,9 +1,7 @@
 package com.example.prj2be.service.drug;
 
-import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.mapper.comment.CommentMapper;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +39,15 @@ public class DrugCommentService {
         return mapper.selectByDrugId(drugId);
     }
 
-    public void remove(Integer id) {
-        mapper.deleteById(id);
+    public boolean remove(Integer id) {
+
+        return mapper.deleteById(id) == 1;
+
+    }
+
+    public boolean hasAccess(Integer id, Member login) {
+        DrugComment drugComment = mapper.selectById(id);
+
+        return drugComment.getMemberId().equals(login.getId());
     }
 }

@@ -30,5 +30,11 @@ public interface DrugCommentMapper {
             DELETE FROM drugComment
             WHERE id = #{id}
             """)
-    void deleteById(Integer id);
+    int deleteById(Integer id);
+
+    @Select("""
+            SELECT * FROM drugComment
+            WHERE id = #{id}
+            """)
+    DrugComment selectById(Integer id);
 }
