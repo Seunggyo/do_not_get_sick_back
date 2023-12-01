@@ -51,17 +51,17 @@ public class DrugCommentController {
 //        TODO: 관리자 권한도 추가 해야함.
 
         if (login == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401
         }
 
         if (service.hasAccess(id, login)) {
             if (service.remove(id)) {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.ok().build(); //200
             } else {
                 return ResponseEntity.internalServerError().build();
             }
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); //403 권한 없음
         }
 
     }
