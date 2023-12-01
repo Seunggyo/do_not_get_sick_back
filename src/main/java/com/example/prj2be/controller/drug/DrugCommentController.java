@@ -5,6 +5,7 @@ import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.DrugCommentService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,5 +43,11 @@ public class DrugCommentController {
     @GetMapping("list")
     public List<DrugComment> list(@RequestParam("id") Integer drugId){
         return service.list(drugId);
+    }
+
+    @DeleteMapping("{id}")
+    public void remove(@PathVariable Integer id){
+//        TODO: 권한 검증
+        service.remove(id);
     }
 }

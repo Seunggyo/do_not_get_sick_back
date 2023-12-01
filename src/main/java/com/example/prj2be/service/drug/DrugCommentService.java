@@ -40,4 +40,8 @@ public class DrugCommentService {
     public List<DrugComment> list(Integer drugId) {
         return mapper.selectByDrugId(drugId);
     }
+
+    public void remove(Integer id) {
+        mapper.deleteById(id);
+    }
 }
