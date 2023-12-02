@@ -18,12 +18,15 @@ public class Ds {
     private Integer closeMin;
     private String content;
     private Boolean nightCare;
+    private List<DsPicture> files;
 
     // update 란
     private String lat;
     private String lng;
     private String category;
 
-    private List<DsPicture> files;
+    // 좋아요, 댓글
+    private Integer likeCount;
+    private Integer commentCount;
 
 }

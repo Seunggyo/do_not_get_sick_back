@@ -33,7 +33,17 @@ public interface DsMapper {
     int updateById(Ds ds);
 
     @Select("""
-            SELECT * FROM business
+            SELECT b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+            FROM business b
+                JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
             WHERE category = 'drugStore'
             """)
     List<Ds> selectByCategory( );
