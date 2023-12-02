@@ -4,6 +4,7 @@ import com.example.prj2be.domain.ds.DsComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.ds.DsCommentService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,5 +40,16 @@ public class DsCommentController {
     @GetMapping("list")
     public List<DsComment> list (@RequestParam("id") Integer businessId) {
         return service.list(businessId);
+    }
+
+    @PutMapping("edit")
+    public boolean edit(@RequestBody DsComment comment) {
+
+        return service.update(comment);
+    }
+
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable Integer id){
+        service.delete(id);
     }
 }

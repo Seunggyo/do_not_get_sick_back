@@ -1,9 +1,7 @@
 package com.example.prj2be.mapper.ds;
 
 import com.example.prj2be.domain.ds.DsComment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -25,4 +23,23 @@ public interface DsCommentMapper {
             ORDER By id DESC ;
             """)
     List<DsComment> selectByBusinessId(Integer businessId);
+
+    @Select("""
+            SELECT * FROM businesscomment
+            WHERE id = #{id}
+            """)
+    DsComment selectById(Integer id);
+
+    @Update("""
+            UPDATE businesscomment
+            SET comment = #{comment}
+            WHERE id = #{id}
+            """)
+    int update(DsComment comment);
+
+    @Delete("""
+            DELETE FROM businesscomment
+            WHERE id = #{id}
+            """)
+    int deleteById(Integer id);
 }
