@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Member {
-    private Integer id;
+    private String id;
     private String password;
     private String nickName;
     private String birthday;
