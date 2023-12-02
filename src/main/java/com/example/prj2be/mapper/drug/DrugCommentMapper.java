@@ -41,5 +41,5 @@ public interface DrugCommentMapper {
             SET comment = #{comment}
             WHERE id = #{id}
             """)
-    int update(@RequestParam DrugComment comment);
+    int update(DrugComment comment);
 }
