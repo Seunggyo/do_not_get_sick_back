@@ -42,8 +42,8 @@ public class DrugController {
     }
 
     @GetMapping("drugList")
-    public List<Drug> list() {
-        return service.drugList();
+    public List<Drug> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+        return service.drugList(page);
     }
 
     @GetMapping("id/{id}")

@@ -90,8 +90,12 @@ public class DrugService {
         return true;
     }
 
-    public List<Drug> drugList() {
-        List<Drug> drugList = mapper.selectDrugList();
+    public List<Drug> drugList(Integer page) {
+
+        int from = (page - 1) * 6;
+
+        List<Drug> drugList = mapper.selectDrugList(from);
+
         for (Drug drug : drugList) {
 
             List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(drug.getId());

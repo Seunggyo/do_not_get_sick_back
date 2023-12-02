@@ -27,9 +27,10 @@ public interface DrugMapper {
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
-            
+            ORDER BY d.id DESC 
+            LIMIT #{from}, 6
             """)
-    List<Drug> selectDrugList();
+    List<Drug> selectDrugList(Integer from);
 
     @Select("""
             select d.id, d.name, d.function func, d.content, d.price, d.inserted
