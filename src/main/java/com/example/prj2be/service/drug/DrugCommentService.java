@@ -4,6 +4,7 @@ import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,5 +50,10 @@ public class DrugCommentService {
         DrugComment drugComment = mapper.selectById(id);
 
         return drugComment.getMemberId().equals(login.getId());
+    }
+
+
+    public boolean update(DrugComment comment) {
+        return mapper.update(comment) == 1;
     }
 }

@@ -2,10 +2,8 @@ package com.example.prj2be.mapper.drug;
 
 
 import com.example.prj2be.domain.drug.DrugComment;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -37,4 +35,11 @@ public interface DrugCommentMapper {
             WHERE id = #{id}
             """)
     DrugComment selectById(Integer id);
+
+    @Update("""
+            UPDATE drugComment
+            SET comment = #{comment}
+            WHERE id = #{id}
+            """)
+    int update(@RequestParam DrugComment comment);
 }

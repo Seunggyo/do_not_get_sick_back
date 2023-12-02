@@ -63,6 +63,10 @@ public class DrugCommentController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); //403 권한 없음
         }
+    }
 
+    @PutMapping("edit")
+    public void update(@RequestBody DrugComment comment) {
+        service.update(comment);
     }
 }
