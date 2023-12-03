@@ -124,16 +124,17 @@ public class DsService {
         Map<String,Object> pageInfo = new HashMap<>();
 
         // 현재 페이지
-        int from = (page - 1 ) * 5 ;
+        int from = (page - 1 ) * 10 ;
         // 총 게시글이 몇개인지 확인
         int countAll = mapper.countAll();
-        int lastPageNumber = (countAll -1) / 5 + 1;
-        int startPageNumber = ((page -1) / 5 * 5) + 1;
-        int endPageNumber = startPageNumber + 4;
+
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = ((page -1) / 10 * 10) + 1;
+        int endPageNumber = startPageNumber + 9;
         endPageNumber = Math.min(endPageNumber, lastPageNumber);
 
         pageInfo.put("startPageNumber", startPageNumber);
-        pageInfo.put("lastPageNumber", lastPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
 
         map.put("dsList", mapper.selectAllByCategory(from));
         map.put("pageInfo", pageInfo);

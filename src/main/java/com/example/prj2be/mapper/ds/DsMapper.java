@@ -32,18 +32,32 @@ public interface DsMapper {
             """)
     int updateById(Ds ds);
 
+//    @Select("""
+//            SELECT b.id,
+//                   b.name,
+//                   b.phone,
+//                   b.address,
+//                   COUNT(DISTINCT bl.id) `likeCount`,
+//                   COUNT(DISTINCT bc.id) `commentCount`
+//            FROM business b
+//                JOIN businesslike bl
+//                    ON b.id = bl.businessId
+//                LEFT JOIN businesscomment bc
+//                    ON b.id = bc.businessId
+//            WHERE category = 'drugStore'
+//            GROUP BY b.id
+//            LIMIT #{from}, 10
+//            """)
+//    List<Ds> selectAllByCategory(Integer from);
+
+    // 데이터 값이 없어서 임시로 사용
     @Select("""
             SELECT b.id,
                    b.name,
                    b.phone,
-                   b.address,
-                   COUNT(DISTINCT bl.id) `likeCount`,
-                   COUNT(DISTINCT bc.id) `commentCount`
+                   b.address
             FROM business b
                 JOIN businesslike bl
-                    ON b.id = bl.businessId
-                LEFT JOIN businesscomment bc
-                    ON b.id = bc.businessId
             WHERE category = 'drugStore'
             GROUP BY b.id
             LIMIT #{from}, 10
