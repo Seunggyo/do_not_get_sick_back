@@ -15,15 +15,15 @@ public interface DrugMapper {
     List<Drug> selectByFunction(String function);
 
     @Insert("""
-            INSERT INTO drug (name,function,content,price)
-            VALUES (#{name}, #{func},#{content},#{price})
+            INSERT INTO drug (name, function, content, price, shipping)
+            VALUES (#{name}, #{func},#{content},#{price}, #{shipping})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Drug drug);
 
 
     @Select("""
-            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted
+            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
@@ -33,7 +33,7 @@ public interface DrugMapper {
     List<Drug> selectDrugList(Integer from);
 
     @Select("""
-            select d.id, d.name, d.function func, d.content, d.price, d.inserted
+            select d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
             FROM drug d
             WHERE d.id = #{id}
             """)
@@ -51,7 +51,8 @@ public interface DrugMapper {
             name = #{name},
             function = #{func},
             content = #{content},
-            price = #{price}
+            price = #{price},
+            shipping = #{shipping}
             WHERE id = #{id}
             """)
     int update(Drug drug);

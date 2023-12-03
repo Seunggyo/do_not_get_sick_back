@@ -85,6 +85,9 @@ public class DrugService {
         if (drug.getContent() == null || drug.getContent().isBlank()) {
             return false;
         }
+        if (drug.getShipping() == null || drug.getShipping().isBlank()){
+            return false;
+        }
 
 
         return true;
