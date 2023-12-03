@@ -1,7 +1,7 @@
 package com.example.prj2be.controller.cs;
 
-
-import com.example.prj2be.service.board.BoardService;
+import com.example.prj2be.domain.cs.CustomerService;
+import com.example.prj2be.service.cs.CSService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("api/cs")
+@RequestMapping("/api/cs")
 @RestController
 @RequiredArgsConstructor
-public class CSContorller {
+public class CSController {
 
    private final CSService service;
 
    @PostMapping("add")
-   public ResponseEntity add(@RequestBody CS cs) {
+   public ResponseEntity add(@RequestBody CustomerService cs) {
 
       if (!service.validate(cs)) {
          return ResponseEntity.badRequest().build();
@@ -35,12 +35,12 @@ public class CSContorller {
    @GetMapping("list")
 
    // add 된 게시판 리스트를 보여주는 로직
-   public List<CS> list() {
+   public List<CustomerService> list() {
       return service.list();
    }
 
    @GetMapping("id/{id}")
-   public CS get(@PathVariable Integer id) {
+   public CustomerService get(@PathVariable Integer id) {
 
       // csDTO 대로 쓴 글을 게시판에 전달..
       return service.get(id);

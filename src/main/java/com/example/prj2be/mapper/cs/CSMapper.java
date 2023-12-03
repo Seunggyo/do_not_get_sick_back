@@ -1,5 +1,6 @@
-package com.example.prj2be.controller.cs;
+package com.example.prj2be.mapper.cs;
 
+import com.example.prj2be.domain.cs.CustomerService;
 import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -9,23 +10,23 @@ import org.apache.ibatis.annotations.Select;
 public interface CSMapper {
 
    @Insert("""
-      INSERT INTO cs(csTitle, csContent, csWriter)
-      VALUES (#{title}, #{content, #{writer})
+      INSERT INTO customerService (csTitle, csContent, csWriter)
+      VALUES (#{csTitle}, #{csContent}, #{csWriter})
       """)
-   int insert(CS cs);
+   int insert(CustomerService cs);
 
    @Select("""
       SELECT id, csTitle, csWriter, instered
-      FROM cs
+      FROM customerService
       ORDER BY id DESC 
       """)
-   List<CS> selectAll();
+   List<CustomerService> selectAll();
 
 
    @Select("""
       SELECT *
-      FROM cs
+      FROM customerService
       WHERE id= #{id}
       """)
-   CS selectById(Integer id);
+   CustomerService selectById(Integer id);
 }

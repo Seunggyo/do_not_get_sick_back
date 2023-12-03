@@ -1,10 +1,10 @@
-package com.example.prj2be.controller.cs;
+package com.example.prj2be.domain.cs;
 
 import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class CS {
+public class CustomerService {
 
    private Integer id;
    private String csTitle;

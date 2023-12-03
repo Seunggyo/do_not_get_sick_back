@@ -1,5 +1,7 @@
-package com.example.prj2be.controller.cs;
+package com.example.prj2be.service.cs;
 
+import com.example.prj2be.domain.cs.CustomerService;
+import com.example.prj2be.mapper.cs.CSMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,11 @@ public class CSService {
 
    private final CSMapper mapper;
 
-   public boolean save(CS cs) {
+   public boolean save(CustomerService cs) {
       return mapper.insert(cs) == 1;
 
    }
-   public boolean validate(CS cs) {
+   public boolean validate(CustomerService cs) {
       if (cs == null) {
          return false;
       }
@@ -34,11 +36,11 @@ public class CSService {
       return true;
    }
 
-   public List<CS> list() {
+   public List<CustomerService> list() {
       return mapper.selectAll();
    }
 
-   public CS get(Integer id) {
+   public CustomerService get(Integer id) {
       return mapper.selectById(id);
    }
 }
