@@ -45,8 +45,10 @@ public interface DsMapper {
                 LEFT JOIN businesscomment bc
                     ON b.id = bc.businessId
             WHERE category = 'drugStore'
+            GROUP BY b.id
+            LIMIT #{from}, 10
             """)
-    List<Ds> selectByCategory( );
+    List<Ds> selectAllByCategory(Integer from);
 
     @Select("""
             SELECT *
@@ -60,5 +62,10 @@ public interface DsMapper {
             WHERE id = #{id}
             """)
     int deleteById(Integer id);
+
+    @Select("""
+            SELECT COUNT(*) FROM business;
+            """)
+    int countAll();
 
 }

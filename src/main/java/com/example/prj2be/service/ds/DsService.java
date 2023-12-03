@@ -15,7 +15,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -117,8 +119,26 @@ public class DsService {
         return mapper.updateById(ds) == 1;
     }
 
-    public List<Ds> list( ) {
-        return mapper.selectByCategory();
+    public Map<String,Object> list(Integer page) {
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> pageInfo = new HashMap<>();
+
+        // 현재 페이지
+        int from = (page - 1 ) * 5 ;
+        // 총 게시글이 몇개인지 확인
+        int countAll = mapper.countAll();
+        int lastPageNumber = (countAll -1) / 5 + 1;
+        int startPageNumber = ((page -1) / 5 * 5) + 1;
+        int endPageNumber = startPageNumber + 4;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("lastPageNumber", lastPageNumber);
+
+        map.put("dsList", mapper.selectAllByCategory(from));
+        map.put("pageInfo", pageInfo);
+
+        return map;
     }
 
     public Ds get(Integer id) {

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -41,10 +42,12 @@ public class DsController {
         }
 
     }
-
+    // list?p=? 로 받아야 하기 떄문에 수정
     @GetMapping("list")
-    public List<Ds> list() {
-        return service.list();
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+        // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
+
+        return service.list(page);
     }
 
     @GetMapping("id/{id}")
