@@ -55,14 +55,16 @@ public interface DsMapper {
             SELECT b.id,
                    b.name,
                    b.phone,
-                   b.address
+                   b.address,
+                   b.category
             FROM business b
                 JOIN businesslike bl
-            WHERE category = 'drugStore'
+            WHERE b.name LIKE #{keyword}
+                OR b.category = 'drugstore'
             GROUP BY b.id
             LIMIT #{from}, 10
             """)
-    List<Ds> selectAllByCategory(Integer from);
+    List<Ds> selectAllByCategory(Integer from, String keyword);
 
     @Select("""
             SELECT *
@@ -78,8 +80,10 @@ public interface DsMapper {
     int deleteById(Integer id);
 
     @Select("""
-            SELECT COUNT(*) FROM business;
+            SELECT COUNT(*) FROM business
+            WHERE name LIKE #{keyword}
+                OR category LIKE 'drugstore'
             """)
-    int countAll();
+    int countAll(String keyword);
 
 }

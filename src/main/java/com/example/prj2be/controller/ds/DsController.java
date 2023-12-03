@@ -43,11 +43,14 @@ public class DsController {
 
     }
     // list?p=? 로 받아야 하기 떄문에 수정
+//    TODO : 진료명 카테고리 추가 해야함
     @GetMapping("list")
-    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page) {
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
+                                    @RequestParam(value = "k", defaultValue = "") String keyword
+                                    ) {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
-        return service.list(page);
+        return service.list(page, keyword);
     }
 
     @GetMapping("id/{id}")
