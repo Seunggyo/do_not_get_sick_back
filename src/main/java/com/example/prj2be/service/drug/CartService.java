@@ -1,6 +1,7 @@
 package com.example.prj2be.service.drug;
 
 import com.example.prj2be.domain.drug.Cart;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ public class CartService {
 
     private final CartMapper mapper;
 
-    public void update(Cart cart){
+    public void update(Cart cart, Member login){
+
+        cart.setMemberId(login.getId());
         // 처음 좋아요 누를 때 : insert
         // 다시 누르면 delete
 
