@@ -119,14 +119,14 @@ public class DsService {
         return mapper.updateById(ds) == 1;
     }
 
-    public Map<String,Object> list(Integer page, String keyword) {
+    public Map<String,Object> list(Integer page, String keyword, String category) {
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> pageInfo = new HashMap<>();
 
         // 현재 페이지
         int from = (page - 1 ) * 10 ;
-        // 총 게시글이 몇개인지 확인
-        int countAll = mapper.countAll("%" + keyword + "%");
+        // 총 게시글이 몇개 인지, 어떤 키워드로 검색할 껏인지 등등 총 게시물에서 하는 키워드
+        int countAll = mapper.countAll("%" + keyword + "%", category);
 
         int lastPageNumber = (countAll -1) / 10 + 1;
         int startPageNumber = ((page -1) / 10 * 10) + 1;
@@ -136,7 +136,7 @@ public class DsService {
         pageInfo.put("startPageNumber", startPageNumber);
         pageInfo.put("endPageNumber", endPageNumber);
 
-        map.put("dsList", mapper.selectAllByCategory(from, "%" + keyword + "%"));
+        map.put("dsList", mapper.selectAllByCategory(from, "%" + keyword + "%", category));
         map.put("pageInfo", pageInfo);
 
         return map;

@@ -52,19 +52,27 @@ public interface DsMapper {
 
     // 데이터 값이 없어서 임시로 사용
     @Select("""
+            <script>
             SELECT b.id,
                    b.name,
                    b.phone,
                    b.address,
                    b.category
             FROM business b
-                JOIN businesslike bl
-            WHERE b.name LIKE #{keyword}
-                OR b.category = 'drugstore'
+            WHERE
+                <trim prefixOverrides="OR">
+                    <if test="category == 'all' or category == 'name'">
+                        OR name LIKE #{keyword}
+                    </if>
+                    <if test="category == 'all' or category == 'category'">
+                        OR category LIKE #{keyword}
+                    </if>
+                </trim>
             GROUP BY b.id
             LIMIT #{from}, 10
+            </script>
             """)
-    List<Ds> selectAllByCategory(Integer from, String keyword);
+    List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
     @Select("""
             SELECT *
@@ -80,10 +88,19 @@ public interface DsMapper {
     int deleteById(Integer id);
 
     @Select("""
+            <script>
             SELECT COUNT(*) FROM business
-            WHERE name LIKE #{keyword}
-                OR category LIKE 'drugstore'
+            WHERE
+                <trim prefixOverrides="OR">
+                    <if test="category == 'all' or category == 'name'">
+                        OR name LIKE #{keyword}
+                    </if>
+                    <if test="category == 'all' or category == 'category'">
+                        OR category LIKE #{keyword}
+                    </if>
+                </trim>
+            </script>
             """)
-    int countAll(String keyword);
+    int countAll(String keyword, String category);
 
 }
