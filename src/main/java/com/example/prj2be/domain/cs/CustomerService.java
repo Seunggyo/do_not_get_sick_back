@@ -7,8 +7,10 @@ import lombok.Data;
 public class CustomerService {
 
    private Integer id;
+   private String csCategory;
    private String csTitle;
    private String csContent;
    private String csWriter;
-   private LocalDateTime instered;
+   private LocalDateTime inserted;
+   private Integer csHit;
 }
