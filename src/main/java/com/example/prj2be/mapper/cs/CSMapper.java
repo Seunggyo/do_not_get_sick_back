@@ -18,19 +18,32 @@ public interface CSMapper {
    int insert(CustomerService cs);
 
    @Select("""
-      <script>
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
-      <if test="orderByHit">
-      ORDER BY csHit DESC
-      </if>
-      <if test="not orderByHit">
-      ORDER BY id DESC 
-      </if>
-      </script>
+      ORDER BY csHit 
       """)
-   List<CustomerService> selectAll(Boolean orderByHit);
+   List<CustomerService> selectAll();
 
+   @Select("""
+      SELECT id, csTitle, csCategory, csWriter, inserted, csHit
+      FROM customerService
+      ORDER BY csHit DESC
+      """)
+   List<CustomerService> selectAllOrderByHit();
+
+   @Select("""
+      SELECT id, csTitle, csCategory, csWriter, inserted, csHit
+      FROM customerService
+      ORDER BY csTitle DESC
+      """)
+   List<CustomerService> selectAllOrderByTitleDesc();
+
+   @Select("""
+      SELECT id, csTitle, csCategory, csWriter, inserted, csHit
+      FROM customerService
+      ORDER BY csTitle ASC
+      """)
+   List<CustomerService> selectAllOrderByTitleAsc();
 
    @Select("""
       SELECT *

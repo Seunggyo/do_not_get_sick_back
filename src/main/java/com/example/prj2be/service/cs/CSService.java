@@ -37,7 +37,10 @@ public class CSService {
    }
 
    public List<CustomerService> list(Boolean orderByHit) {
-      return mapper.selectAll(orderByHit);
+      if (orderByHit) {
+         return mapper.selectAllOrderByHit();
+      }
+      return mapper.selectAll();
    }
 
    public CustomerService get(Integer id) {
