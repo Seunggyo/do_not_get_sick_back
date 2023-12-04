@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper.drug;
 
 import com.example.prj2be.domain.drug.Cart;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface CartMapper {
@@ -17,8 +14,8 @@ public interface CartMapper {
     int delete(Cart cart);
 
     @Insert("""
-            INSERT INTO drugCart (drugId, memberId)
-            VALUES (#{drugId}, #{memberId})
+            INSERT INTO drugCart (drugId, memberId, quantity)
+            VALUES (#{drugId}, #{memberId}, #{quantity})
             
             """)
     int insert(Cart cart);
@@ -34,5 +31,13 @@ public interface CartMapper {
             WHERE drugId = #{drugId}
             AND memberId = #{memberId}
             """)
-    Cart selectByDrugIdAndMemberId(Integer drugId, String id);
+    Cart selectByDrugIdAndMemberId(Integer drugId, String memberId);
+
+    @Update("""
+            UPDATE drugCart
+            SET quantity = #{quantity}
+            WHERE memberId = #{memberId}
+              AND drugId = #{drugId}
+            """)
+    int updateIncreaseQuantity(Cart cart);
 }

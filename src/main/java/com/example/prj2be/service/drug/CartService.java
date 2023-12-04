@@ -16,19 +16,19 @@ public class CartService {
 
     public Map<String, Object> update(Cart cart, Member login){
 
-        cart.setMemberId(login.getId());
-        // 처음 좋아요 누를 때 : insert
-        // 다시 누르면 delete
+        Cart dbcart = mapper.selectByDrugIdAndMemberId(cart.getDrugId(), login.getId());
 
-        int count = 0;
-        if (mapper.delete(cart) == 0) {
-            count = mapper.insert(cart);
+        if (dbcart == null) {
+            Cart newCart = new Cart();
+            newCart.setDrugId(cart.getDrugId());
+            newCart.setMemberId(login.getId());
+            newCart.setQuantity(cart.getQuantity());
+            mapper.insert(newCart);
+        } else {
+            dbcart.setQuantity(cart.getQuantity());
+            mapper.updateIncreaseQuantity(dbcart);
         }
-
-        int countCart = mapper.countByDrugId(cart.getDrugId());
-
-        return Map.of("cart", count == 1,
-                "countCart", countCart);
+        return Map.of();
     }
 
     public Map<String, Object> get(Integer drugId, Member login) {

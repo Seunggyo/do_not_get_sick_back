@@ -7,4 +7,5 @@ public class Cart {
     private Integer id;
     private Integer drugId;
     private String memberId;
+    private Integer quantity;
 }
