@@ -6,6 +6,7 @@ import com.example.prj2be.mapper.drug.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -40,6 +41,10 @@ public class CartService {
         }
 
         return Map.of("cart", cart != null, "countCart", countCart);
+    }
+
+    public List<Cart> cartList() {
+        return mapper.selectCartList();
     }
 }
 

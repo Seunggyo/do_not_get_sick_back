@@ -77,6 +77,18 @@ public class DrugController {
         }
     }
 
+    @GetMapping("/func/{func}")
+    public List<Drug> funcList(@PathVariable String func,
+                               @RequestParam(value = "p", defaultValue = "1") Integer page) {
+
+        System.out.println("page = " + page);
+        if (func.equals("stomach")) {
+            func = "위 건강";
+        }
+
+        return service.selectByFunctionPage(func, page);
+    }
+
 }
 
 

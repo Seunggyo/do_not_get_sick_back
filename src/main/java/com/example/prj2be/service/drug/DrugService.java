@@ -34,8 +34,22 @@ public class DrugService {
     @Value("${aws.s3.bucket.name}")
     private String bucket;
 
-    public List<Drug> selectByFunction(String function) {
-        return mapper.selectByFunction(function);
+    public List<Drug> selectByFunctionPage(String function, Integer page) {
+        int from = (page - 1) * 6;
+
+        List<Drug> drugList = mapper.selectDrugListByFunc(from, function);
+
+        for (Drug drug : drugList) {
+
+            List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(drug.getId());
+
+            for (DrugFile drugFile : drugFiles) {
+                String url = urlPrefix + "prj2/drug/" + drug.getId() + "/" + drugFile.getName();
+                drugFile.setUrl(url);
+            }
+            drug.setFiles(drugFiles);
+        }
+        return drugList;
     }
 
     public boolean save(Drug drug, MultipartFile[] files) throws IOException {
@@ -182,4 +196,7 @@ public class DrugService {
         return mapper.update(drug) == 1;
     }
 
+    public List<Drug> selectByFunction(String function) {
+        return mapper.selectByFunction(function);
+    }
 }

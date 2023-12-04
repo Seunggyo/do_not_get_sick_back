@@ -8,4 +8,8 @@ public class Cart {
     private Integer drugId;
     private String memberId;
     private Integer quantity;
+    private String drugName;
+    private Integer total;
+
+
 }

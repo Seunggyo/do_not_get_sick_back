@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,5 +37,10 @@ public class DrugCartController {
              @SessionAttribute(value = "login", required = false) Member login) {
 
         return ResponseEntity.ok(service.get(drugId, login));
+    }
+
+    @GetMapping("cartList")
+    public List<Cart> cartList() {
+        return service.cartList();
     }
 }
