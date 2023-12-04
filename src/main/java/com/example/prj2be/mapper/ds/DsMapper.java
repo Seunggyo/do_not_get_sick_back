@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper.ds;
 
+import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.Ds;
 import org.apache.ibatis.annotations.*;
 
@@ -11,12 +12,12 @@ public interface DsMapper {
             INSERT INTO 
             business(name, address, phone, openHour, openMin, closeHour,
                     closeMin, content, category, nightCare, restHour, restMin,
-                    restCloseHour, restCloseMin, info, holiday)
+                    restCloseHour, restCloseMin, info)
             VALUES (#{name}, #{address}, #{phone},
                     #{openHour}, #{openMin}, #{closeHour},
                     #{closeMin}, #{content},'drugStore', #{nightCare},
                     #{restHour}, #{restMin}, #{restCloseHour}, #{restCloseMin},
-                    #{info}, #{holiday} )
+                    #{info} )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ds ds);
@@ -124,4 +125,16 @@ public interface DsMapper {
             """)
     int countAll(String keyword, String category);
 
+    @Insert("""
+            INSERT INTO businessholiday (businessId, holiday)
+            VALUES (#{id}, #{holiday})
+            """)
+    void insertHoliday(Integer id, String holiday);
+
+    @Select("""
+            SELECT id, holiday FROM businessholiday
+            WHERE businessId = #{id}
+            ORDER BY holiday
+            """)
+    List<BusinessHoliday> selectHolidayById(Integer id);
 }

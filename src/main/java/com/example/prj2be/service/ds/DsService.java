@@ -1,5 +1,6 @@
 package com.example.prj2be.service.ds;
 
+import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.domain.member.Member;
@@ -57,10 +58,16 @@ public class DsService {
         return true;
     }
 
-    public boolean save(Ds ds, MultipartFile[] files, Member login) throws IOException {
+    public boolean save(Ds ds, MultipartFile[] files, Member login, String[] holidays) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
 
         int cnt = mapper.insert(ds);
+
+        if (holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(ds.getId(), holiday);
+            }
+        }
 
 
         if (files != null) {
@@ -152,7 +159,10 @@ public class DsService {
             dsPicture.setUrl(url);
         }
 
+        List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(id);
+
         ds.setFiles(dsPictures);
+        ds.setHolidays(businessHolidays);
 
         return ds;
     }

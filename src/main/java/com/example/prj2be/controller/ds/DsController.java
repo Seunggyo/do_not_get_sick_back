@@ -23,6 +23,7 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add(Ds ds,
+                              @RequestParam(value = "holiday[]",required = false) String[] holidays,
                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 기입
@@ -35,7 +36,7 @@ public class DsController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (service.save(ds, files, login)) {
+        if (service.save(ds, files, login, holidays)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();

@@ -21,7 +21,7 @@ public class Ds {
     private Integer restMin;
     private Integer restCloseHour;
     private Integer restCloseMin;
-    private String holiday;
+    private List<BusinessHoliday> holidays;
     private String content;
     private String info;
     private Boolean nightCare;
