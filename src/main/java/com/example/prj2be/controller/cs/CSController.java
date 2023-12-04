@@ -47,8 +47,10 @@ public class CSController {
    @GetMapping("list")
 
    // add 된 게시판 리스트를 보여주는 로직
-   public List<CustomerService> list(@RequestParam(value = "h", defaultValue = "false") Boolean orderByHit) {
-      return service.list(orderByHit);
+   public List<CustomerService> list(
+      @RequestParam(value = "t", required = false) Boolean orderByTitle,
+      @RequestParam(value = "h", required = false) Boolean orderByHit) {
+      return service.list(orderByTitle, orderByHit);
    }
 
    @GetMapping("id/{id}")

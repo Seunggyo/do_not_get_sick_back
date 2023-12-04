@@ -20,16 +20,22 @@ public interface CSMapper {
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
-      ORDER BY csHit 
+      ORDER BY id DESC 
       """)
    List<CustomerService> selectAll();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
+      ORDER BY csHit ASC
+      """)
+   List<CustomerService> selectAllOrderByHitAsc();
+   @Select("""
+      SELECT id, csTitle, csCategory, csWriter, inserted, csHit
+      FROM customerService
       ORDER BY csHit DESC
       """)
-   List<CustomerService> selectAllOrderByHit();
+   List<CustomerService> selectAllOrderByHitDesc();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit

@@ -36,9 +36,23 @@ public class CSService {
       return true;
    }
 
-   public List<CustomerService> list(Boolean orderByHit) {
-      if (orderByHit) {
-         return mapper.selectAllOrderByHit();
+   public List<CustomerService> list(Boolean orderByTitle, Boolean orderByHit) {
+      System.out.println("orderByTitle = " + orderByTitle);
+      System.out.println("orderByHit = " + orderByHit);
+      if (orderByTitle != null) {
+         if (orderByTitle) {
+            return mapper.selectAllOrderByTitleDesc();
+         } else {
+            return mapper.selectAllOrderByTitleAsc();
+         }
+      }
+      if (orderByHit != null) {
+         if (orderByHit) {
+            return mapper.selectAllOrderByHitDesc();
+         } else {
+            return mapper.selectAllOrderByHitAsc();
+         }
+
       }
       return mapper.selectAll();
    }
