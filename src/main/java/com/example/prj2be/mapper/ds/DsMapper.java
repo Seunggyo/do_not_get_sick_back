@@ -8,11 +8,15 @@ import java.util.List;
 @Mapper
 public interface DsMapper {
     @Insert("""
-            INSERT INTO business(name, address, phone, openHour, openMin, closeHour, closeMin, content, category, nightCare)
+            INSERT INTO 
+            business(name, address, phone, openHour, openMin, closeHour,
+                    closeMin, content, category, nightCare, restHour, restMin,
+                    restCloseHour, restCloseMin, info, holiday)
             VALUES (#{name}, #{address}, #{phone},
                     #{openHour}, #{openMin}, #{closeHour},
-                    #{closeMin}, #{content},'drugStore', #{nightCare}
-                    )
+                    #{closeMin}, #{content},'drugStore', #{nightCare},
+                    #{restHour}, #{restMin}, #{restCloseHour}, #{restCloseMin},
+                    #{info}, #{holiday} )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ds ds);
@@ -26,40 +30,33 @@ public interface DsMapper {
                 openMin = #{openMin},
                 closeHour = #{closeHour},
                 closeMin = #{closeMin},
+                restHour = #{restHour},
+                restMin = #{restMin},
+                restCloseHour = #{restCloseHour},
+                restCloseMin = #{restCloseMin},
+                info = #{info},
                 content = #{content},
-                nightCare = #{nightCare}
+                nightCare = #{nightCare},
+                holiday = #{holiday}
             WHERE id = #{id}
             """)
     int updateById(Ds ds);
 
-//    @Select("""
-//            SELECT b.id,
-//                   b.name,
-//                   b.phone,
-//                   b.address,
-//                   COUNT(DISTINCT bl.id) `likeCount`,
-//                   COUNT(DISTINCT bc.id) `commentCount`
-//            FROM business b
-//                JOIN businesslike bl
-//                    ON b.id = bl.businessId
-//                LEFT JOIN businesscomment bc
-//                    ON b.id = bc.businessId
-//            WHERE category = 'drugStore'
-//            GROUP BY b.id
-//            LIMIT #{from}, 10
-//            """)
-//    List<Ds> selectAllByCategory(Integer from);
-
-    // 데이터 값이 없어서 임시로 사용
     @Select("""
             <script>
             SELECT b.id,
                    b.name,
                    b.phone,
                    b.address,
-                   b.category
+                   b.category,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
             FROM business b
-            WHERE
+                LEFT JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
+            WHERE 
                 <trim prefixOverrides="OR">
                     <if test="category == 'all' or category == 'name'">
                         OR name LIKE #{keyword}
@@ -73,6 +70,30 @@ public interface DsMapper {
             </script>
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
+
+    // 데이터 값이 없어서 임시로 사용
+//    @Select("""
+//            <script>
+//            SELECT b.id,
+//                   b.name,
+//                   b.phone,
+//                   b.address,
+//                   b.category
+//            FROM business b
+//            WHERE
+//                <trim prefixOverrides="OR">
+//                    <if test="category == 'all' or category == 'name'">
+//                        OR name LIKE #{keyword}
+//                    </if>
+//                    <if test="category == 'all' or category == 'category'">
+//                        OR category LIKE #{keyword}
+//                    </if>
+//                </trim>
+//            GROUP BY b.id
+//            LIMIT #{from}, 10
+//            </script>
+//            """)
+//    List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
     @Select("""
             SELECT *

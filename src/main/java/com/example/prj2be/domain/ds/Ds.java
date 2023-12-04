@@ -1,5 +1,6 @@
 package com.example.prj2be.domain.ds;
 
+import com.example.prj2be.domain.business.BusinessHoliday;
 import lombok.Data;
 
 import java.util.List;
@@ -16,7 +17,13 @@ public class Ds {
     private Integer openMin;
     private Integer closeHour;
     private Integer closeMin;
+    private Integer restHour;
+    private Integer restMin;
+    private Integer restCloseHour;
+    private Integer restCloseMin;
+    private String holiday;
     private String content;
+    private String info;
     private Boolean nightCare;
     private List<DsPicture> files;
 
