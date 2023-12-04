@@ -75,9 +75,11 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public List<Member> memberList() {
+    public List<Member> memberList(@RequestParam(value = "k",defaultValue = "") String keyword,
+                                   @RequestParam(value = "p",defaultValue = "1") Integer page) {
 
-        return service.selectAll();
+//        return service.selectAll(keyword, page);
+        return null;
     }
 
     @GetMapping("/joinList")

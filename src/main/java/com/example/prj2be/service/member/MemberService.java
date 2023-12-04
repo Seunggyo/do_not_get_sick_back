@@ -17,7 +17,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -111,8 +113,32 @@ public class MemberService {
 
     }
 
-    public List<Member> selectAll() {
-        return mapper.selectAll();
+    public Map<String, Object> selectAll(String keyword, Integer page) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
+
+        int countAll = mapper.countAll("%"+keyword+"%");
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = (page -1) / 10 * 10 + 1;
+        int endPageNumber = startPageNumber + 9;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+        int prevPageNumber = startPageNumber - 10;
+        int nextPageNumber = endPageNumber + 1;
+
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= nextPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+
+        int from = (page - 1) * 10;
+        map.put("pageInfo", pageInfo);
+        map.put("memberList" , mapper.selectAll("%"+keyword+"%"));
+        return map;
     }
 
     public List<Member> selectJoinAll() {

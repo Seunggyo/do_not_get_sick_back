@@ -39,9 +39,10 @@ public interface MemberMapper {
 
     @Select("""
         select * from member
+        where id like #{id}
         order by inserted
 """)
-    List<Member> selectAll();
+    List<Member> selectAll(String id);
 
     @Select("""
         select * from member
@@ -80,4 +81,10 @@ public interface MemberMapper {
 """)
     int acceptMember(Member member);
 
+
+    @Select("""
+        select count(*) from member
+        where id = #{id}
+""")
+    int countAll(String id);
 }
