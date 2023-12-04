@@ -2,6 +2,7 @@ package com.example.prj2be.service.ds;
 
 import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
 import lombok.RequiredArgsConstructor;
@@ -56,12 +57,11 @@ public class DsService {
         return true;
     }
 
-    public boolean save(Ds ds, MultipartFile[] files) throws IOException {
+    public boolean save(Ds ds, MultipartFile[] files, Member login) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
 
         int cnt = mapper.insert(ds);
-        System.out.println(ds.getId());
-        System.out.println(ds);
+
 
         if (files != null) {
             for (int i = 0; i < files.length; i++) {

@@ -24,10 +24,10 @@ public class DsController {
     @PostMapping("add")
     public ResponseEntity add(Ds ds,
                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
-                    @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 기입
 
-        if ( login != null) {
+        if ( login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -35,7 +35,7 @@ public class DsController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (service.save(ds, files)) {
+        if (service.save(ds, files, login)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
