@@ -58,9 +58,31 @@ public class MemberController {
         }
     }
 
+    @PostMapping("/accept")
+    public ResponseEntity accept(@RequestBody Member member) {
+        if (service.accept(member)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity cancel(@RequestBody Member member) {
+        if (service.cancel(member)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     @GetMapping("/list")
     public List<Member> memberList() {
+
         return service.selectAll();
+    }
+
+    @GetMapping("/joinList")
+    public List<Member> memberJoinList() {
+        return service.selectJoinAll();
     }
 
     @GetMapping("/info")

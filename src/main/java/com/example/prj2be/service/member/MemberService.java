@@ -1,9 +1,11 @@
 package com.example.prj2be.service.member;
 
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.member.MemberJoinMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
@@ -23,6 +25,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberMapper mapper;
+    private final MemberJoinMapper memberJoinMapper;
 
     private final S3Client s3;
     @Value("${image.file.prefix}")
@@ -56,8 +59,10 @@ public class MemberService {
         if (member.getNickName().isBlank()) {
             return false;
         }
-        if (member.getBirthday().isBlank()) {
-            return false;
+        if (member.getAuth().equals("user")) {
+            if (member.getBirthday().isBlank()) {
+                return false;
+            }
         }
         if (member.getPhone().isBlank()) {
             return false;
@@ -83,10 +88,13 @@ public class MemberService {
     }
 
     public boolean add(Member member,MultipartFile file) throws IOException {
-        if (file != null) {
-            upload(member.getId(), file);
-            return mapper.insertMember(member, file.getOriginalFilename()) == 1;
+        if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
+            if (file != null) {
+                upload(member.getId(), file);
+                return memberJoinMapper.insertMember(member, file.getOriginalFilename()) == 1;
+            }
         }
+
         return mapper.insertMember(member, "") == 1;
     }
 
@@ -105,6 +113,10 @@ public class MemberService {
 
     public List<Member> selectAll() {
         return mapper.selectAll();
+    }
+
+    public List<Member> selectJoinAll() {
+        return memberJoinMapper.selectAll();
     }
 
     public Member selectById(String id) {
@@ -161,5 +173,14 @@ public class MemberService {
 
     public String findIdByEmail(String email) {
         return mapper.findIdByEmail(email);
+    }
+
+    public boolean accept(Member member) {
+        memberJoinMapper.deleteById(member.getId());
+        return mapper.acceptMember(member) == 1;
+    }
+
+    public boolean cancel(Member member) {
+        return memberJoinMapper.deleteById(member.getId()) == 1;
     }
 }
