@@ -21,8 +21,10 @@ public interface CSMapper {
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
       ORDER BY id DESC 
+      LIMIT #{from}, 10
       """)
-   List<CustomerService> selectAll();
+   List<CustomerService> selectAll(Integer from);
+
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit

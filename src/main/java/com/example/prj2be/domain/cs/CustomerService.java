@@ -1,6 +1,8 @@
 package com.example.prj2be.domain.cs;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.spi.LocaleNameProvider;
 import lombok.Data;
 
 @Data
@@ -11,6 +13,6 @@ public class CustomerService {
    private String csTitle;
    private String csContent;
    private String csWriter;
-   private LocalDateTime inserted;
+   private LocalDate inserted;
    private Integer csHit;
 }

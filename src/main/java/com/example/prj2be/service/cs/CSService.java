@@ -36,9 +36,12 @@ public class CSService {
       return true;
    }
 
-   public List<CustomerService> list(Boolean orderByTitle, Boolean orderByHit) {
+   public List<CustomerService> list(Boolean orderByTitle, Boolean orderByHit, Integer page) {
       System.out.println("orderByTitle = " + orderByTitle);
       System.out.println("orderByHit = " + orderByHit);
+
+      int from = (page - 1) * 10;
+
       if (orderByTitle != null) {
          if (orderByTitle) {
             return mapper.selectAllOrderByTitleDesc();
@@ -54,7 +57,7 @@ public class CSService {
          }
 
       }
-      return mapper.selectAll();
+      return mapper.selectAll(from);
    }
 
    public CustomerService get(Integer id) {
