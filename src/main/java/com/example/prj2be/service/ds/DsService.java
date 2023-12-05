@@ -56,9 +56,6 @@ public class DsService {
         if (ds.getPhone().isBlank()) {
             return false;
         }
-        if (ds.getContent().isBlank()) {
-            return false;
-        }
 
         return true;
     }
