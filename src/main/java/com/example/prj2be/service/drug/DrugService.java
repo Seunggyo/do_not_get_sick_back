@@ -18,7 +18,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 @Service
@@ -107,9 +109,31 @@ public class DrugService {
         return true;
     }
 
-    public List<Drug> drugList(Integer page) {
+    public Map<String, Object> drugList(Integer page) {
+
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
+
+        int countAll = mapper.countAll();
+        int lastPageNumber = (countAll - 1) / 6 + 1;
+        int startPageNumber = (page - 1) / 6 * 6 + 1;
+        int endPageNumber = startPageNumber + 5;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+        int prevPageNumber = startPageNumber - 6;
+        int nextPageNumber = endPageNumber + 1;
+
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
 
         int from = (page - 1) * 6;
+        map.put("pageInfo", pageInfo);
 
         List<Drug> drugList = mapper.selectDrugList(from);
 
@@ -123,7 +147,8 @@ public class DrugService {
             }
             drug.setFiles(drugFiles);
         }
-        return drugList;
+        map.put("drugList",drugList);
+        return map;
     }
 
     public Drug drugGet(Integer id) {

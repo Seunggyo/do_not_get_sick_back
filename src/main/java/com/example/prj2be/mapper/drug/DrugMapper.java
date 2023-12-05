@@ -67,4 +67,9 @@ public interface DrugMapper {
             LIMIT #{from}, 6
             """)
     List<Drug> selectDrugListByFunc(int from, String func);
+
+    @Select("""
+            SELECT COUNT(*) FROM drug;
+            """)
+    int countAll();
 }
