@@ -44,10 +44,16 @@ public interface CartMapper {
     int updateIncreaseQuantity(Cart cart);
 
     @Select("""
-            
-            select d.id , d.name drugName, c.quantity, d.price*c.quantity total
-            from drugCart c
-            join drug d on d.id = c.drugId;
+            SELECT d.id memberId, c.id, d.name drugName, c.quantity, d.price*c.quantity total
+            FROM drugCart c
+            JOIN drug d ON d.id = c.drugId;
             """)
     List<Cart> selectCartList();
+
+    @Delete("""
+            DELETE FROM drugCart
+            WHERE id = #{id}
+
+            """)
+    int deleteById(Integer id);
 }

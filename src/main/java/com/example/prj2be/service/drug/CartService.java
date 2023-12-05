@@ -46,6 +46,10 @@ public class CartService {
     public List<Cart> cartList() {
         return mapper.selectCartList();
     }
+
+    public boolean remove(Integer id) {
+        return mapper.deleteById(id) == 1;
+    }
 }
 
 
