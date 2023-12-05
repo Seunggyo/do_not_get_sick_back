@@ -41,8 +41,9 @@ public interface MemberMapper {
         select * from member
         where id like #{id}
         order by inserted
+        limit #{from}, 10
 """)
-    List<Member> selectAll(String id);
+    List<Member> selectAll(Integer from, String id);
 
     @Select("""
         select * from member
@@ -84,7 +85,7 @@ public interface MemberMapper {
 
     @Select("""
         select count(*) from member
-        where id = #{id}
+        where id like #{id}
 """)
     int countAll(String id);
 }

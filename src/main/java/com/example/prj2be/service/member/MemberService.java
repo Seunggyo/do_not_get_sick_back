@@ -131,13 +131,13 @@ public class MemberService {
         if (prevPageNumber > 0) {
             pageInfo.put("prevPageNumber", prevPageNumber);
         }
-        if (nextPageNumber <= nextPageNumber) {
+        if (nextPageNumber <= lastPageNumber) {
             pageInfo.put("nextPageNumber", nextPageNumber);
         }
 
         int from = (page - 1) * 10;
         map.put("pageInfo", pageInfo);
-        map.put("memberList" , mapper.selectAll("%"+keyword+"%"));
+        map.put("memberList" , mapper.selectAll(from, "%"+keyword+"%"));
         return map;
     }
 

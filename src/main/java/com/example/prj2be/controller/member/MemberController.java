@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -75,11 +76,10 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public List<Member> memberList(@RequestParam(value = "k",defaultValue = "") String keyword,
-                                   @RequestParam(value = "p",defaultValue = "1") Integer page) {
+    public Map<String, Object> memberList(@RequestParam(value = "k",defaultValue = "") String keyword,
+                                          @RequestParam(value = "p",defaultValue = "1") Integer page) {
 
-//        return service.selectAll(keyword, page);
-        return null;
+        return service.selectAll(keyword, page);
     }
 
     @GetMapping("/joinList")
