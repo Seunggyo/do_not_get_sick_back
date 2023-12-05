@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface DsMapper {
     @Insert("""
-            INSERT INTO 
+            INSERT INTO
             business(name, address, phone, openHour, openMin, closeHour,
                     closeMin, content, category, nightCare, restHour, restMin,
                     restCloseHour, restCloseMin, info)
@@ -49,6 +49,15 @@ public interface DsMapper {
                    b.phone,
                    b.address,
                    b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
+                   bh.holiday,
                    COUNT(DISTINCT bl.id) `likeCount`,
                    COUNT(DISTINCT bc.id) `commentCount`
             FROM business b
@@ -56,36 +65,14 @@ public interface DsMapper {
                     ON b.id = bl.businessId
                 LEFT JOIN businesscomment bc
                     ON b.id = bc.businessId
+                LEFT JOIN businessholiday bh
+                    ON b.id = bh.businessId
             WHERE b.category = 'drugStore'
 
             GROUP BY b.id
             LIMIT #{from}, 10
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
-
-    // 데이터 값이 없어서 임시로 사용
-//    @Select("""
-//            <script>
-//            SELECT b.id,
-//                   b.name,
-//                   b.phone,
-//                   b.address,
-//                   b.category
-//            FROM business b
-//            WHERE
-//                <trim prefixOverrides="OR">
-//                    <if test="category == 'all' or category == 'name'">
-//                        OR name LIKE #{keyword}
-//                    </if>
-//                    <if test="category == 'all' or category == 'category'">
-//                        OR category LIKE #{keyword}
-//                    </if>
-//                </trim>
-//            GROUP BY b.id
-//            LIMIT #{from}, 10
-//            </script>
-//            """)
-//    List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
     @Select("""
             SELECT *
@@ -129,17 +116,17 @@ public interface DsMapper {
             """)
     List<BusinessHoliday> selectHolidayById(Integer id);
 //    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
-    @Update("""
-            UPDATE businessholiday
-            SET id = #{id},
-                holiday = #{holiday}
-            WHERE businessId = #{businessId}
-            """)
-    void updateByHoliday(Integer id, String holiday);
+//    @Update("""
+//            UPDATE businessholiday
+//            SET id = #{id},
+//                holiday = #{holiday}
+//            WHERE businessId = #{businessId}
+//            """)
+//    void updateByHoliday(Integer id, String holiday);
 
     @Delete("""
         DELETE FROM businessHoliday
         WHERE businessId = #{id}
         """)
-    int deleteHolidayByDsId(Integer id);
+    void deleteHolidayByDsId(Integer id);
 }
