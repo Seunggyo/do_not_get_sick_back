@@ -1,9 +1,8 @@
-package com.example.prj2be.service.cs;
+package com.example.prj2be.service.cs_qa;
 
-import com.example.prj2be.domain.cs.CustomerService;
+import com.example.prj2be.domain.cs_qa.CustomerService;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.mapper.cs.CSMapper;
-import java.util.ArrayList;
+import com.example.prj2be.mapper.cs_qa.CSMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,24 +62,27 @@ public class CSService {
          pageInfo.put("nextPageNumber", nextPageNumber);
       }
 
+      // 정렬된 데이터 조회
+      List<CustomerService> csList;
+      int from = (page - 1) * 10;
+      csList = mapper.selectAll(from, "%" + keyword + "%");
+
       if (orderByNum != null) {
          if (orderByNum) {
-            map.put("csList", mapper.selectAllOrderByNumDesc());
+            csList = csList.stream().sorted((a, b) -> b.getId() - a.getId()).toList();
          } else {
-            map.put("csList", mapper.selectAllOrderByNumAsc());
+            csList = csList.stream().sorted((a, b) -> a.getId() - b.getId()).toList();
          }
-      }
-      if (orderByHit != null) {
+      } else if (orderByHit != null) {
          if (orderByHit) {
-            map.put("csList", mapper.selectAllOrderByHitDesc());
+           csList = csList.stream().sorted((a, b) -> b.getId() - a.getId()).toList();
          } else {
-            map.put("csList", mapper.selectAllOrderByHitAsc());
+            csList = csList.stream().sorted((a, b) -> a.getId() - b.getId()).toList();
          }
-
       }
-      int from = (page - 1) * 10;
-      map.putIfAbsent("csList", mapper.selectAll(from, "%" + keyword + "%"));
+      map.put("csList", csList);
       map.put("pageInfo", pageInfo);
+
       return map;
    }
 

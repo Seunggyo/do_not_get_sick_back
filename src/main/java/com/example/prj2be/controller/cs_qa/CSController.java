@@ -1,9 +1,8 @@
-package com.example.prj2be.controller.cs;
+package com.example.prj2be.controller.cs_qa;
 
-import com.example.prj2be.domain.cs.CustomerService;
+import com.example.prj2be.domain.cs_qa.CustomerService;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.service.cs.CSService;
-import java.util.List;
+import com.example.prj2be.service.cs_qa.CSService;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

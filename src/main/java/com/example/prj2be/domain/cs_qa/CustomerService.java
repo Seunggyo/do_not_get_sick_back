@@ -1,8 +1,6 @@
-package com.example.prj2be.domain.cs;
+package com.example.prj2be.domain.cs_qa;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.spi.LocaleNameProvider;
 import lombok.Data;
 
 @Data
