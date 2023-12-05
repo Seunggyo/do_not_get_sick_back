@@ -44,7 +44,6 @@ public interface DsMapper {
     int updateById(Ds ds);
 
     @Select("""
-            <script>
             SELECT b.id,
                    b.name,
                    b.phone,
@@ -57,18 +56,10 @@ public interface DsMapper {
                     ON b.id = bl.businessId
                 LEFT JOIN businesscomment bc
                     ON b.id = bc.businessId
-            WHERE 
-                <trim prefixOverrides="OR">
-                    <if test="category == 'all' or category == 'name'">
-                        OR name LIKE #{keyword}
-                    </if>
-                    <if test="category == 'all' or category == 'category'">
-                        OR category LIKE #{keyword}
-                    </if>
-                </trim>
+            WHERE b.category = 'drugStore'
+
             GROUP BY b.id
             LIMIT #{from}, 10
-            </script>
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
