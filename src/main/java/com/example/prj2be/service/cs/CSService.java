@@ -3,7 +3,8 @@ package com.example.prj2be.service.cs;
 import com.example.prj2be.domain.cs.CustomerService;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.cs.CSMapper;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +37,29 @@ public class CSService {
       return true;
    }
 
-   public List<CustomerService> list(Boolean orderByTitle, Boolean orderByHit, Integer page) {
-      System.out.println("orderByTitle = " + orderByTitle);
-      System.out.println("orderByHit = " + orderByHit);
+   public Map<String, Object> list(Boolean orderByTitle, Boolean orderByHit, Integer page,
+      String keyword) {
 
-      int from = (page - 1) * 10;
+      Map<String, Object> map = new HashMap<>();
+      Map<String, Object> pageInfo = new HashMap<>();
+
+      int countAll = mapper.countAll("%" + keyword + "%");
+      int lastPageNumber = (countAll - 1) / 10 + 1;
+      int startPageNumber = (page - 1) / 10 * 10 + 1;
+      int endPageNumber = startPageNumber + 9;
+      endPageNumber = Math.min(endPageNumber, lastPageNumber);
+      int prevPageNumber = startPageNumber - 10;
+      int nextPageNumber = endPageNumber + 1;
+
+      pageInfo.put("currentPageNumber", page);
+      pageInfo.put("startPageNumber", startPageNumber);
+      pageInfo.put("endPageNumber", endPageNumber);
+      if (prevPageNumber > 0) {
+         pageInfo.put("prevPageNumber", prevPageNumber);
+      }
+      if (nextPageNumber <= lastPageNumber) {
+         pageInfo.put("nextPageNumber", nextPageNumber);
+      }
 
       if (orderByTitle != null) {
          if (orderByTitle) {
@@ -57,7 +76,10 @@ public class CSService {
          }
 
       }
-      return mapper.selectAll(from);
+      int from = (page - 1) * 10;
+      map.put("boardList", mapper.selectAll(from, "%" + keyword + "%"));
+      map.put("pageInfo", pageInfo);
+      return map;
    }
 
    public CustomerService get(Integer id) {

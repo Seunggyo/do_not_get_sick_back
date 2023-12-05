@@ -2,6 +2,7 @@ package com.example.prj2be.mapper.cs;
 
 import com.example.prj2be.domain.cs.CustomerService;
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -23,7 +24,7 @@ public interface CSMapper {
       ORDER BY id DESC 
       LIMIT #{from}, 10
       """)
-   List<CustomerService> selectAll(Integer from);
+   List<CustomerService> selectAll(Integer from, String s);
 
 
    @Select("""
@@ -31,27 +32,27 @@ public interface CSMapper {
       FROM customerService
       ORDER BY csHit ASC
       """)
-   List<CustomerService> selectAllOrderByHitAsc();
+   Map<String, Object> selectAllOrderByHitAsc();
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
       ORDER BY csHit DESC
       """)
-   List<CustomerService> selectAllOrderByHitDesc();
+   Map<String, Object> selectAllOrderByHitDesc();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
       ORDER BY csTitle DESC
       """)
-   List<CustomerService> selectAllOrderByTitleDesc();
+   Map<String, Object> selectAllOrderByTitleDesc();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
       ORDER BY csTitle ASC
       """)
-   List<CustomerService> selectAllOrderByTitleAsc();
+   Map<String, Object> selectAllOrderByTitleAsc();
 
    @Select("""
       SELECT *
@@ -100,4 +101,10 @@ public interface CSMapper {
       """)
    void increaseHit(int id);
 
+   @Select("""
+        SELECT COUNT(*) FROM board
+        WHERE title LIKE #{keyword}
+           OR content LIKE #{keyword}
+        """)
+   int countAll(String keyword);
 }
