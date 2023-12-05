@@ -127,6 +127,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+
         if (service.update(member)) {
             return ResponseEntity.ok().build();
         } else {

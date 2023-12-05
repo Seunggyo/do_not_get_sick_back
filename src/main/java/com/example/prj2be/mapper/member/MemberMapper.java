@@ -60,7 +60,7 @@ public interface MemberMapper {
     @Update("""
         update member
         set nickName=#{nickName}, phone=#{phone},
-        email=#{email}, address=#{address}
+        birthday=#{birthday}, address=#{address}
         where id = #{id}
 """)
     int update(Member member);
