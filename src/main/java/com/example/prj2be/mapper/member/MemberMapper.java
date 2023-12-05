@@ -39,11 +39,11 @@ public interface MemberMapper {
 
     @Select("""
         select * from member
-        where id like #{id}
+        where id like #{keyword}
         order by inserted
         limit #{from}, 10
 """)
-    List<Member> selectAll(Integer from, String id);
+    List<Member> selectAll(Integer from, String keyword);
 
     @Select("""
         select * from member

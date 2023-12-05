@@ -24,13 +24,21 @@ public interface MemberJoinMapper {
 
     @Select("""
         select * from memberJoin
-        order by inserted;
+        where id like #{keyword}
+        order by inserted
+        limit #{from}, 10
 """)
-    List<Member> selectAll();
+    List<Member> selectAll(Integer from, String keyword);
 
     @Delete("""
         delete from memberJoin
         where id = #{id}
 """)
     int deleteById(String id);
+
+    @Select("""
+        select count(*) from memberJoin
+        where id like #{keword}
+""")
+    int countAll(String keyword);
 }
