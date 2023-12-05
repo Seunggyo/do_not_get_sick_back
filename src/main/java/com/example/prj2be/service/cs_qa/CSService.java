@@ -19,7 +19,7 @@ public class CSService {
 
       cs.setCsWriter(login.getId());
 
-      return mapper.insert(cs) == 1;
+      return mapper.insert(cs, login) == 1;
 
    }
    public boolean validate(CustomerService cs) {
