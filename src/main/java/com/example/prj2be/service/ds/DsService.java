@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class DsService {
 
     }
 
-    public boolean update(Ds ds, MultipartFile[] uploadFile, List<Integer> deleteFileIds) throws IOException {
+    public boolean update(Ds ds, MultipartFile[] uploadFile, List<Integer> deleteFileIds, String[] holidays) throws IOException {
         // 유저가 정보 수정 할려 할 떄 보내는 코드
 
         // 파일 삭제
@@ -120,6 +121,17 @@ public class DsService {
                 upload(ds.getId(), file);
                 // db에 추가
                 businessFileMapper.insert(ds.getId(), file.getOriginalFilename());
+            }
+        }
+
+//        System.out.println("Arrays.toString(holidays) = " + Arrays.toString(holidays));
+        //    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
+
+        mapper.deleteHolidayByDsId(ds.getId());
+        if ( holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(ds.getId(), holiday);
+//                mapper.updateByHoliday(ds.getId(), holiday);
             }
         }
 

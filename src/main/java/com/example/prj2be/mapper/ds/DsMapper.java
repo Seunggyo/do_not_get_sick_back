@@ -37,8 +37,8 @@ public interface DsMapper {
                 restCloseMin = #{restCloseMin},
                 info = #{info},
                 content = #{content},
-                nightCare = #{nightCare},
-                holiday = #{holiday}
+                nightCare = #{nightCare}
+                
             WHERE id = #{id}
             """)
     int updateById(Ds ds);
@@ -137,4 +137,18 @@ public interface DsMapper {
             ORDER BY holiday
             """)
     List<BusinessHoliday> selectHolidayById(Integer id);
+//    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
+    @Update("""
+            UPDATE businessholiday
+            SET id = #{id},
+                holiday = #{holiday}
+            WHERE businessId = #{businessId}
+            """)
+    void updateByHoliday(Integer id, String holiday);
+
+    @Delete("""
+        DELETE FROM businessHoliday
+        WHERE businessId = #{id}
+        """)
+    int deleteHolidayByDsId(Integer id);
 }

@@ -61,7 +61,8 @@ public class DsController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Ds ds,
-                               @RequestParam("uploadFile[]") MultipartFile[] uploadFile,
+                               @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
+                               @RequestParam(value = "uploadFile[]", required = false) MultipartFile[] uploadFile,
                                @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds
                                /*@SessionAttribute(value = "login",required = false) Member login*/) throws IOException {
         // 약국 정보 수정
@@ -70,7 +71,7 @@ public class DsController {
 //            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 //        }
         if (service.validate(ds)) {
-            if (service.update(ds, uploadFile, deleteFileIds)) {
+            if (service.update(ds, uploadFile, deleteFileIds, holidays)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();
