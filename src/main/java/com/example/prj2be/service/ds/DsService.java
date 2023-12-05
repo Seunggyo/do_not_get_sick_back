@@ -1,8 +1,8 @@
 package com.example.prj2be.service.ds;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
-import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.business.BusinessLikeMapper;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
@@ -19,7 +19,6 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +155,21 @@ public class DsService {
         pageInfo.put("startPageNumber", startPageNumber);
         pageInfo.put("endPageNumber", endPageNumber);
 
-        map.put("dsList", mapper.selectAllByCategory(from, "%" + keyword + "%", category));
+        // view안에 있는 사진리스트를 리스트 안에 사진 받아 오는 방법
+        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
+
+        for (Ds ds : dsList) {
+            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+
+            for (DsPicture dsPicture : dsPictures){
+                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
+                dsPicture.setUrl(url);
+            }
+
+            ds.setFiles(dsPictures);
+        }
+
+        map.put("dsList", dsList);
         map.put("pageInfo", pageInfo);
 
         return map;
