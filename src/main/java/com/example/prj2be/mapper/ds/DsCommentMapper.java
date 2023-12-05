@@ -39,7 +39,14 @@ public interface DsCommentMapper {
 
     @Delete("""
             DELETE FROM businesscomment
-            WHERE id = #{id}
+            WHERE businessId = #{id}
             """)
     int deleteById(Integer id);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM businesscomment
+            WHERE businessId = #{id}
+            """)
+    int findById(Integer id);
 }

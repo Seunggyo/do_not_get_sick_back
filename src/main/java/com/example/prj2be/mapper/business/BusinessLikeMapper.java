@@ -15,6 +15,13 @@ public interface BusinessLikeMapper {
             """)
     int delete(DsLike like);
 
+    @Delete("""
+            DELETE FROM businesslike
+            WHERE businessId = #{id}
+         
+            """)
+    int deleteById(Integer id);
+
     @Insert("""
             INSERT INTO businesslike (memberId, businessId)
             VALUES (#{memberId}, #{businessId})

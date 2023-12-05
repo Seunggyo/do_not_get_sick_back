@@ -4,7 +4,9 @@ import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.business.BusinessLikeMapper;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
+import com.example.prj2be.mapper.ds.DsCommentMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,8 @@ public class DsService {
 
     private final DsMapper mapper;
     private final BusinessPictureMapper businessFileMapper;
+    private final DsCommentMapper dsCommentMapper;
+    private final BusinessLikeMapper businessLikeMapper;
     private final S3Client s3;
 
     @Value("${image.file.prefix}")
@@ -182,6 +186,17 @@ public class DsService {
 
     public boolean delete(Integer id) {
 
+        // 휴무일 삭제
+        mapper.deleteHolidayByDsId(id);
+
+        // 코멘트 삭제
+        if (dsCommentMapper.findById(id) != 0) {
+//            System.out.println(dsCommentMapper.findById(id));
+            dsCommentMapper.deleteById(id);
+        }
+
+        // 좋아요 삭제
+        businessLikeMapper.deleteById(id);
 
         // 파일 레코드 삭제
         businessFileMapper.deleteByDsId(id);
