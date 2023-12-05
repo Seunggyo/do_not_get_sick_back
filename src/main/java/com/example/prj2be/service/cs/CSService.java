@@ -3,7 +3,9 @@ package com.example.prj2be.service.cs;
 import com.example.prj2be.domain.cs.CustomerService;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.cs.CSMapper;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,11 +39,11 @@ public class CSService {
       return true;
    }
 
-   public Map<String, Object> list(Boolean orderByTitle, Boolean orderByHit, Integer page,
+   public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
       String keyword) {
 
       Map<String, Object> map = new HashMap<>();
-      Map<String, Object> pageInfo = new HashMap<>();
+      Map<String, Object>  pageInfo = new HashMap<>();
 
       int countAll = mapper.countAll("%" + keyword + "%");
       int lastPageNumber = (countAll - 1) / 10 + 1;
@@ -61,23 +63,23 @@ public class CSService {
          pageInfo.put("nextPageNumber", nextPageNumber);
       }
 
-      if (orderByTitle != null) {
-         if (orderByTitle) {
-            return mapper.selectAllOrderByTitleDesc();
+      if (orderByNum != null) {
+         if (orderByNum) {
+            map.put("csList", mapper.selectAllOrderByNumDesc());
          } else {
-            return mapper.selectAllOrderByTitleAsc();
+            map.put("csList", mapper.selectAllOrderByNumAsc());
          }
       }
       if (orderByHit != null) {
          if (orderByHit) {
-            return mapper.selectAllOrderByHitDesc();
+            map.put("csList", mapper.selectAllOrderByHitDesc());
          } else {
-            return mapper.selectAllOrderByHitAsc();
+            map.put("csList", mapper.selectAllOrderByHitAsc());
          }
 
       }
       int from = (page - 1) * 10;
-      map.put("boardList", mapper.selectAll(from, "%" + keyword + "%"));
+      map.putIfAbsent("csList", mapper.selectAll(from, "%" + keyword + "%"));
       map.put("pageInfo", pageInfo);
       return map;
    }

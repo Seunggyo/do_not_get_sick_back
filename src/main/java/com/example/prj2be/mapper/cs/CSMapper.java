@@ -19,12 +19,13 @@ public interface CSMapper {
    int insert(CustomerService cs);
 
    @Select("""
-      SELECT id, csTitle, csCategory, csWriter, inserted, csHit
-      FROM customerService
-      ORDER BY id DESC 
+      SELECT c.id, c.csTitle, c.csCategory, c.csWriter, m.nickName, c.inserted, c.csHit
+      FROM customerService c JOIN member m ON c.csWriter = m.id
+      WHERE c.csTitle LIKE #{keyword}
+      ORDER BY c.id DESC 
       LIMIT #{from}, 10
       """)
-   List<CustomerService> selectAll(Integer from, String s);
+   List<CustomerService> selectAll(Integer from, String keyword);
 
 
    @Select("""
@@ -32,33 +33,39 @@ public interface CSMapper {
       FROM customerService
       ORDER BY csHit ASC
       """)
-   Map<String, Object> selectAllOrderByHitAsc();
+
+   List<Map<String, Object>> selectAllOrderByHitAsc();
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
       ORDER BY csHit DESC
       """)
-   Map<String, Object> selectAllOrderByHitDesc();
+   List<Map<String, Object>> selectAllOrderByHitDesc();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
-      ORDER BY csTitle DESC
+      ORDER BY id DESC
       """)
-   Map<String, Object> selectAllOrderByTitleDesc();
+   List<Map<String, Object>> selectAllOrderByNumDesc();
 
    @Select("""
       SELECT id, csTitle, csCategory, csWriter, inserted, csHit
       FROM customerService
-      ORDER BY csTitle ASC
+      ORDER BY id ASC
       """)
-   Map<String, Object> selectAllOrderByTitleAsc();
+   List<Map<String, Object>> selectAllOrderByNumAsc();
 
    @Select("""
-      SELECT *
-      FROM customerService
-      WHERE id= #{id}
-      """)
+      SELECT c.id,
+          c.csTitle, 
+          c.csContent, 
+             c.csWriter, 
+          m.nickName,
+          c.inserted
+              FROM customerService c JOIN member m ON c.csWriter = m.id
+              WHERE c.id = #{id}
+            """)
    CustomerService selectById(Integer id);
 
    @Delete("""
@@ -102,9 +109,9 @@ public interface CSMapper {
    void increaseHit(int id);
 
    @Select("""
-        SELECT COUNT(*) FROM board
-        WHERE title LIKE #{keyword}
-           OR content LIKE #{keyword}
+        SELECT COUNT(*) FROM customerService
+        WHERE csTitle LIKE #{keyword}
+           OR csContent LIKE #{keyword}
         """)
    int countAll(String keyword);
 }

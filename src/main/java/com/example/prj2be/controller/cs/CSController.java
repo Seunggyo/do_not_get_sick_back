@@ -5,7 +5,6 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.cs.CSService;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,12 +50,12 @@ public class CSController {
    // api/cs/list?p=
    // add 된 게시판 리스트를 보여주는 로직
    public Map<String, Object> list(
-      @RequestParam(value = "t", required = false) Boolean orderByTitle,
+      @RequestParam(value = "n", required = false) Boolean orderByNum,
       @RequestParam(value = "h", required = false) Boolean orderByHit,
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String  keyword) {
 
-      return service.list(orderByTitle, orderByHit, page, keyword);
+      return service.list(orderByNum, orderByHit, page, keyword);
    }
 
    @GetMapping("id/{id}")

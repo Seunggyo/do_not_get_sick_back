@@ -13,6 +13,7 @@ public class CustomerService {
    private String csTitle;
    private String csContent;
    private String csWriter;
+   private String csNickName;
    private LocalDate inserted;
    private Integer csHit;
 }
