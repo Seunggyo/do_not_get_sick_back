@@ -41,4 +41,5 @@ public interface HsFileMapper {
         WHERE businessId = #{businessId}
         """)
     void deleteByHsId(Integer businessId);
+
 }

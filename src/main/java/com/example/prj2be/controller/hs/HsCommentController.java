@@ -1,9 +1,8 @@
 package com.example.prj2be.controller.hs;
 
-import com.example.prj2be.domain.hs.Hs;
+import com.example.prj2be.domain.hs.HsComment;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.service.hs.HsService;
-import java.io.IOException;
+import com.example.prj2be.service.hs.HsCommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,61 +12,62 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/hospital")
-public class HsController {
+@RequestMapping("/api/hospital/comment")
+public class HsCommentController {
 
-    private final HsService service;
-
-
-    @GetMapping("list")
-    public List<Hs> list(@RequestParam(value = "category", required = false) String category) {
-        return service.list(category);
-    }
+    private final HsCommentService service;
 
     @PostMapping("add")
-    public ResponseEntity add(Hs hs,
-        @RequestParam(value = "course[]", required = false) String[] course,
-        @RequestParam(value = "hsFiles[]", required = false)
-        MultipartFile[] hsFile,
-        @SessionAttribute(value = "login", required = false) Member login) throws IOException {
-        System.out.println("hs = " + hs);
+    public ResponseEntity add(@RequestBody HsComment comment,
+        @SessionAttribute(value = "login", required = false) Member login) {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (service.add(hs, course, hsFile, login)) {
-            return ResponseEntity.ok().build();
+        if (service.validate(comment)) {
+            if (service.add(comment, login)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
         } else {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.badRequest().build();
         }
     }
 
-    @GetMapping("id/{id}")
-    public Hs get(@PathVariable Integer id) {
-        return service.get(id);
+    @GetMapping("list")
+    public List<HsComment> list(@RequestParam("id") Integer businessId) {
+        return service.list(businessId);
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(Hs hs,
-        @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
-        @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFile)
-        throws IOException {
-
-        if (service.update(hs, removeFileIds, uploadFile)) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity update(@RequestBody HsComment comment,
+        @SessionAttribute(value = "login", required = false) Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.hasAccess(comment.getId(), login)) {
+            if (!service.updateValidate(comment)) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (service.update(comment)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
         } else {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Object> remove(@PathVariable Integer id,
         @SessionAttribute(value = "login", required = false) Member login) {
         if (login == null) {
@@ -83,6 +83,4 @@ public class HsController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
-
-
 }
