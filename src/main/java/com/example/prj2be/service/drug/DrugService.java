@@ -133,6 +133,7 @@ public class DrugService {
         }
 
         int from = (page - 1) * 6;
+        map.put("drugList", mapper.selectDrugList(from));
         map.put("pageInfo", pageInfo);
 
         List<Drug> drugList = mapper.selectDrugList(from);
