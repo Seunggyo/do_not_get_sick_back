@@ -14,6 +14,7 @@ public class Drug {
     private String func;
     private String content;
     private Integer price;
+    private String shipping;
     private LocalDateTime inserted;
     private String fileName;
 

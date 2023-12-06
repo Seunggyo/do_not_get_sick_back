@@ -25,8 +25,21 @@ public interface FileMapper {
     List<DrugFile> selectNamesByDrugId(Integer drugId);
 
     @Delete("""
-            DELETE FROM drugfile
+            DELETE FROM drugFile
             WHERE drugId = #{drugId}
             """)
     int deleteByBoardId(Integer drugId);
+    
+    @Select("""
+            SELECT *
+            FROM drugFile
+            WHERE id = #{id}
+            """)
+    DrugFile selectById(Integer id);
+
+    @Delete("""
+            DELETE FROM drugFile
+            WHERE id = #{id}
+            """)
+    void deleteById(Integer id);
 }

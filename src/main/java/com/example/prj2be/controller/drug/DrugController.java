@@ -1,5 +1,6 @@
 package com.example.prj2be.controller.drug;
 
+import com.example.prj2be.domain.comment.Comment;
 import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.service.drug.DrugService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,8 +44,10 @@ public class DrugController {
     }
 
     @GetMapping("drugList")
-    public List<Drug> list() {
-        return service.drugList();
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page
+                                  ) {
+
+        return service.drugList(page);
     }
 
     @GetMapping("id/{id}")
@@ -66,7 +71,7 @@ public class DrugController {
                                @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles) throws IOException {
 
         if (service.validate(drug)) {
-            if (service.update(drug)) {
+            if (service.update(drug, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();
@@ -75,6 +80,19 @@ public class DrugController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/func/{func}")
+    public List<Drug> funcList(@PathVariable String func,
+                               @RequestParam(value = "p", defaultValue = "1") Integer page) {
+
+        System.out.println("page = " + page);
+        if (func.equals("stomach")) {
+            func = "위 건강";
+        }
+
+        return service.selectByFunctionPage(func, page);
+    }
+
 }
 
 

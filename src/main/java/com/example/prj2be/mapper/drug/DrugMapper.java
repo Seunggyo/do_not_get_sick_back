@@ -9,30 +9,31 @@ import java.util.List;
 public interface DrugMapper {
 
     @Select("""
-            select * from drug
+            select id, name, function func, content, price, inserted, shipping from drug
             where function=#{function}
                 """)
     List<Drug> selectByFunction(String function);
 
     @Insert("""
-            INSERT INTO drug (name,function,content,price)
-            VALUES (#{name}, #{func},#{content},#{price})
+            INSERT INTO drug (name, function, content, price, shipping)
+            VALUES (#{name}, #{func},#{content},#{price}, #{shipping})
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Drug drug);
 
 
     @Select("""
-            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted
+            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
             FROM drug d
             JOIN drugFile f
             ON d.id = f.drugId
-            
+            ORDER BY d.id DESC 
+            LIMIT #{from}, 6
             """)
-    List<Drug> selectDrugList();
+    List<Drug> selectDrugList(Integer from);
 
     @Select("""
-            select d.id, d.name, d.function func, d.content, d.price, d.inserted
+            select d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
             FROM drug d
             WHERE d.id = #{id}
             """)
@@ -48,10 +49,27 @@ public interface DrugMapper {
             UPDATE drug
             SET 
             name = #{name},
-            func = #{func},
+            function = #{func},
             content = #{content},
-            price = #{price}
+            price = #{price},
+            shipping = #{shipping}
             WHERE id = #{id}
             """)
     int update(Drug drug);
+
+    @Select("""
+            select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
+            FROM drug d
+            JOIN drugFile f
+            ON d.id = f.drugId
+            where function = #{func}
+            ORDER BY d.id DESC 
+            LIMIT #{from}, 6
+            """)
+    List<Drug> selectDrugListByFunc(int from, String func);
+
+    @Select("""
+            SELECT COUNT(*) FROM drug;
+            """)
+    int countAll();
 }
