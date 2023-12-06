@@ -2,6 +2,7 @@ package com.example.prj2be.mapper.ds;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsKakao;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -130,4 +131,10 @@ public interface DsMapper {
         WHERE businessId = #{id}
         """)
     void deleteHolidayByDsId(Integer id);
+
+    @Select("""
+            SELECT name, address, phone
+            FROM business;
+            """)
+    List<DsKakao> selectAllByKakao(DsKakao dsKakao);
 }

@@ -2,6 +2,7 @@ package com.example.prj2be.service.ds;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsKakao;
 import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.business.BusinessLikeMapper;
@@ -213,5 +214,9 @@ public class DsService {
 
 
         return mapper.deleteById(id) == 1;
+    }
+
+    public List<DsKakao> kakao(DsKakao dsKakao) {
+        return mapper.selectAllByKakao(dsKakao);
     }
 }

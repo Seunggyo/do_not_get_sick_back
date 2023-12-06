@@ -1,6 +1,7 @@
 package com.example.prj2be.controller.ds;
 
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsKakao;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.ds.DsService;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,11 @@ public class DsController {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
         return service.list(page, keyword, category);
+    }
+
+    @GetMapping("kakao")
+    public List<DsKakao> map (DsKakao dsKakao){
+        return service.kakao(dsKakao);
     }
 
     @GetMapping("id/{id}")
