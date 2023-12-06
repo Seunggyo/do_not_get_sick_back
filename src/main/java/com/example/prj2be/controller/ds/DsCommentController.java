@@ -42,6 +42,11 @@ public class DsCommentController {
         return service.list(businessId);
     }
 
+    @GetMapping("listName")
+    public List<DsComment> listName (@RequestParam("name") String memberId) {
+        return service.listName(memberId);
+    }
+
     @PutMapping("edit")
     public boolean edit(@RequestBody DsComment comment) {
 

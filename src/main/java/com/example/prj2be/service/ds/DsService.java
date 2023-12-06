@@ -221,6 +221,6 @@ public class DsService {
     }
 
     public Ds getName(String name) {
-        return mapper.selectByName(name);
+        return get(mapper.selectByName(name).getId());
     }
 }
