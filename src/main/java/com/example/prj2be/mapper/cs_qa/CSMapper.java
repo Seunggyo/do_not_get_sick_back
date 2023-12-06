@@ -16,12 +16,14 @@ public interface CSMapper {
       INSERT INTO customerService (csTitle, csCategory, csContent, csWriter)
       VALUES (#{csTitle}, #{csCategory}, #{csContent}, #{csWriter})
       """)
-   int insert(CustomerService cs, Member login);
+   int insert(CustomerService cs);
 
    @Select("""
       SELECT c.id, c.csTitle, c.csCategory, c.csWriter, m.nickName, c.inserted, c.csHit
       FROM customerService c JOIN member m ON c.csWriter = m.id
       WHERE c.csTitle LIKE #{keyword}
+      or c.csCategory LIKE #{keyword}
+      or m.nickName LIKE #{keyword}
       ORDER BY c.id DESC 
       LIMIT #{from}, 10
       """)
