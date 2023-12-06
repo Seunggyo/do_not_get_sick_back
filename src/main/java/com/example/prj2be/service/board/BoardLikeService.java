@@ -43,6 +43,6 @@ public class BoardLikeService {
          like = likeMapper.selectByBoardIdAndMemberId(boardId, login.getId());
 
       }
-      return Map.of("Like", like != null, "countLike", countLike);
+      return Map.of("like", like != null, "countLike", countLike);
    }
 }
