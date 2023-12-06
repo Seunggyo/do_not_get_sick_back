@@ -137,4 +137,10 @@ public interface DsMapper {
             FROM business;
             """)
     List<DsKakao> selectAllByKakao(DsKakao dsKakao);
+
+    @Select("""
+            SELECT * FROM business
+            WHERE name = #{name}
+            """)
+    Ds selectByName(String name);
 }

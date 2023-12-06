@@ -34,4 +34,9 @@ public class DsLikeController {
         return ResponseEntity.ok(service.get(id, login));
     }
 
+    @GetMapping("dsName/{name}")
+    public Map<String, Object> getName(@PathVariable String name) {
+        return service.getName(name);
+    }
+
 }

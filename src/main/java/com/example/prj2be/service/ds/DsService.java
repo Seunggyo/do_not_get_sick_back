@@ -219,4 +219,8 @@ public class DsService {
     public List<DsKakao> kakao(DsKakao dsKakao) {
         return mapper.selectAllByKakao(dsKakao);
     }
+
+    public Ds getName(String name) {
+        return mapper.selectByName(name);
+    }
 }

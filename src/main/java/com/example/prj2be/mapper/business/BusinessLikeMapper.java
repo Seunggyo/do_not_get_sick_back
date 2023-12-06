@@ -1,10 +1,13 @@
 package com.example.prj2be.mapper.business;
 
 import com.example.prj2be.domain.ds.DsLike;
+import com.example.prj2be.domain.member.Member;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.Map;
 
 @Mapper
 public interface BusinessLikeMapper {
@@ -41,4 +44,10 @@ public interface BusinessLikeMapper {
               AND memberId = #{memberId}
             """)
     DsLike selectByDsIdAndMemberId(Integer businessId, String memberId);
+
+    @Select("""
+            SELECT * FROM businesslike
+            WHERE memberId = #{memberId}
+            """)
+    Map<String, Object> selectByName(String name);
 }

@@ -65,6 +65,12 @@ public class DsController {
         return service.get(id);
     }
 
+    @GetMapping("name/{name}")
+    public Ds map(@PathVariable String name) {
+        System.out.println(name);
+        return service.getName(name);
+    }
+
     @PutMapping("edit")
     public ResponseEntity edit(Ds ds,
                                @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
