@@ -1,8 +1,12 @@
 package com.example.prj2be.service.hs;
 
 import com.example.prj2be.domain.hs.Hs;
+import com.example.prj2be.domain.hs.HsCourse;
 import com.example.prj2be.domain.hs.HsFile;
+import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.hs.HsCommentMapper;
 import com.example.prj2be.mapper.hs.HsFileMapper;
+import com.example.prj2be.mapper.hs.HsLikeMapper;
 import com.example.prj2be.mapper.hs.HsMapper;
 import java.io.IOException;
 import java.util.List;
@@ -22,6 +26,8 @@ public class HsService {
 
     private final HsMapper mapper;
     private final HsFileMapper fileMapper;
+    private final HsLikeMapper likeMapper;
+    private final HsCommentMapper commentMapper;
     private final S3Client s3;
     @Value("${aws.s3.bucket.name}")
     private String bucket;
@@ -45,8 +51,16 @@ public class HsService {
         return mapper.selectByCategory(category);
     }
 
-    public boolean add(Hs hs, MultipartFile[] hsFile) throws IOException {
+    public boolean add(Hs hs, String[] course, MultipartFile[] hsFile, Member login)
+        throws IOException {
+        hs.setMemberId(login.getId());
         int cnt = mapper.insert(hs);
+        if (course != null) {
+            for (String hsCourse : course) {
+                mapper.insertCourse(hs.getId(), hsCourse);
+            }
+        }
+
         if (hsFile != null) {
             for (int i = 0; i < hsFile.length; i++) {
                 fileMapper.insert(hs.getId(), hsFile[i].getOriginalFilename());
@@ -95,11 +109,17 @@ public class HsService {
             hsFile.setUrl(url);
         }
         hs.setFiles(hsFiles);
+        List<HsCourse> hsCourses = mapper.courseSelectByBuisnessId(id);
+        hs.setMedicalCourse(hsCourses);
         return hs;
     }
 
     public boolean remove(Integer id) {
         deleteFile(id);
+
+        commentMapper.deleteByBusinessId(id);
+
+        likeMapper.deleteByBusinessId(id);
 
         return mapper.deleteById(id) == 1;
     }
@@ -120,4 +140,14 @@ public class HsService {
     }
 
 
+    public boolean hasAccess(Integer id, Member login) {
+        Hs hospital = mapper.selectById(id);
+        if (login == null) {
+            return false;
+        }
+        if (login.isAdmin()) {
+            return true;
+        }
+        return hospital.getMemberId().equals(login.getId());
+    }
 }

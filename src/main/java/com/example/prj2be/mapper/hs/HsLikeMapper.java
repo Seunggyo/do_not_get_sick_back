@@ -36,4 +36,10 @@ public interface HsLikeMapper {
         AND memberId = #{memberId}
         """)
     HsLike selectByBusinessIdAndMemberId(Integer businessId, String memberId);
+
+    @Delete("""
+        DELETE FROM prj2.businesslike
+        WHERE businessId = #{id}
+        """)
+    void deleteByBusinessId(Integer id);
 }
