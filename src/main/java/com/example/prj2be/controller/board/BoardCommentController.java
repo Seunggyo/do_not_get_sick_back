@@ -1,8 +1,8 @@
-package com.example.prj2be.controller.comment;
+package com.example.prj2be.controller.board;
 
-import com.example.prj2be.domain.comment.Comment;
+import com.example.prj2be.domain.board.BoardComment;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.service.comment.CommentService;
+import com.example.prj2be.service.board.BoardCommentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
-public class CommentController {
+public class BoardCommentController {
 
-   private final CommentService service;
+   private final BoardCommentService service;
 
    @PostMapping("add")
    public ResponseEntity add(
-      @RequestBody Comment comment,
+      @RequestBody BoardComment comment,
       @SessionAttribute(value = "login", required = false) Member login) {
 
       if (login == null) {
@@ -46,7 +46,7 @@ public class CommentController {
    }
 
    @GetMapping("list")
-   public List<Comment> list(@RequestParam("id") Integer boardId) {
+   public List<BoardComment> list(@RequestParam("id") Integer boardId) {
       return service.list(boardId);
    }
 
@@ -66,11 +66,11 @@ public class CommentController {
             return ResponseEntity.internalServerError().build();
          }
       } else {
-         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+         return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
       }
    }
    @PutMapping("edit")
-   public ResponseEntity update(@RequestBody Comment comment,
+   public ResponseEntity update(@RequestBody BoardComment comment,
       @SessionAttribute(value = "login", required = false) Member login) {
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

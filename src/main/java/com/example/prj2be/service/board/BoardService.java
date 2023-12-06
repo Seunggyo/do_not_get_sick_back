@@ -3,7 +3,7 @@ package com.example.prj2be.service.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardMapper;
-import com.example.prj2be.service.member.MemberService;
+import com.example.prj2be.mapper.board.BoardCommentMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
 
-   private final MemberService memberService;
    private final BoardMapper mapper;
+   private final BoardCommentMapper commentMapper;
 
    public boolean save(Board board, Member login) {
       board.setWriter(login.getId());
@@ -46,6 +46,10 @@ public class BoardService {
    }
 
    public boolean remove(Integer id) {
+
+      // 게시물에 달린 댓글들 지우기...
+      commentMapper.deleteByBoardId(id);
+
       return mapper.deleteById(id) == 1;
    }
 
@@ -56,9 +60,13 @@ public class BoardService {
 
    public boolean hasAccess(Integer id, Member login) {
 
-//      if (memberService.isAdmin(login)) {
-//         return true;
-//      }
+      if (login == null) {
+         return false;
+      }
+
+      if (login.isAdmin()) {
+         return true;
+      }
 
       Board board = mapper.selectById(id);
       // mapper 에서 해당 게시물정보를 얻기
@@ -66,14 +74,4 @@ public class BoardService {
       return board.getWriter().equals(login.getId());
    }
 
-   // TODO: admin 권한부여.. 아직 미완성..
-//   public boolean isAdmin(Member login) {
-//
-//      if (login.getAuth() != null) {
-//         return login.getAuth()
-//            .stream()
-//            .map(e -> e.getName())
-//            .anyMatch(n -> n.equals("admin"));
-//      }
-//   }
 }

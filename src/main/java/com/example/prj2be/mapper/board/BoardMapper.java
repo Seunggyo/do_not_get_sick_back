@@ -26,7 +26,7 @@ public interface BoardMapper {
                b.inserted,
                COUNT(c.id) countComment
         FROM board b JOIN member m ON b.writer = m.id
-                     LEFT JOIN comment c on b.id = c.boardId
+                     LEFT JOIN boardComment c on b.id = c.boardId
         GROUP BY b.id
         ORDER BY b.id DESC
       """)
@@ -65,4 +65,5 @@ public interface BoardMapper {
         """)
 
    int deleteByWriter(String writer);
+
 }
