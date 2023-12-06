@@ -1,8 +1,12 @@
 package com.example.prj2be.service.ds;
 
-import com.example.prj2be.domain.business.BusinessPicture;
+import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsPicture;
+import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.business.BusinessLikeMapper;
 import com.example.prj2be.mapper.business.BusinessPictureMapper;
+import com.example.prj2be.mapper.ds.DsCommentMapper;
 import com.example.prj2be.mapper.ds.DsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +19,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -24,6 +30,8 @@ public class DsService {
 
     private final DsMapper mapper;
     private final BusinessPictureMapper businessFileMapper;
+    private final DsCommentMapper dsCommentMapper;
+    private final BusinessLikeMapper businessLikeMapper;
     private final S3Client s3;
 
     @Value("${image.file.prefix}")
@@ -47,19 +55,21 @@ public class DsService {
         if (ds.getPhone().isBlank()) {
             return false;
         }
-        if (ds.getContent().isBlank()) {
-            return false;
-        }
 
         return true;
     }
 
-    public boolean save(Ds ds, MultipartFile[] files) throws IOException {
+    public boolean save(Ds ds, MultipartFile[] files, Member login, String[] holidays) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
 
         int cnt = mapper.insert(ds);
-        System.out.println(ds.getId());
-        System.out.println(ds);
+
+        if (holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(ds.getId(), holiday);
+            }
+        }
+
 
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
@@ -85,13 +95,13 @@ public class DsService {
 
     }
 
-    public boolean update(Ds ds, MultipartFile[] uploadFile, List<Integer> deleteFileIds) throws IOException {
+    public boolean update(Ds ds, MultipartFile[] uploadFile, List<Integer> deleteFileIds, String[] holidays) throws IOException {
         // 유저가 정보 수정 할려 할 떄 보내는 코드
 
         // 파일 삭제
         if (deleteFileIds != null) {
             for (Integer id : deleteFileIds) {
-                BusinessPicture picture = businessFileMapper.selectById(id);
+                DsPicture picture = businessFileMapper.selectById(id);
                 String key = "prj2/Ds/" + ds.getId() + "/" + picture.getName();
                 DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                         .bucket(bucket)
@@ -114,24 +124,71 @@ public class DsService {
             }
         }
 
+//        System.out.println("Arrays.toString(holidays) = " + Arrays.toString(holidays));
+        //    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
+
+        mapper.deleteHolidayByDsId(ds.getId());
+        if ( holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(ds.getId(), holiday);
+//                mapper.updateByHoliday(ds.getId(), holiday);
+            }
+        }
+
         return mapper.updateById(ds) == 1;
     }
 
-    public List<Ds> list( ) {
-        return mapper.selectByCategory();
+    public Map<String,Object> list(Integer page, String keyword, String category) {
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> pageInfo = new HashMap<>();
+
+        // 현재 페이지
+        int from = (page - 1 ) * 10 ;
+        // 총 게시글이 몇개 인지, 어떤 키워드로 검색할 껏인지 등등 총 게시물에서 하는 키워드
+        int countAll = mapper.countAll("%" + keyword + "%", category);
+
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = ((page -1) / 10 * 10) + 1;
+        int endPageNumber = startPageNumber + 9;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+
+        // view안에 있는 사진리스트를 리스트 안에 사진 받아 오는 방법
+        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
+
+        for (Ds ds : dsList) {
+            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+
+            for (DsPicture dsPicture : dsPictures){
+                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
+                dsPicture.setUrl(url);
+            }
+
+            ds.setFiles(dsPictures);
+        }
+
+        map.put("dsList", dsList);
+        map.put("pageInfo", pageInfo);
+
+        return map;
     }
 
     public Ds get(Integer id) {
         Ds ds = mapper.selectById(id);
 
-        List<BusinessPicture> businessPictures = businessFileMapper.selectNamesByDsId(id);
+        List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(id);
 
-        for (BusinessPicture businessPicture : businessPictures){
-            String url = urlPrefix + "prj2/Ds/" + id + "/" + businessPicture.getName();
-            businessPicture.setUrl(url);
+        for (DsPicture dsPicture : dsPictures){
+            String url = urlPrefix + "prj2/Ds/" + id + "/" + dsPicture.getName();
+            dsPicture.setUrl(url);
         }
 
-        ds.setFiles(businessPictures);
+        List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(id);
+
+        ds.setFiles(dsPictures);
+        ds.setHolidays(businessHolidays);
 
         return ds;
     }
@@ -139,6 +196,17 @@ public class DsService {
 
     public boolean delete(Integer id) {
 
+        // 휴무일 삭제
+        mapper.deleteHolidayByDsId(id);
+
+        // 코멘트 삭제
+        if (dsCommentMapper.findById(id) != 0) {
+//            System.out.println(dsCommentMapper.findById(id));
+            dsCommentMapper.deleteById(id);
+        }
+
+        // 좋아요 삭제
+        businessLikeMapper.deleteById(id);
 
         // 파일 레코드 삭제
         businessFileMapper.deleteByDsId(id);

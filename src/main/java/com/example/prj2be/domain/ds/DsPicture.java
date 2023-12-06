@@ -1,9 +1,9 @@
-package com.example.prj2be.domain.business;
+package com.example.prj2be.domain.ds;
 
 import lombok.Data;
 
 @Data
-public class BusinessPicture {
+public class DsPicture {
     private Integer id;
     private String name;
 

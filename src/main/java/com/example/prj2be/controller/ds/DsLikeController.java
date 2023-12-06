@@ -1,6 +1,6 @@
-package com.example.prj2be.controller.business;
+package com.example.prj2be.controller.ds;
 
-import com.example.prj2be.domain.business.BusinessLike;
+import com.example.prj2be.domain.ds.DsLike;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.business.BusinessLikeService;
 import lombok.RequiredArgsConstructor;
@@ -13,13 +13,14 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/business/like")
-public class BusinessLikeController {
+public class DsLikeController {
 
     private final BusinessLikeService service;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> like(@RequestBody BusinessLike like,
+    public ResponseEntity<Map<String, Object>> like(@RequestBody DsLike like,
                         @SessionAttribute(value = "login", required = false) Member login) {
+
         if ( login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -27,10 +28,10 @@ public class BusinessLikeController {
         return ResponseEntity.ok(service.update(like, login));
     }
 
-    @GetMapping("dsId/{dsId}")
-    public ResponseEntity<Map<String, Object>> get(@PathVariable Integer dsId,
+    @GetMapping("dsId/{id}")
+    public ResponseEntity<Map<String, Object>> get(@PathVariable Integer id,
                                    @SessionAttribute(value = "login", required = false)Member login) {
-        return ResponseEntity.ok(service.get(dsId, login));
+        return ResponseEntity.ok(service.get(id, login));
     }
 
 }

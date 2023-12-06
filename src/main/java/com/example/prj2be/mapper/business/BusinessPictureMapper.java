@@ -1,6 +1,6 @@
 package com.example.prj2be.mapper.business;
 
-import com.example.prj2be.domain.business.BusinessPicture;
+import com.example.prj2be.domain.ds.DsPicture;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,7 +22,7 @@ public interface BusinessPictureMapper {
             FROM businesspicture
             WHERE businessId = #{id}
             """)
-    List<BusinessPicture> selectNamesByDsId(Integer id);
+    List<DsPicture> selectNamesByDsId(Integer id);
 
     @Delete("""
             DELETE FROM businesspicture
@@ -34,7 +34,7 @@ public interface BusinessPictureMapper {
             SELECT * FROM businesspicture
             WHERE id = #{id}
             """)
-    BusinessPicture selectById(Integer id);
+    DsPicture selectById(Integer id);
 
     @Delete("""
             DELETE FROM businesspicture
