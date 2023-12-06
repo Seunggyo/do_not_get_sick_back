@@ -43,8 +43,11 @@ public class CartService {
         return Map.of("cart", cart != null, "countCart", countCart);
     }
 
-    public List<Cart> cartList() {
-        return mapper.selectCartList();
+    public List<Cart> cartList(Member login) {
+        if (login != null) {
+            return mapper.selectCartList(login.getId());
+        }
+        return null;
     }
 
     public boolean remove(Integer id) {
