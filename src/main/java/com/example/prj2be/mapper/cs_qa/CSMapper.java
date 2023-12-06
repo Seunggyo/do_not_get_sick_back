@@ -60,7 +60,7 @@ public interface CSMapper {
 
 
    @Delete("""
-        DELETE FROM board
+        DELETE FROM customerService
         WHERE csWriter = #{csWriter}
         """)
 
@@ -69,7 +69,7 @@ public interface CSMapper {
    @Select("""
       SELECT id
       FROM customerService
-      WHERE writer = #{id}
+      WHERE csWriter = #{id}
       """)
 
    List<Integer> selectIdListByMemberId(String writer);

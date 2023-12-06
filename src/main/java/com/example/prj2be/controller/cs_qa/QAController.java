@@ -1,9 +1,8 @@
 package com.example.prj2be.controller.cs_qa;
 
-import com.example.prj2be.domain.cs_qa.CustomerService;
-import com.example.prj2be.domain.cs_qa.QA;
+import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.service.cs_qa.QA_Service;
+import com.example.prj2be.service.cs_qa.QAService;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,17 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-@RequestMapping("/api/cs/qa")
+@RequestMapping("/api/qa")
 @RestController
 @RequiredArgsConstructor
-public class QA_Controller {
+public class QAController {
 
-   private final QA_Service service;
+   private final QAService service;
 
    @PostMapping("add")
 
    public ResponseEntity add(
-      @RequestBody QA qa,
+      @RequestBody CustomerQA qa,
       @SessionAttribute(value = "login", required = false) Member login) {
 
       if (login == null) {
@@ -42,17 +41,17 @@ public class QA_Controller {
          return ResponseEntity.internalServerError().build();
       }
    }
-   @GetMapping("qa_list")
+   @GetMapping("qaList")
    public Map<String, Object> list(
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String keyword) {
 
 
-      return service.qa_list(page, keyword);
+      return service.qaList(page, keyword);
    }
 
    @GetMapping("id/{id}")
-   public QA get(@PathVariable Integer id) {
+   public CustomerQA get(@PathVariable Integer id) {
       return service.get(id);
    }
 }
