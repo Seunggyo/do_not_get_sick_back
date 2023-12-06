@@ -26,7 +26,7 @@ public interface BoardCommentMapper {
           c.memberId,
           m.nickName memberNickName
       FROM boardComment c JOIN member m ON c.memberId = m.id
-      WHERE boardId = #{boardId}
+      WHERE c.boardId = #{boardId}
       ORDER BY c.id DESC
       """)
    List<BoardComment> selectByBoardId(Integer boardId);

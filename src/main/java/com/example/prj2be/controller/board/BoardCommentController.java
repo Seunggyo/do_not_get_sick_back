@@ -66,7 +66,7 @@ public class BoardCommentController {
             return ResponseEntity.internalServerError().build();
          }
       } else {
-         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+         return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
       }
    }
    @PutMapping("edit")
