@@ -8,6 +8,7 @@ import com.example.prj2be.mapper.hs.HsCommentMapper;
 import com.example.prj2be.mapper.hs.HsFileMapper;
 import com.example.prj2be.mapper.hs.HsLikeMapper;
 import com.example.prj2be.mapper.hs.HsMapper;
+import com.example.prj2be.mapper.hs.HsReservationMapper;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class HsService {
     private final HsFileMapper fileMapper;
     private final HsLikeMapper likeMapper;
     private final HsCommentMapper commentMapper;
+    private final HsReservationMapper reservationMapper;
     private final S3Client s3;
     @Value("${aws.s3.bucket.name}")
     private String bucket;
@@ -120,6 +122,8 @@ public class HsService {
         commentMapper.deleteByBusinessId(id);
 
         likeMapper.deleteByBusinessId(id);
+
+        reservationMapper.deleteByBusinessId(id);
 
         return mapper.deleteById(id) == 1;
     }

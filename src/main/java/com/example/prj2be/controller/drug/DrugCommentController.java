@@ -1,17 +1,23 @@
 package com.example.prj2be.controller.drug;
 
-import com.example.prj2be.domain.comment.Comment;
+
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.DrugCommentService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.print.DocFlavor;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +28,7 @@ public class DrugCommentController {
 
     @PostMapping("add")
     public ResponseEntity add(@RequestBody DrugComment drugComment,
-                              @SessionAttribute(value = "login", required = false) Member login) {
+        @SessionAttribute(value = "login", required = false) Member login) {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -41,13 +47,13 @@ public class DrugCommentController {
     }
 
     @GetMapping("list")
-    public List<DrugComment> list(@RequestParam("id") Integer drugId){
+    public List<DrugComment> list(@RequestParam("id") Integer drugId) {
         return service.list(drugId);
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity remove(@PathVariable Integer id,
-                                 @SessionAttribute(value = "login", required = false) Member login) {
+        @SessionAttribute(value = "login", required = false) Member login) {
 //        TODO: 관리자 권한도 추가 해야함.
 
         if (login == null) {
@@ -67,7 +73,7 @@ public class DrugCommentController {
 
     @PutMapping("edit")
     public ResponseEntity update(@RequestBody DrugComment comment,
-                                 @SessionAttribute(value = "login", required = false) Member login) {
+        @SessionAttribute(value = "login", required = false) Member login) {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
