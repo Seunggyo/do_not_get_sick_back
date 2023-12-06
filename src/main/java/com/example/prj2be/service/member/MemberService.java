@@ -1,9 +1,11 @@
 package com.example.prj2be.service.member;
 
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.member.MemberJoinMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
@@ -15,7 +17,9 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberMapper mapper;
+    private final MemberJoinMapper memberJoinMapper;
 
     private final S3Client s3;
     @Value("${image.file.prefix}")
@@ -56,8 +61,10 @@ public class MemberService {
         if (member.getNickName().isBlank()) {
             return false;
         }
-        if (member.getBirthday().isBlank()) {
-            return false;
+        if (member.getAuth().equals("user")) {
+            if (member.getBirthday().isBlank()) {
+                return false;
+            }
         }
         if (member.getPhone().isBlank()) {
             return false;
@@ -83,10 +90,13 @@ public class MemberService {
     }
 
     public boolean add(Member member,MultipartFile file) throws IOException {
-        if (file != null) {
-            upload(member.getId(), file);
-            return mapper.insertMember(member, file.getOriginalFilename()) == 1;
+        if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
+            if (file != null) {
+                upload(member.getId(), file);
+                return memberJoinMapper.insertMember(member, file.getOriginalFilename()) == 1;
+            }
         }
+
         return mapper.insertMember(member, "") == 1;
     }
 
@@ -103,8 +113,60 @@ public class MemberService {
 
     }
 
-    public List<Member> selectAll() {
-        return mapper.selectAll();
+    public Map<String, Object> selectAll(String keyword, Integer page) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
+
+        int countAll = mapper.countAll("%"+keyword+"%");
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = (page -1) / 10 * 10 + 1;
+        int endPageNumber = startPageNumber + 9;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+        int prevPageNumber = startPageNumber - 10;
+        int nextPageNumber = endPageNumber + 1;
+
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+
+        int from = (page - 1) * 10;
+        map.put("pageInfo", pageInfo);
+        map.put("memberList" , mapper.selectAll(from, "%"+keyword+"%"));
+        return map;
+    }
+
+    public Map<String, Object> selectJoinAll(String keyword, Integer page) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
+
+        int countAll = memberJoinMapper.countAll("%"+keyword+"%");
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = (page -1) / 10 * 10 + 1;
+        int endPageNumber = startPageNumber + 9;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+        int prevPageNumber = startPageNumber - 10;
+        int nextPageNumber = endPageNumber + 1;
+
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+
+        int from = (page - 1) * 10;
+        map.put("pageInfo", pageInfo);
+        map.put("memberList" , memberJoinMapper.selectAll(from, "%"+keyword+"%"));
+        return map;
     }
 
     public Member selectById(String id) {
@@ -157,5 +219,18 @@ public class MemberService {
 
     public boolean update(Member member) {
         return mapper.update(member) == 1;
+    }
+
+    public String findIdByEmail(String email) {
+        return mapper.findIdByEmail(email);
+    }
+
+    public boolean accept(Member member) {
+        memberJoinMapper.deleteById(member.getId());
+        return mapper.acceptMember(member) == 1;
+    }
+
+    public boolean cancel(Member member) {
+        return memberJoinMapper.deleteById(member.getId()) == 1;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -58,9 +59,33 @@ public class MemberController {
         }
     }
 
+    @PostMapping("/accept")
+    public ResponseEntity accept(@RequestBody Member member) {
+        if (service.accept(member)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity cancel(@RequestBody Member member) {
+        if (service.cancel(member)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     @GetMapping("/list")
-    public List<Member> memberList() {
-        return service.selectAll();
+    public Map<String, Object> memberList(@RequestParam(value = "k",defaultValue = "") String keyword,
+                                          @RequestParam(value = "p",defaultValue = "1") Integer page) {
+
+        return service.selectAll(keyword, page);
+    }
+
+    @GetMapping("/joinList")
+    public Map<String, Object> memberJoinList(@RequestParam(value = "k",defaultValue = "") String keyword,
+                                              @RequestParam(value = "p",defaultValue = "1") Integer page) {
+        return service.selectJoinAll(keyword, page);
     }
 
     @GetMapping("/info")
@@ -103,11 +128,17 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+
         if (service.update(member)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @PostMapping("/findId")
+    public String findId(@RequestBody Member member) {
+        return service.findIdByEmail(member.getEmail());
     }
 }
 

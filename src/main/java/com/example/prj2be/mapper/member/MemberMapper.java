@@ -1,10 +1,7 @@
 package com.example.prj2be.mapper.member;
 
 import com.example.prj2be.domain.member.Member;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -42,9 +39,11 @@ public interface MemberMapper {
 
     @Select("""
         select * from member
+        where id like #{keyword}
         order by inserted
+        limit #{from}, 10
 """)
-    List<Member> selectAll();
+    List<Member> selectAll(Integer from, String keyword);
 
     @Select("""
         select * from member
@@ -61,8 +60,32 @@ public interface MemberMapper {
     @Update("""
         update member
         set nickName=#{nickName}, phone=#{phone},
-        email=#{email}, address=#{address}
+        birthday=#{birthday}, address=#{address}
         where id = #{id}
 """)
     int update(Member member);
+
+    @Select("""
+        select id from member
+        where email = #{email}
+""")
+    String findIdByEmail(String email);
+
+    @Insert("""
+        insert into member (
+        id, password, nickName, birthday, phone,
+        email, address, auth, fileName)
+        values (
+        #{id}, #{password}, #{nickName}, #{birthday},
+        #{phone}, #{email}, #{address},
+        #{auth}, #{fileName})
+""")
+    int acceptMember(Member member);
+
+
+    @Select("""
+        select count(*) from member
+        where id like #{id}
+""")
+    int countAll(String id);
 }
