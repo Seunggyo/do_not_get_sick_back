@@ -3,14 +3,18 @@ package com.example.prj2be.service.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardCommentMapper;
+import com.example.prj2be.mapper.board.BoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
+import com.example.prj2be.mapper.drug.FileMapper;
+import java.io.File;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -19,11 +23,43 @@ public class BoardService {
    private final BoardMapper mapper;
    private final BoardCommentMapper commentMapper;
    private final BoardLikeMapper likeMapper;
+   private final BoardFileMapper fileMapper;
 
-   public boolean save(Board board, Member login) {
+   public boolean save(Board board, MultipartFile[] files, Member login) {
       board.setWriter(login.getId());
 
-      return mapper.insert(board) == 1;
+      // boardFile 테이블에 files 정보저장
+      // boardId, name - 어떤 게시물의 파일인지 알아야함.
+      int cnt = mapper.insert(board);
+
+      if (files != null) {
+         for (int i = 0; i < files.length; i++) {
+            fileMapper.insert(board.getId(), files[i].getOriginalFilename());
+
+            // 실제 파일 s3 bucket 에 넣어야지만 일단 연습중이니 local에 저장.
+            upload(board.getId(),files[i]);
+         }
+      }
+
+      return cnt == 1;
+   }
+
+   private void upload(Integer boardId, MultipartFile file) {
+
+      try {
+         File folder = new File("C:\\Temp\\prj2\\" + boardId);
+         if(!folder.exists()){
+            folder.mkdirs();
+         }
+
+         String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
+         File des = new File(path);
+         file.transferTo(des);
+
+
+      } catch(Exception e){
+         e.printStackTrace();
+      }
    }
 
    public boolean validate(Board board) {
@@ -71,6 +107,7 @@ public class BoardService {
       int from = (page - 1) * 10;
       boardList = mapper.selectAll(from, "%" + keyword + "%");
 
+      // 필요한 경우 정렬을 적용하기
       if (orderByNum != null || orderByHit != null) {
          Comparator<Board> comparator = Comparator.comparing(Board::getId);
          if (orderByNum != null && orderByNum) {

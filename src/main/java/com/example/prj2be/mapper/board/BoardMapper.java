@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -16,6 +17,7 @@ public interface BoardMapper {
       title, content, writer,category)
       VALUES (#{title}, #{content}, #{writer}, #{category})
       """)
+   @Options(useGeneratedKeys = true, keyProperty = "id")
    int insert(Board board);
 
    @Select("""

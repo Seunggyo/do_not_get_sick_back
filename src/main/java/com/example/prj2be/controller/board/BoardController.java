@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,9 +30,9 @@ public class BoardController {
 
    @PostMapping("add")
    public ResponseEntity add(
-      @RequestBody Board board,
+      Board board,
+      @RequestParam(value = "file[]", required = false) MultipartFile[] files,
       @SessionAttribute(value = "login", required = false) Member login) {
-//      System.out.println("login = " + login);
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -40,7 +41,7 @@ public class BoardController {
          return ResponseEntity.badRequest().build();
       }
 
-      if (service.save(board, login)) {
+      if (service.save(board, files, login)) {
          return ResponseEntity.ok().build();
       } else {
          return ResponseEntity.internalServerError().build();
