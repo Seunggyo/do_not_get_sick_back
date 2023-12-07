@@ -40,8 +40,8 @@ public class DrugCartController {
     }
 
     @GetMapping("cartList")
-    public List<Cart> cartList() {
-        return service.cartList();
+    public List<Cart> cartList(@SessionAttribute(value = "login", required = false) Member login) {
+        return service.cartList(login);
     }
 
     @DeleteMapping("remove/{id}")
