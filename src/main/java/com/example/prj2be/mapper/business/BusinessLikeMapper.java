@@ -50,4 +50,10 @@ public interface BusinessLikeMapper {
             WHERE memberId = #{memberId}
             """)
     Map<String, Object> selectByName(String name);
+
+    @Select("""
+        select id from business
+        where name = #{name}
+""")
+    Integer getIdByName(String name);
 }

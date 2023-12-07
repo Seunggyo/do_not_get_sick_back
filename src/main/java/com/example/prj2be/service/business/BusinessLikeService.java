@@ -46,4 +46,8 @@ public class BusinessLikeService {
     public Map<String, Object> getName(String name) {
         return mapper.selectByName(name);
     }
+
+    public Integer getIdByName(String name) {
+        return mapper.getIdByName(name);
+    }
 }

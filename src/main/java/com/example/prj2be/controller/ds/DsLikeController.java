@@ -35,8 +35,12 @@ public class DsLikeController {
     }
 
     @GetMapping("dsName/{name}")
-    public Map<String, Object> getName(@PathVariable String name) {
-        return service.getName(name);
+    public ResponseEntity<Map<String, Object>> get(@PathVariable String name,
+                       @SessionAttribute(value = "login", required = false)Member login) {
+
+        Integer id = service.getIdByName(name);
+
+        return ResponseEntity.ok(service.get(id, login));
     }
 
 }

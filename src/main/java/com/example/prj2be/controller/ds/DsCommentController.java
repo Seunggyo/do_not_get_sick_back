@@ -43,8 +43,10 @@ public class DsCommentController {
     }
 
     @GetMapping("listName")
-    public List<DsComment> listName (@RequestParam("name") String memberId) {
-        return service.listName(memberId);
+    public List<DsComment> listName (@RequestParam("name") String name) {
+        Integer id = service.getIdByName(name);
+
+        return service.list(id);
     }
 
     @PutMapping("edit")

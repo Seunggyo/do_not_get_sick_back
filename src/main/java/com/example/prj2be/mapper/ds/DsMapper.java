@@ -77,9 +77,21 @@ public interface DsMapper {
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
     @Select("""
-            SELECT *
-            FROM business
-            WHERE id = #{id};
+            SELECT b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin
+            FROM business b
+            WHERE b.id = #{id};
             """)
     Ds selectById(Integer id);
 
@@ -117,14 +129,6 @@ public interface DsMapper {
             ORDER BY holiday
             """)
     List<BusinessHoliday> selectHolidayById(Integer id);
-//    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
-//    @Update("""
-//            UPDATE businessholiday
-//            SET id = #{id},
-//                holiday = #{holiday}
-//            WHERE businessId = #{businessId}
-//            """)
-//    void updateByHoliday(Integer id, String holiday);
 
     @Delete("""
         DELETE FROM businessHoliday

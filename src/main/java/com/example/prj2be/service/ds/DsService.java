@@ -63,6 +63,8 @@ public class DsService {
     public boolean save(Ds ds, MultipartFile[] files, Member login, String[] holidays) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
 
+        ds.setMemberId(login.getId());
+
         int cnt = mapper.insert(ds);
 
         if (holidays != null) {
@@ -222,5 +224,19 @@ public class DsService {
 
     public Ds getName(String name) {
         return get(mapper.selectByName(name).getId());
+    }
+
+    public boolean hasAccess(Integer id, Member login) {
+        if (login == null){
+            return false;
+        }
+
+        if (login.isAdmin()) {
+            return true;
+        }
+
+        Ds ds = mapper.selectById(id);
+
+        return ds.getMemberId().equals(login.getId());
     }
 }

@@ -29,36 +29,18 @@ public class DsCommentService {
 
     public boolean add(DsComment comment, Member login) {
         comment.setMemberId(login.getId());
-        System.out.println("comment = " + comment);
-        System.out.println("login = " + login);
 
         return mapper.insert(comment) == 1;
     }
 
-    public List<DsComment> list(Integer businessId) {
-        return mapper.selectByBusinessId(businessId);
+    public List<DsComment> list(Integer id) {
+        return mapper.selectByBusinessId(id);
     }
 
     public boolean hasAccess(Integer id, Member login) {
         DsComment comment = mapper.selectById(id);
 
         return comment.getMemberId().equals(login.getId());
-    }
-
-    public boolean updateValidate(DsComment comment) {
-        if (comment == null) {
-            return false;
-        }
-
-        if (comment.getId() == null){
-            return false;
-        }
-
-        if (comment.getComment() == null || comment.getComment().isBlank()) {
-            return false;
-        }
-
-        return true;
     }
 
     public boolean update(DsComment comment) {
@@ -69,7 +51,11 @@ public class DsCommentService {
         mapper.deleteById(id);
     }
 
-    public List<DsComment> listName(String memberId) {
-        return mapper.selectByMemberId(memberId);
+    public List<DsComment> listName(Integer id) {
+        return mapper.selectByMemberId(id);
+    }
+
+    public Integer getIdByName(String name) {
+        return mapper.selectIdByName(name);
     }
 }
