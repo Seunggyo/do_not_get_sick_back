@@ -6,9 +6,11 @@ import com.example.prj2be.mapper.board.BoardCommentMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class BoardCommentService {
 
    private final BoardCommentMapper mapper;

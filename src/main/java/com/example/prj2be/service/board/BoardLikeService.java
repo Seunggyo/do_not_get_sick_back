@@ -6,9 +6,11 @@ import com.example.prj2be.mapper.board.BoardLikeMapper;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class BoardLikeService {
 
    private final BoardLikeMapper likeMapper;

@@ -6,18 +6,20 @@ import com.example.prj2be.mapper.board.BoardCommentMapper;
 import com.example.prj2be.mapper.board.BoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
-import com.example.prj2be.mapper.drug.FileMapper;
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class BoardService {
 
    private final BoardMapper mapper;
@@ -25,7 +27,7 @@ public class BoardService {
    private final BoardLikeMapper likeMapper;
    private final BoardFileMapper fileMapper;
 
-   public boolean save(Board board, MultipartFile[] files, Member login) {
+   public boolean save(Board board, MultipartFile[] files, Member login) throws IOException {
       board.setWriter(login.getId());
 
       // boardFile 테이블에 files 정보저장
@@ -44,21 +46,15 @@ public class BoardService {
       return cnt == 1;
    }
 
-   private void upload(Integer boardId, MultipartFile file) {
+   private void upload(Integer boardId, MultipartFile file) throws IOException {
 
-      try {
-         File folder = new File("C:\\Temp\\prj2\\" + boardId);
-         if(!folder.exists()){
-            folder.mkdirs();
-         }
+      File folder = new File("C:\\Temp\\prj2\\" + boardId);
+      if(!folder.exists()) {
+         folder.mkdirs();
 
          String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
          File des = new File(path);
          file.transferTo(des);
-
-
-      } catch(Exception e){
-         e.printStackTrace();
       }
    }
 

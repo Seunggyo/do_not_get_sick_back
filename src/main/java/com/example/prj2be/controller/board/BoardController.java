@@ -3,6 +3,7 @@ package com.example.prj2be.controller.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.board.BoardService;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class BoardController {
    public ResponseEntity add(
       Board board,
       @RequestParam(value = "file[]", required = false) MultipartFile[] files,
-      @SessionAttribute(value = "login", required = false) Member login) {
+      @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
