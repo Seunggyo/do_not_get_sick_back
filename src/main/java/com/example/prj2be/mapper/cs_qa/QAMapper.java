@@ -20,7 +20,9 @@ public interface QAMapper {
    @Select("""
         SELECT q.id,
                q.qaTitle,
+               q.qaContent,
                q.qaWriter,
+               q.qaCategory,
                m.nickName,
                q.inserted
         FROM customerqa q JOIN member m ON q.qaWriter = m.id
@@ -35,7 +37,8 @@ public interface QAMapper {
    @Select("""
         SELECT q.id,
                q.qaTitle,
-               q.qaContent, 
+               q.qaCategory,
+               q.qaContent,
                q.qaWriter, 
                m.NickName,
                q.inserted
@@ -51,33 +54,34 @@ public interface QAMapper {
    int deleteById(Integer id);
 
    @Update("""
-        UPDATE customerqa
-        SET qaTitle = #{qaTitle},
-            qaContent = #{qaContent},
-            qaWriter = #{qaWriter}
-        WHERE id = #{id}
-        """)
+      UPDATE customerqa
+      SET qaTitle = #{qaTitle},
+          qaContent = #{qaContent},
+          qaWriter = #{qaWriter},
+          qaCategory = #{qaCategory}
+      WHERE id = #{id}
+      """)
    int update(CustomerQA qa);
 
 
-   @Delete("""
-        DELETE FROM customerqa
-        WHERE qaWriter = #{qaWriter}
-        """)
-
-   int deleteByWriter(String qaWriter);
-
-   @Select("""
-        SELECT id
-        FROM customerqa
-        WHERE qaWriter = #{id}
-        """)
-   List<Integer> selectIdListByMemberId(String qaWriter);
+//   @Delete("""
+//        DELETE FROM customerqa
+//        WHERE qaWriter = #{qaWriter}
+//        """)
+//
+//   int deleteByWriter(String qaWriter);
+//
+//   @Select("""
+//        SELECT id
+//        FROM customerqa
+//        WHERE qaWriter = #{id}
+//        """)
+//   List<Integer> selectIdListByMemberId(String qaWriter);
 
    @Select("""
         SELECT COUNT(*) FROM customerqa
         WHERE qaTitle LIKE #{keyword}
-           OR qaContent LIKE #{keyword}
+           OR qaCategory LIKE #{keyword}
         """)
    int countAll(String keyword);
 }

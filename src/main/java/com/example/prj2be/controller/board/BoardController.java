@@ -4,6 +4,7 @@ import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.board.BoardService;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -46,12 +48,18 @@ public class BoardController {
    }
 
    @GetMapping("list")
-   public List<Board> list() {
-      return service.list();
+   public Map<String, Object> list(
+      @RequestParam(value = "n", required = false) Boolean orderByNum,
+      @RequestParam(value = "h", required = false) Boolean orderByHit,
+      @RequestParam(value = "p", defaultValue = "1") Integer page,
+      @RequestParam(value = "k", defaultValue = "") String  keyword) {
+
+      return service.list(orderByNum, orderByHit, page, keyword);
    }
 
    @GetMapping("id/{id}")
    public Board get(@PathVariable Integer id) {
+
       return service.get(id);
    }
 
@@ -93,6 +101,12 @@ public class BoardController {
       } else {
          return ResponseEntity.badRequest().build();
       }
+   }
+
+   @PutMapping("{id}")
+   public void hitCount(@PathVariable Integer id) {
+      service.hitCount(id);
+
    }
 
 }

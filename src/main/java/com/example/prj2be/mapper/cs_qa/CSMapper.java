@@ -52,27 +52,27 @@ public interface CSMapper {
       UPDATE customerService
       SET csTitle = #{csTitle},
          csContent = #{csContent},
-         csWriter = #{csWriter},
-         csCategory = #{csCategory}
+         csWriter = #{csWriter}
+       
       WHERE id = #{id}
       """)
    int update(CustomerService cs);
 
 
-   @Delete("""
-        DELETE FROM customerService
-        WHERE csWriter = #{csWriter}
-        """)
-
-   int deleteByWriter(String writer);
-
-   @Select("""
-      SELECT id
-      FROM customerService
-      WHERE csWriter = #{id}
-      """)
-
-   List<Integer> selectIdListByMemberId(String writer);
+//   @Delete("""
+//        DELETE FROM customerService
+//        WHERE csWriter = #{csWriter}
+//        """)
+//
+//   int deleteByWriter(String writer);
+//
+//   @Select("""
+//      SELECT id
+//      FROM customerService
+//      WHERE csWriter = #{id}
+//      """)
+//
+//   List<Integer> selectIdListByMemberId(String writer);
 
    @Update("""
       UPDATE customerService
@@ -85,6 +85,7 @@ public interface CSMapper {
         SELECT COUNT(*) FROM customerService
         WHERE csTitle LIKE #{keyword}
            OR csContent LIKE #{keyword}
+           OR csCategory LIKE #{keyword}
         """)
    int countAll(String keyword);
 }
