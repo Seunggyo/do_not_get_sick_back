@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -12,37 +13,48 @@ import org.apache.ibatis.annotations.Update;
 public interface BoardMapper {
 
    @Insert("""
-      INSERT INTO board(title, content, writer,category)
+      INSERT INTO board(
+      title, content, writer,category)
       VALUES (#{title}, #{content}, #{writer}, #{category})
       """)
+   @Options(useGeneratedKeys = true, keyProperty = "id")
    int insert(Board board);
 
    @Select("""
-      SELECT b.id,
+        SELECT b.id,
                b.title,
                b.writer,
                m.nickName,
                b.category,
                b.inserted,
-               COUNT(distinct c.id) countComment,
-               COUNT(distinct l.memberId) countLike
+               b.increaseHit,
+               COUNT(DISTINCT c.id) countComment,
+               COUNT(DISTINCT l.memberId) countLike
         FROM board b JOIN member m ON b.writer = m.id
-                     LEFT JOIN boardComment c on b.id = c.boardId
-                     LEFT JOIN boardLike l on b.id = l.boardId
+                     LEFT JOIN boardComment c ON b.id = c.boardId
+                     LEFT JOIN boardLike l ON b.id = l.boardId
+        WHERE b.category LIKE #{keyword}
+           OR b.title LIKE #{keyword}
+           OR m.nickName Like #{keyword}
         GROUP BY b.id
         having count(distinct l.memberId) >= #{countLike}
         ORDER BY b.id DESC
-      """)
-   List<Board> selectAll(Integer countLike);
+        LIMIT #{from}, 10
+        """)
+   List<Board> selectAll(Integer from, String keyword);
 
    @Select("""
-      SELECT b.id, b.title, b.content, b.writer, m.nickName, b.category, b.inserted
+      SELECT b.id, 
+      b.title, 
+      b.content, 
+      b.writer, 
+      m.nickName, 
+      b.category, 
+      b.inserted
       FROM board b JOIN member m ON b.writer = m.id
       WHERE b.id = #{id}
       """)
    Board selectById(Integer id);
-
-
 
    @Delete("""
       DELETE FROM board
@@ -57,16 +69,31 @@ public interface BoardMapper {
       content = #{content},
       writer = #{writer},
       category = #{category}
-     
       WHERE id = #{id}
       """)
    int update(Board board);
 
-   @Delete("""
-        DELETE FROM board
-        WHERE writer = #{writer}
-        """)
 
-   int deleteByWriter(String writer);
+//   @Delete("""
+//        DELETE FROM board
+//        WHERE writer = #{writer}
+//        """)
+//
+//   int deleteByWriter(String writer);
+
+   @Select("""
+        SELECT COUNT(*) FROM board
+        WHERE title LIKE #{keyword}
+           OR content LIKE #{keyword}
+           OR category Like #{keyword}
+        """)
+   int countAll(String keyword);
+
+   @Update("""
+      UPDATE board
+      SET increaseHit = increaseHit + 1
+      WHERE id = #{id}
+      """)
+   int increaseHit(int id);
 
 }

@@ -3,11 +3,14 @@ package com.example.prj2be.controller.board;
 import com.example.prj2be.domain.board.Board;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.board.BoardService;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,9 +22,9 @@ public class BoardController {
 
    @PostMapping("add")
    public ResponseEntity add(
-      @RequestBody Board board,
-      @SessionAttribute(value = "login", required = false) Member login) {
-//      System.out.println("login = " + login);
+      Board board,
+      @RequestParam(value = "file[]", required = false) MultipartFile[] files,
+      @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -30,7 +33,7 @@ public class BoardController {
          return ResponseEntity.badRequest().build();
       }
 
-      if (service.save(board, login)) {
+      if (service.save(board, files, login)) {
          return ResponseEntity.ok().build();
       } else {
          return ResponseEntity.internalServerError().build();
@@ -38,16 +41,27 @@ public class BoardController {
    }
 
    @GetMapping("list")
-   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
-      int likeCount=0;
-      if (keyword.equals("pop")) {
-         likeCount=1;
-      }
-      return service.list(likeCount);
+   public Map<String, Object> list(
+      @RequestParam(value = "n", required = false) Boolean orderByNum,
+      @RequestParam(value = "h", required = false) Boolean orderByHit,
+      @RequestParam(value = "p", defaultValue = "1") Integer page,
+      @RequestParam(value = "k", defaultValue = "") String  keyword) {
+
+      return service.list(orderByNum, orderByHit, page, keyword);
+
+//   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
+//      int likeCount=0;
+//      if (keyword.equals("pop")) {
+//         likeCount=1;
+//      }
+//      return service.list(likeCount);
+//   }
    }
+
 
    @GetMapping("id/{id}")
    public Board get(@PathVariable Integer id) {
+
       return service.get(id);
    }
 
@@ -89,6 +103,12 @@ public class BoardController {
       } else {
          return ResponseEntity.badRequest().build();
       }
+   }
+
+   @PutMapping("{id}")
+   public void hitCount(@PathVariable Integer id) {
+      service.hitCount(id);
+
    }
 
 }

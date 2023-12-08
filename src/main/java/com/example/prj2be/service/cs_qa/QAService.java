@@ -1,42 +1,46 @@
 package com.example.prj2be.service.cs_qa;
 
-import com.example.prj2be.domain.cs_qa.QA;
+import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.mapper.cs_qa.QA_BoardMapper;
+
+import com.example.prj2be.mapper.cs_qa.QAMapper;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class QA_Service {
+@Transactional(rollbackFor = Exception.class)
+public class QAService {
 
-   private final QA_BoardMapper mapper;
+   private final QAMapper mapper;
+//   private final QACommentMapper qaCommentMapper;
 
-   public boolean save(QA qa, Member login) {
-      qa.setQa_Writer(login.getId());
+   public boolean save(CustomerQA qa, Member login) {
+      qa.setQaWriter(login.getId());
 
       return mapper.insert(qa) == 1;
    }
 
-   public boolean validate(QA qa) {
+   public boolean validate(CustomerQA qa) {
       if (qa == null) {
          return false;
       }
 
-      if (qa.getQa_Content() == null || qa.getQa_Content().isBlank()) {
+      if (qa.getQaContent() == null || qa.getQaContent().isBlank()) {
          return false;
       }
 
-      if (qa.getQa_Title() == null || qa.getQa_Title().isBlank()) {
+      if (qa.getQaTitle() == null || qa.getQaTitle().isBlank()) {
          return false;
       }
 
       return true;
    }
 
-   public Map<String, Object> qa_list(Integer page, String keyword) {
+   public Map<String, Object> qaList(Integer page, String keyword) {
       Map<String, Object> map = new HashMap<>();
       Map<String, Object> pageInfo = new HashMap<>();
 
@@ -59,14 +63,38 @@ public class QA_Service {
       }
 
       int from = (page - 1) * 10;
-      map.put("boardList", mapper.selectAll(from, "%" + keyword + "%"));
+      map.put("qaList", mapper.selectAll(from, "%" + keyword + "%"));
       map.put("pageInfo", pageInfo);
       return map;
    }
 
-   public QA get(Integer id) {
+   public CustomerQA get(Integer id) {
 
       return mapper.selectById(id);
 
+   }
+   public boolean remove(Integer id) {
+//      // 게시물에 달린 댓글들 지우기
+//      commentMapper.deleteByBoardId(id);
+
+      return mapper.deleteById(id) == 1;
+   }
+
+   public boolean update(CustomerQA qa) {
+      return mapper.update(qa) == 1;
+   }
+
+   public boolean hasAccess(Integer id, Member login) {
+      if (login == null) {
+         return false;
+      }
+
+      if (login.isAdmin()) {
+         return true;
+      }
+
+      CustomerQA qa = mapper.selectById(id);
+
+      return qa.getQaWriter().equals(login.getId());
    }
 }

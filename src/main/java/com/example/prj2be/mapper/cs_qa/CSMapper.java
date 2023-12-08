@@ -16,12 +16,14 @@ public interface CSMapper {
       INSERT INTO customerService (csTitle, csCategory, csContent, csWriter)
       VALUES (#{csTitle}, #{csCategory}, #{csContent}, #{csWriter})
       """)
-   int insert(CustomerService cs, Member login);
+   int insert(CustomerService cs);
 
    @Select("""
       SELECT c.id, c.csTitle, c.csCategory, c.csWriter, m.nickName, c.inserted, c.csHit
       FROM customerService c JOIN member m ON c.csWriter = m.id
       WHERE c.csTitle LIKE #{keyword}
+      or c.csCategory LIKE #{keyword}
+      or m.nickName LIKE #{keyword}
       ORDER BY c.id DESC 
       LIMIT #{from}, 10
       """)
@@ -50,27 +52,27 @@ public interface CSMapper {
       UPDATE customerService
       SET csTitle = #{csTitle},
          csContent = #{csContent},
-         csWriter = #{csWriter},
-         csCategory = #{csCategory}
+         csWriter = #{csWriter}
+       
       WHERE id = #{id}
       """)
    int update(CustomerService cs);
 
 
-   @Delete("""
-        DELETE FROM board
-        WHERE csWriter = #{csWriter}
-        """)
-
-   int deleteByWriter(String writer);
-
-   @Select("""
-      SELECT id
-      FROM customerService
-      WHERE writer = #{id}
-      """)
-
-   List<Integer> selectIdListByMemberId(String writer);
+//   @Delete("""
+//        DELETE FROM customerService
+//        WHERE csWriter = #{csWriter}
+//        """)
+//
+//   int deleteByWriter(String writer);
+//
+//   @Select("""
+//      SELECT id
+//      FROM customerService
+//      WHERE csWriter = #{id}
+//      """)
+//
+//   List<Integer> selectIdListByMemberId(String writer);
 
    @Update("""
       UPDATE customerService
@@ -83,6 +85,7 @@ public interface CSMapper {
         SELECT COUNT(*) FROM customerService
         WHERE csTitle LIKE #{keyword}
            OR csContent LIKE #{keyword}
+           OR csCategory LIKE #{keyword}
         """)
    int countAll(String keyword);
 }
