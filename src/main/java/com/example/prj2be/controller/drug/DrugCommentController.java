@@ -1,9 +1,12 @@
 package com.example.prj2be.controller.drug;
 
+
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.DrugCommentService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
