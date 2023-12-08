@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper.hs;
 
+import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsCourse;
 import java.util.List;
@@ -33,13 +34,14 @@ public interface HsMapper {
             b.content,
             b.category,
             b.nightCare,
-            b.phone;
+            b.phone
+        ORDER BY COUNT(DISTINCT b2.id) DESC 
         """)
     List<Hs> selectByCategory(String category);
 
     @Insert("""
-        INSERT INTO prj2.business(name,memberId,address,phone,openHour,openMin,restHour,restMin,closeHour,closeMin,content,category,nightCare,homePage)
-        VALUES (#{name},#{memberId},#{address},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{closeHour},#{closeMin},#{content},'hospital',#{nightCare},#{homePage})
+        INSERT INTO prj2.business(name,memberId,address,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
+        VALUES (#{name},#{memberId},#{address},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{restCloseHour},#{restCloseMin},#{closeHour},#{closeMin},#{info},#{content},'hospital',#{nightCare},#{homePage})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Hs hs);
@@ -51,9 +53,14 @@ public interface HsMapper {
         phone =#{phone},
         openHour = #{openHour},
         openMin = #{openMin},
+        restHour = #{restHour},
+        restMin = #{restMin},
+        restCloseHour = #{restCloseHour},
+        restCloseMin = #{restCloseMin},
         closeHour = #{closeHour},
         closeMin = #{closeMin},
         content = #{content},
+        info = #{info},
         homePage = #{homePage},
         nightCare = #{nightCare}
         WHERE id = #{id}
@@ -61,9 +68,9 @@ public interface HsMapper {
     int update(Hs hs);
 
     @Select("""
-            SELECT b.id,b.memberId,b.name, b.address, b.phone, b.openhour, b.openmin, b.closehour, b.closemin, b.content, b.homePage, b.category, b.nightcare
-            FROM prj2.business b
-            WHERE b.id = #{id}
+            SELECT *
+            FROM prj2.business 
+            WHERE id = #{id}
         """)
     Hs selectById(Integer id);
 
@@ -85,5 +92,30 @@ public interface HsMapper {
         FROM prj2.medicalcourse
         WHERE medicalCourseId =#{id}
         """)
-    List<HsCourse> courseSelectByBuisnessId(Integer id);
+    List<HsCourse> courseSelectByBusinessId(Integer id);
+
+    @Delete("""
+        DELETE FROM prj2.medicalcourse
+        WHERE prj2.medicalcourse.medicalCourseId = #{id}
+        """)
+    void courseDeleteByBusinessId(Integer id);
+
+    @Delete("""
+        DELETE FROM businessholiday
+        WHERE businessId = #{id}
+        """)
+    void holidayDeleteByBusinessId(Integer id);
+
+    @Insert("""
+        INSERT INTO businessholiday(businessId, holiday) 
+        VALUES (#{id},#{holiday})
+        """)
+    void insertHoliday(Integer id, String holiday);
+
+    @Select("""
+        SELECT *
+        FROM prj2.businessholiday
+        WHERE businessId = #{id}
+        """)
+    List<BusinessHoliday> holidaySelectByBusinessId(Integer id);
 }

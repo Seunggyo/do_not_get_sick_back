@@ -35,6 +35,7 @@ public class HsController {
     @PostMapping("add")
     public ResponseEntity add(Hs hs,
         @RequestParam(value = "course[]", required = false) String[] course,
+        @RequestParam(value = "holiday[]", required = false) String[] holiday,
         @RequestParam(value = "hsFiles[]", required = false)
         MultipartFile[] hsFile,
         @SessionAttribute(value = "login", required = false) Member login) throws IOException {
@@ -42,7 +43,7 @@ public class HsController {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (service.add(hs, course, hsFile, login)) {
+        if (service.add(hs, holiday, course, hsFile, login)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
@@ -56,11 +57,13 @@ public class HsController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Hs hs,
+        @RequestParam(value = "holiday[]", required = false) String[] holiday,
+        @RequestParam(value = "course", required = false) String[] course,
         @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
         @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFile)
         throws IOException {
 
-        if (service.update(hs, removeFileIds, uploadFile)) {
+        if (service.update(hs, holiday, course, removeFileIds, uploadFile)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();

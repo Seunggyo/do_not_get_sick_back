@@ -42,4 +42,12 @@ public class BusinessLikeService {
 
         return Map.of("like", like != null, "countLike", countLike);
     }
+
+    public Map<String, Object> getName(String name) {
+        return mapper.selectByName(name);
+    }
+
+    public Integer getIdByName(String name) {
+        return mapper.getIdByName(name);
+    }
 }

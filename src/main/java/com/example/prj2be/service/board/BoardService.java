@@ -37,8 +37,8 @@ public class BoardService {
       return true;
    }
 
-   public List<Board> list() {
-      return mapper.selectAll();
+   public List<Board> list(Integer likeCount) {
+      return mapper.selectAll(likeCount);
    }
 
    public Board get(Integer id) {

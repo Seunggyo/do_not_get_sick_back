@@ -1,6 +1,6 @@
 package com.example.prj2be.service.drug;
 
-import com.example.prj2be.domain.comment.Comment;
+
 import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.mapper.drug.DrugMapper;

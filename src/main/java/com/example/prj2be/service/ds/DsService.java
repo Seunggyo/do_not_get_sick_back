@@ -2,6 +2,7 @@ package com.example.prj2be.service.ds;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsKakao;
 import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.business.BusinessLikeMapper;
@@ -61,6 +62,8 @@ public class DsService {
 
     public boolean save(Ds ds, MultipartFile[] files, Member login, String[] holidays) throws IOException {
         // 올바르게 접근한 사용자가 정보 저장 시 db로 정보 보내는 코드
+
+        ds.setMemberId(login.getId());
 
         int cnt = mapper.insert(ds);
 
@@ -213,5 +216,31 @@ public class DsService {
 
 
         return mapper.deleteById(id) == 1;
+    }
+
+    public List<DsKakao> kakao(DsKakao dsKakao) {
+        return mapper.selectAllByKakao(dsKakao);
+    }
+
+    public Ds getName(String name) {
+        return get(mapper.selectByName(name).getId());
+    }
+
+    public boolean hasAccess(Integer id, Member login) {
+        if (login == null){
+            return false;
+        }
+
+        if (login.isAdmin()) {
+            return true;
+        }
+
+        Ds ds = mapper.selectById(id);
+
+        return ds.getMemberId().equals(login.getId());
+    }
+
+    public List<Ds> getListByCK(String keyword, String category) {
+        return mapper.getListByCK("%" + keyword + "%", category);
     }
 }
