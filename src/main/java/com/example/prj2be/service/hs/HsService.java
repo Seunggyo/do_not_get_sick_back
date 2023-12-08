@@ -1,6 +1,8 @@
 package com.example.prj2be.service.hs;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
+import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsCourse;
 import com.example.prj2be.domain.hs.HsFile;
@@ -51,7 +53,33 @@ public class HsService {
     }
 
     public List<Hs> list(String category) {
-        return mapper.selectByCategory(category);
+
+//        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
+//
+//        for (Ds ds : dsList) {
+//            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+//
+//            for (DsPicture dsPicture : dsPictures){
+//                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
+//                dsPicture.setUrl(url);
+//            }
+//
+//            ds.setFiles(dsPictures);
+//        }
+        List<Hs> hsList = mapper.selectByCategory(category);
+
+        for (Hs hs : hsList) {
+            List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
+
+            for (HsFile hsFile : hsFiles) {
+                String url = urlPrefix + "prj2/hospital/" + hs.getId() + "/" + hsFile.getName();
+                hsFile.setUrl(url);
+            }
+            hs.setFiles(hsFiles);
+
+        }
+
+        return hsList;
     }
 
     public boolean add(Hs hs, String[] course, String[] holidays, MultipartFile[] hsFile,

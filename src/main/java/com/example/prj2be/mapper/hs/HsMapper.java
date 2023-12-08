@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
         FROM prj2.business b left join prj2.businessmap bm on b.id = bm.businessId
         left join prj2.businesslike b2 on b.id = b2.businessId
@@ -35,7 +35,7 @@ public interface HsMapper {
             b.category,
             b.nightCare,
             b.phone
-        ORDER BY COUNT(DISTINCT b2.id) DESC 
+        ORDER BY COUNT(DISTINCT b2.id) DESC
         """)
     List<Hs> selectByCategory(String category);
 
