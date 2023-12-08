@@ -55,6 +55,13 @@ public class DsController {
         return service.list(page, keyword, category);
     }
 
+    // soowan's code
+    @GetMapping("listByCK")
+    public List<Ds> getListByCK(@RequestParam(value = "k", defaultValue = "") String keyword,
+                                @RequestParam(value = "c", defaultValue = "all") String category) {
+        return service.getListByCK(keyword, category);
+    }
+
     @GetMapping("kakao")
     public List<DsKakao> map (DsKakao dsKakao){
         return service.kakao(dsKakao);

@@ -239,4 +239,8 @@ public class DsService {
 
         return ds.getMemberId().equals(login.getId());
     }
+
+    public List<Ds> getListByCK(String keyword, String category) {
+        return mapper.getListByCK("%" + keyword + "%", category);
+    }
 }

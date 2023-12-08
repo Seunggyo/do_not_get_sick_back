@@ -6,6 +6,7 @@ import com.example.prj2be.domain.ds.DsKakao;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DsMapper {
@@ -46,6 +47,7 @@ public interface DsMapper {
 
 //    TODO : 검색 기능 추가해야 함
     @Select("""
+            <script>
             SELECT b.id,
                    b.name,
                    b.phone,
@@ -69,10 +71,17 @@ public interface DsMapper {
                     ON b.id = bc.businessId
                 LEFT JOIN businessholiday bh
                     ON b.id = bh.businessId
-            WHERE b.category = 'drugStore'
+            WHERE 
+             <trim prefixOverrides="OR">
+                     b.category = 'drugStore'
+                    <if test="category == 'all' or category == 'name'">
+                        OR name LIKE #{keyword}
+                    </if>
+            </trim>
 
             GROUP BY b.id
             LIMIT #{from}, 10
+            </script>
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
@@ -147,4 +156,34 @@ public interface DsMapper {
             WHERE name = #{name}
             """)
     Ds selectByName(String name);
+
+    @Select("""
+            SELECT b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
+                   bh.holiday,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+            FROM business b
+                     LEFT JOIN businesslike bl
+                               ON b.id = bl.businessId
+                     LEFT JOIN businesscomment bc
+                               ON b.id = bc.businessId
+                     LEFT JOIN businessholiday bh
+                               ON b.id = bh.businessId
+            WHERE b.category = 'drugStore' AND name LIKE #{keyword}
+            GROUP BY b.id
+            LIMIT 0, 10
+    """)
+    List<Ds> getListByCK(String keyword, String category);
 }
