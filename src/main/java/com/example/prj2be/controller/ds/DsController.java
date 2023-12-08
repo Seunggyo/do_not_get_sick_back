@@ -52,6 +52,7 @@ public class DsController {
                                     @RequestParam(value = "c", defaultValue = "all") String category) {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
+
         return service.list(page, keyword, category);
     }
 
