@@ -10,6 +10,7 @@ public class Cart {
     private Integer quantity;
     private String drugName;
     private Integer total;
-
+    private String fileName;
+    private String url;
 
 }

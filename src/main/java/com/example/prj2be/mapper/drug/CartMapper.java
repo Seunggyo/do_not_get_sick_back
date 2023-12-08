@@ -44,9 +44,11 @@ public interface CartMapper {
     int updateIncreaseQuantity(Cart cart);
 
     @Select("""
-            SELECT c.id, d.name drugName, c.quantity, d.price*c.quantity total
+            SELECT c.id, d.name drugName, c.quantity, d.price*c.quantity total, d.id drugId,
+            (select name from drugFile where drugId = d.id limit 1) fileName
             FROM drugCart c
             JOIN drug d ON d.id = c.drugId
+            join drugFile df on d.id = df.drugId
             where c.memberId = #{memberId}
             """)
     List<Cart> selectCartList(String memberId);

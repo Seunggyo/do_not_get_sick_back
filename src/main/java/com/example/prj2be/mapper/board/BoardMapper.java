@@ -24,13 +24,16 @@ public interface BoardMapper {
                m.nickName,
                b.category,
                b.inserted,
-               COUNT(c.id) countComment
+               COUNT(distinct c.id) countComment,
+               COUNT(distinct l.memberId) countLike
         FROM board b JOIN member m ON b.writer = m.id
                      LEFT JOIN boardComment c on b.id = c.boardId
+                     LEFT JOIN boardLike l on b.id = l.boardId
         GROUP BY b.id
+        having count(distinct l.memberId) >= #{countLike}
         ORDER BY b.id DESC
       """)
-   List<Board> selectAll();
+   List<Board> selectAll(Integer countLike);
 
    @Select("""
       SELECT b.id, b.title, b.content, b.writer, m.nickName, b.category, b.inserted
