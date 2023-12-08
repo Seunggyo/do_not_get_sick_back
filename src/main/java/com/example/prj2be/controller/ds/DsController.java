@@ -1,6 +1,7 @@
 package com.example.prj2be.controller.ds;
 
 import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsKakao;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.ds.DsService;
 import lombok.RequiredArgsConstructor;
@@ -54,22 +55,44 @@ public class DsController {
         return service.list(page, keyword, category);
     }
 
+    // soowan's code
+    @GetMapping("listByCK")
+    public List<Ds> getListByCK(@RequestParam(value = "k", defaultValue = "") String keyword,
+                                @RequestParam(value = "c", defaultValue = "all") String category) {
+        return service.getListByCK(keyword, category);
+    }
+
+    @GetMapping("kakao")
+    public List<DsKakao> map (DsKakao dsKakao){
+        return service.kakao(dsKakao);
+    }
+
     @GetMapping("id/{id}")
     public Ds get(@PathVariable Integer id) {
         return service.get(id);
+    }
+
+    @GetMapping("name/{name}")
+    public Ds map(@PathVariable String name) {
+        return service.getName(name);
     }
 
     @PutMapping("edit")
     public ResponseEntity edit(Ds ds,
                                @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
                                @RequestParam(value = "uploadFile[]", required = false) MultipartFile[] uploadFile,
-                               @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds
-                               /*@SessionAttribute(value = "login",required = false) Member login*/) throws IOException {
+                               @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds,
+                               @SessionAttribute(value = "login",required = false) Member login) throws IOException {
         // 약국 정보 수정
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         // TODO : 멤버 테이블 추가 시 로그인 제약 추가
-//        if (!service.hasAccess(ds.getId(), login)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
+        if (!service.hasAccess(ds.getId(), login)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (service.validate(ds)) {
             if (service.update(ds, uploadFile, deleteFileIds, holidays)) {
                 return ResponseEntity.ok().build();
@@ -82,7 +105,15 @@ public class DsController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity delete(@PathVariable Integer id) {
+    public ResponseEntity delete(@PathVariable Integer id,
+                                 @SessionAttribute(value = "login", required = false)Member login) {
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        if (!service.hasAccess(id, login)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
         if (service.delete(id)) {
             return ResponseEntity.ok().build();

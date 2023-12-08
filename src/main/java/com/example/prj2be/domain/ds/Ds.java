@@ -11,6 +11,7 @@ public class Ds {
 
     // insert 란
     private String name;
+    private String memberId;
     private String address;
     private String phone;
     private Integer openHour;
