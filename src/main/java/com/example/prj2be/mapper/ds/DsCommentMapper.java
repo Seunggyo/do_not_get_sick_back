@@ -22,7 +22,7 @@ public interface DsCommentMapper {
             WHERE businessId = #{businessId}
             ORDER By id DESC ;
             """)
-    List<DsComment> selectByBusinessId(Integer businessId);
+    List<DsComment> selectByBusinessId(Integer id);
 
     @Select("""
             SELECT * FROM businesscomment
@@ -39,7 +39,7 @@ public interface DsCommentMapper {
 
     @Delete("""
             DELETE FROM businesscomment
-            WHERE businessId = #{id}
+            WHERE id = #{id}
             """)
     int deleteById(Integer id);
 
@@ -49,4 +49,16 @@ public interface DsCommentMapper {
             WHERE businessId = #{id}
             """)
     int findById(Integer id);
+
+    @Select("""
+            SELECT * FROM businesscomment
+            WHERE memberId = #{memberId}
+            """)
+    List<DsComment> selectByMemberId(Integer memberId);
+
+    @Select("""
+            SELECT id FROM business
+            WHERE name = #{name}
+            """)
+    Integer selectIdByName(String name);
 }

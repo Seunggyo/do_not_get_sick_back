@@ -4,7 +4,9 @@ import com.example.prj2be.domain.drug.Cart;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.CartMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,11 @@ import java.util.Map;
 public class CartService {
 
     private final CartMapper mapper;
+    private final S3Client s3;
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
     public Map<String, Object> update(Cart cart, Member login){
 
@@ -43,8 +50,16 @@ public class CartService {
         return Map.of("cart", cart != null, "countCart", countCart);
     }
 
-    public List<Cart> cartList() {
-        return mapper.selectCartList();
+    public List<Cart> cartList(Member login) {
+        if (login != null) {
+            List<Cart> cartList = mapper.selectCartList(login.getId());
+            for (Cart cart : cartList) {
+                String url = urlPrefix + "prj2/drug/" + cart.getDrugId() + "/" + cart.getFileName();
+                cart.setUrl(url);
+            }
+            return cartList;
+        }
+        return null;
     }
 
     public boolean remove(Integer id) {

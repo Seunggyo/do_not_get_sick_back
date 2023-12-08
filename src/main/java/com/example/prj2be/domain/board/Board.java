@@ -14,5 +14,5 @@ public class Board {
    private String category;
    private LocalDate inserted;
    private Integer countComment;
-
+   private Integer countLike;
 }

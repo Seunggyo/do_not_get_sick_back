@@ -5,11 +5,8 @@ import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.mapper.drug.DrugMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +15,13 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 @Service
 @RequiredArgsConstructor
@@ -73,13 +77,12 @@ public class DrugService {
         String key = "prj2/drug/" + drugId + "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
-            .bucket(bucket)
-            .key(key)
-            .acl(ObjectCannedACL.PUBLIC_READ)
-            .build();
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
 
-        s3.putObject(objectRequest,
-            RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
     }
 
     public boolean validate(Drug drug) {
@@ -98,9 +101,10 @@ public class DrugService {
         if (drug.getContent() == null || drug.getContent().isBlank()) {
             return false;
         }
-        if (drug.getShipping() == null || drug.getShipping().isBlank()) {
+        if (drug.getShipping() == null || drug.getShipping().isBlank()){
             return false;
         }
+
 
         return true;
     }
@@ -144,7 +148,7 @@ public class DrugService {
             }
             drug.setFiles(drugFiles);
         }
-        map.put("drugList", drugList);
+        map.put("drugList",drugList);
         return map;
     }
 
@@ -170,36 +174,35 @@ public class DrugService {
         return mapper.deleteById(id) == 1;
     }
 
-    public void deleterFile(Integer id) {
+    public void deleterFile(Integer id){
 
-        List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(id);
+      List<DrugFile> drugFiles = fileMapper.selectNamesByDrugId(id);
 
-        for (DrugFile file : drugFiles) {
-            String key = "prj2/drug/" + id + "/" + file.getName();
+      for (DrugFile file : drugFiles) {
+          String key = "prj2/drug/" + id + "/" + file.getName();
 
-            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                .bucket(bucket)
-                .key(key)
-                .build();
-            s3.deleteObject(objectRequest);
-        }
-        fileMapper.deleteByBoardId(id);
+          DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                  .bucket(bucket)
+                  .key(key)
+                  .build();
+          s3.deleteObject(objectRequest);
+      }
+      fileMapper.deleteByBoardId(id);
     }
 
 
-    public boolean update(Drug drug, List<Integer> removeFileIds, MultipartFile[] uploadFiles)
-        throws IOException {
+    public boolean update(Drug drug, List<Integer> removeFileIds, MultipartFile[] uploadFiles ) throws IOException {
 
         // 파일 지우기
         if (removeFileIds != null) {
-            for (Integer id : removeFileIds) {
+            for (Integer id : removeFileIds){
                 // s3 지우기
                 DrugFile file = fileMapper.selectById(id);
                 String key = "prj2/drug" + drug.getId() + "/" + file.getName();
                 DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
-                    .build();
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
                 s3.deleteObject(objectRequest);
 
                 fileMapper.deleteById(id);
@@ -207,7 +210,7 @@ public class DrugService {
         }
 
         if (uploadFiles != null) {
-            for (MultipartFile file : uploadFiles) {
+            for (MultipartFile file :  uploadFiles) {
 
                 upload(drug.getId(), file);
 
