@@ -14,12 +14,12 @@ public interface DsMapper {
             INSERT INTO
             business(name, address, phone, openHour, openMin, closeHour,
                     closeMin, content, category, nightCare, restHour, restMin,
-                    restCloseHour, restCloseMin, info)
+                    restCloseHour, restCloseMin, info, memberId)
             VALUES (#{name}, #{address}, #{phone},
                     #{openHour}, #{openMin}, #{closeHour},
                     #{closeMin}, #{content},'drugStore', #{nightCare},
                     #{restHour}, #{restMin}, #{restCloseHour}, #{restCloseMin},
-                    #{info} )
+                    #{info}, #{memberId} )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ds ds);
@@ -47,7 +47,6 @@ public interface DsMapper {
 
 //    TODO : 검색 기능 추가해야 함
     @Select("""
-            <script>
             SELECT b.id,
                    b.name,
                    b.phone,
@@ -61,6 +60,7 @@ public interface DsMapper {
                    b.restMin,
                    b.restCloseHour,
                    b.restCloseMin,
+                   b.memberId,
                    bh.holiday,
                    COUNT(DISTINCT bl.id) `likeCount`,
                    COUNT(DISTINCT bc.id) `commentCount`
@@ -71,17 +71,10 @@ public interface DsMapper {
                     ON b.id = bc.businessId
                 LEFT JOIN businessholiday bh
                     ON b.id = bh.businessId
-            WHERE 
-             <trim prefixOverrides="OR">
-                     b.category = 'drugStore'
-                    <if test="category == 'all' or category == 'name'">
-                        OR name LIKE #{keyword}
-                    </if>
-            </trim>
+            WHERE b.category = 'drugStore'
 
             GROUP BY b.id
             LIMIT #{from}, 10
-            </script>
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword, String category);
 
@@ -98,7 +91,8 @@ public interface DsMapper {
                    b.restHour,
                    b.restMin,
                    b.restCloseHour,
-                   b.restCloseMin
+                   b.restCloseMin,
+                   b.memberId
             FROM business b
             WHERE b.id = #{id};
             """)
@@ -172,6 +166,7 @@ public interface DsMapper {
                    b.restCloseHour,
                    b.restCloseMin,
                    bh.holiday,
+                   b.memberId,
                    COUNT(DISTINCT bl.id) `likeCount`,
                    COUNT(DISTINCT bc.id) `commentCount`
             FROM business b
