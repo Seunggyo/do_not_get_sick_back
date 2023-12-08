@@ -29,7 +29,7 @@ public interface BoardMapper {
                b.inserted,
                b.increaseHit,
                COUNT(DISTINCT c.id) countComment,
-               COUNT(DISTINCT l.id) countLike
+               COUNT(DISTINCT l.memberId) countLike
         FROM board b JOIN member m ON b.writer = m.id
                      LEFT JOIN boardComment c ON b.id = c.boardId
                      LEFT JOIN boardLike l ON b.id = l.boardId
@@ -37,6 +37,7 @@ public interface BoardMapper {
            OR b.title LIKE #{keyword}
            OR m.nickName Like #{keyword}
         GROUP BY b.id
+        having count(distinct l.memberId) >= #{countLike}
         ORDER BY b.id DESC
         LIMIT #{from}, 10
         """)
