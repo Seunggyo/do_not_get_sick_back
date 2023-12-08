@@ -4,6 +4,7 @@ import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsReservation;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.hs.HsReservationService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -26,6 +28,12 @@ public class HsReservationController {
     @GetMapping("{id}")
     public Hs get(@PathVariable Integer id) {
         return service.get(id);
+    }
+
+    @GetMapping
+    public List<HsReservation> reservationGet(@RequestParam("id") String memberId,
+        @SessionAttribute(value = "login", required = false) Member login) {
+        return service.reservationGet(memberId);
     }
 
     @PostMapping("add")

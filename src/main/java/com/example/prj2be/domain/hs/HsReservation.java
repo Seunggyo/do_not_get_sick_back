@@ -7,6 +7,7 @@ import lombok.Data;
 public class HsReservation {
 
     private Integer id;
+    private String name;
     private Integer businessId;
     private String memberId;
     private Date reservationDate;

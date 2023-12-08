@@ -1,5 +1,6 @@
 package com.example.prj2be.service.hs;
 
+import com.example.prj2be.domain.business.BusinessHoliday;
 import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsCourse;
 import com.example.prj2be.domain.hs.HsFile;
@@ -53,13 +54,19 @@ public class HsService {
         return mapper.selectByCategory(category);
     }
 
-    public boolean add(Hs hs, String[] course, MultipartFile[] hsFile, Member login)
+    public boolean add(Hs hs, String[] course, String[] holidays, MultipartFile[] hsFile,
+        Member login)
         throws IOException {
         hs.setMemberId(login.getId());
         int cnt = mapper.insert(hs);
         if (course != null) {
             for (String hsCourse : course) {
                 mapper.insertCourse(hs.getId(), hsCourse);
+            }
+        }
+        if (holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(hs.getId(), holiday);
             }
         }
 
@@ -74,9 +81,22 @@ public class HsService {
         return cnt == 1;
     }
 
-    public boolean update(Hs hs, List<Integer> removeFileIds, MultipartFile[] uploadFiles)
+    public boolean update(Hs hs, String[] holidays, String[] courses, List<Integer> removeFileIds,
+        MultipartFile[] uploadFiles)
         throws IOException {
         int cnt = mapper.update(hs);
+        mapper.holidayDeleteByBusinessId(hs.getId());
+        if (holidays != null) {
+            for (String holiday : holidays) {
+                mapper.insertHoliday(hs.getId(), holiday);
+            }
+        }
+        mapper.courseDeleteByBusinessId(hs.getId());
+        if (courses != null) {
+            for (String course : courses) {
+                mapper.insertCourse(hs.getId(), course);
+            }
+        }
 
         if (removeFileIds != null) {
             for (Integer id : removeFileIds) {
@@ -111,13 +131,18 @@ public class HsService {
             hsFile.setUrl(url);
         }
         hs.setFiles(hsFiles);
-        List<HsCourse> hsCourses = mapper.courseSelectByBuisnessId(id);
-        hs.setMedicalCourse(hsCourses);
+        List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
+        List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
+        hs.setHolidays(businessHolidays);
         return hs;
     }
 
     public boolean remove(Integer id) {
         deleteFile(id);
+
+        mapper.holidayDeleteByBusinessId(id);
+
+        mapper.courseDeleteByBusinessId(id);
 
         commentMapper.deleteByBusinessId(id);
 

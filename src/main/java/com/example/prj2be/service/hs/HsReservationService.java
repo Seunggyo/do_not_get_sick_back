@@ -4,6 +4,7 @@ import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsReservation;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.hs.HsReservationMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,10 +49,16 @@ public class HsReservationService {
         if (login.isAdmin()) {
             return true;
         }
-        return reservation.getId().equals(login.getId());
+        System.out.println(reservation.getMemberId());
+        return reservation.getMemberId().equals(login.getId());
     }
 
     public boolean remove(Integer id) {
         return mapper.remove(id) == 1;
+    }
+
+
+    public List<HsReservation> reservationGet(String memberId) {
+        return mapper.selectByMemberId(memberId);
     }
 }
