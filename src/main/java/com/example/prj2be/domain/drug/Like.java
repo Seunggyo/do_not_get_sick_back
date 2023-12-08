@@ -7,5 +7,5 @@ public class Like {
 
     private Integer id;
     private Integer drugId;
-    private Integer memberId;
+    private String memberId;
 }
