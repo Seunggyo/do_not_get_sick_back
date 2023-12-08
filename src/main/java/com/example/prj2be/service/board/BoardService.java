@@ -75,12 +75,12 @@ public class BoardService {
    }
 
    public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
-      String keyword) {
+      String keyword, Integer popCount, String filter) {
 
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%");
+      int countAll = mapper.countAll("%" + keyword + "%", popCount, filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -101,7 +101,7 @@ public class BoardService {
       // 정렬된 데이터 조회
       List<Board> boardList;
       int from = (page - 1) * 10;
-      boardList = mapper.selectAll(from, "%" + keyword + "%");
+      boardList = mapper.selectAll(from, "%" + keyword + "%", popCount, filter);
 
       // 필요한 경우 정렬을 적용하기
       if (orderByNum != null || orderByHit != null) {

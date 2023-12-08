@@ -45,9 +45,17 @@ public class BoardController {
       @RequestParam(value = "n", required = false) Boolean orderByNum,
       @RequestParam(value = "h", required = false) Boolean orderByHit,
       @RequestParam(value = "p", defaultValue = "1") Integer page,
-      @RequestParam(value = "k", defaultValue = "") String  keyword) {
+      @RequestParam(value = "k", defaultValue = "") String  keyword,
+      @RequestParam(value = "b", defaultValue = "all") String b,
+      @RequestParam(value = "f", defaultValue = "") String filter) {
 
-      return service.list(orderByNum, orderByHit, page, keyword);
+      int popCount = 0;
+      if (b.equals("pop")) {
+         popCount = 1 ;
+      }
+
+      return service.list(orderByNum, orderByHit, page,
+              keyword, popCount, "%"+filter+"%");
 
 //   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
 //      int likeCount=0;

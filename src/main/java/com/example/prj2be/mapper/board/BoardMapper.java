@@ -33,15 +33,16 @@ public interface BoardMapper {
         FROM board b JOIN member m ON b.writer = m.id
                      LEFT JOIN boardComment c ON b.id = c.boardId
                      LEFT JOIN boardLike l ON b.id = l.boardId
-        WHERE b.category LIKE #{keyword}
+        WHERE (b.category LIKE #{keyword}
            OR b.title LIKE #{keyword}
-           OR m.nickName Like #{keyword}
+           OR m.nickName Like #{keyword})
+           and b.category like #{filter}
         GROUP BY b.id
-        having count(distinct l.memberId) >= #{countLike}
+        having count(distinct l.memberId) >= #{popCount}
         ORDER BY b.id DESC
         LIMIT #{from}, 10
         """)
-   List<Board> selectAll(Integer from, String keyword);
+   List<Board> selectAll(Integer from, String keyword, Integer popCount, String filter);
 
    @Select("""
       SELECT b.id, 
@@ -82,12 +83,16 @@ public interface BoardMapper {
 //   int deleteByWriter(String writer);
 
    @Select("""
-        SELECT COUNT(*) FROM board
-        WHERE title LIKE #{keyword}
-           OR content LIKE #{keyword}
-           OR category Like #{keyword}
+        SELECT COUNT(b.id) FROM board b
+        WHERE (b.title LIKE #{keyword}
+           OR b.content LIKE #{keyword}
+           OR b.category Like #{keyword})
+           and b.category like #{filter}
+           and (select count(*) 
+                from boardLike l 
+                where l.boardId = b.id) >= #{popCount}
         """)
-   int countAll(String keyword);
+   int countAll(String keyword, Integer popCount, String filter);
 
    @Update("""
       UPDATE board
