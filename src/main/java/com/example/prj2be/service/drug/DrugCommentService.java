@@ -2,11 +2,13 @@ package com.example.prj2be.service.drug;
 
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.drug.CartMapper;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
+import com.example.prj2be.mapper.drug.FileMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,10 +18,27 @@ import java.util.List;
 public class DrugCommentService {
 
     private final DrugCommentMapper mapper;
+    private FileMapper fileMapper;
 
-    public boolean add(DrugComment drugComment, Member login) {
+    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) {
+
+
         drugComment.setMemberId(login.getId());
-        return mapper.insert(drugComment) == 1;
+
+        int cnt = mapper.insert(drugComment);
+
+                // drugCommentFile 테이블에 files 정보 저장
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                // drugCommentId, FileName
+                fileMapper.CommentInsert(drugComment.getId(), files[i].getOriginalFilename());
+
+            }
+        }
+
+        // 실제 파일을 S3 bucket에 upload
+
+        return cnt == 1;
     }
 
     public boolean validate(DrugComment drugComment) {
