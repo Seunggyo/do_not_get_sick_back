@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -33,12 +34,31 @@ public class DrugCommentService {
                 // drugCommentId, FileName
                 fileMapper.CommentInsert(drugComment.getId(), files[i].getOriginalFilename());
 
+                 // 실제 파일을 S3 bucket에 upload
+                // 일단 local에 저장
+                upload(files[i]);
             }
         }
-
-        // 실제 파일을 S3 bucket에 upload
-
         return cnt == 1;
+    }
+
+    private void upload(Integer commentId,MultipartFile file) {
+        // 파일 저장 경로
+        // C:\Temp\prj2\댓글 번호\파일명
+
+        try {
+
+        File folder = new File("C:\\Temp\\prj2\\" + commentId);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
+        file.transferTo(new File(path));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean validate(DrugComment drugComment) {
