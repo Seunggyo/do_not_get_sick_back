@@ -10,6 +10,7 @@ import com.example.prj2be.service.payment.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ public class PaymentController {
     @PostMapping("/toss")
     public ResponseEntity requestTossPayment(@RequestBody @Valid PaymentDto paymentReqDto) throws CustomLogicException {
         PaymentResDto paymentResDto = (PaymentResDto) paymentService.requsetTossPayment(
-                entityService.toEntity(paymentReqDto), paymentReqDto.getEmail());
+                paymentReqDto, paymentReqDto.getEmail());
 
 
 

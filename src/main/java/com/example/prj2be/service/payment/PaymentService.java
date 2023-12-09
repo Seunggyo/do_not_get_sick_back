@@ -20,9 +20,12 @@ public class PaymentService {
     private final PaymentMapper paymentMapper;
     private final MemberMapper memberMapper;
     private final PaymentConfig paymentConfig;
+    private final EntityService entityService;
 
 
-    public Payment requsetTossPayment(Payment payment, String email) throws CustomLogicException {
+    public Payment requsetTossPayment(PaymentDto paymentDto, String email) throws CustomLogicException {
+
+        Payment payment = entityService.toEntity(paymentDto);
         if (payment.getAmount() < 1000) {
             throw new CustomLogicException(ExceptionCode.INVALID_PAYMENT_AMOUNT);
         }
