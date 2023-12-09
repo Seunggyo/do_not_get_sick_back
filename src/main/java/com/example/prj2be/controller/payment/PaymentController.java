@@ -31,9 +31,8 @@ public class PaymentController {
     public ResponseEntity requestTossPayment(@RequestBody @Valid PaymentDto paymentReqDto) throws CustomLogicException {
         PaymentResDto paymentResDto = (PaymentResDto) paymentService.requsetTossPayment(
                 paymentReqDto, paymentReqDto.getEmail());
-
-
-
+        paymentResDto.setSuccessUrl(paymentReqDto.getSuccessUrl() == null ? paymentConfig.getSuccessUrl() : paymentReqDto.getSuccessUrl());
+        paymentResDto.setFailUrl(paymentReqDto.getFailUrl() == null ? paymentConfig.getFailUrl() : paymentReqDto.getFailUrl());
 
         return ResponseEntity.ok(paymentResDto);
     }
