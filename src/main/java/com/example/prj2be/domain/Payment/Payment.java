@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Payment extends PaymentResDto {
+@Builder
+public class Payment {
     private Long id;
     private String status;
     private Long amount;

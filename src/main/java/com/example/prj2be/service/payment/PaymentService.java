@@ -34,7 +34,7 @@ public class PaymentService {
     private final EntityService entityService;
 
 
-    public Payment requsetTossPayment(PaymentDto paymentDto, String email) throws CustomLogicException {
+    public PaymentResDto requsetTossPayment(PaymentDto paymentDto, String email) throws CustomLogicException {
 
         Payment payment = entityService.toEntity(paymentDto);
         if (payment.getAmount() < 1000) {
@@ -42,7 +42,17 @@ public class PaymentService {
         }
         payment.setMemberId(memberMapper.findIdByEmail(email));
         paymentMapper.updateMemberIdByPayment(payment);
-        return payment;
+
+        PaymentResDto paymentResDto = new PaymentResDto();
+
+        paymentResDto.setStatus(payment.getStatus());
+        paymentResDto.setAmount(payment.getAmount());
+        paymentResDto.setPaymentName(payment.getPaymentName());
+        paymentResDto.setPaymentName(payment.getPaymentName());
+        paymentResDto.setPaymentUid(payment.getPaymentUid());
+        paymentResDto.setCustomerEmail(email);
+        paymentResDto.setCustomerName(payment.getMemberId());
+        return paymentResDto;
     }
 
     public PaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount) {

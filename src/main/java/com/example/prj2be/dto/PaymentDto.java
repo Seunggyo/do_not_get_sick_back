@@ -14,6 +14,7 @@ public class PaymentDto {
     private String paymentName;
     @NonNull
     private String email;
+    private String status = "CASH";
     private String paymentUid;
     private String successUrl;
     private String failUrl;

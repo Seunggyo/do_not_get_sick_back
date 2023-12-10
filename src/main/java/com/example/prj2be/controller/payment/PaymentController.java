@@ -28,7 +28,8 @@ public class PaymentController {
 
     @PostMapping("/toss")
     public ResponseEntity requestTossPayment(@RequestBody @Valid PaymentDto paymentReqDto) throws CustomLogicException {
-        PaymentResDto paymentResDto = (PaymentResDto) paymentService.requsetTossPayment(
+        System.out.println("PaymentController.requestTossPayment");
+        PaymentResDto paymentResDto = paymentService.requsetTossPayment(
                 paymentReqDto, paymentReqDto.getEmail());
         paymentResDto.setSuccessUrl(paymentReqDto.getSuccessUrl() == null ? paymentConfig.getSuccessUrl() : paymentReqDto.getSuccessUrl());
         paymentResDto.setFailUrl(paymentReqDto.getFailUrl() == null ? paymentConfig.getFailUrl() : paymentReqDto.getFailUrl());
@@ -36,11 +37,20 @@ public class PaymentController {
         return ResponseEntity.ok(paymentResDto);
     }
 
-    @GetMapping("/toss/success")
-    public ResponseEntity tossPaymentSuccess(@RequestParam PaymentRequsetDto paymentRequsetDto) throws JsonEOFException {
+    @PostMapping("/toss/success")
+    public ResponseEntity tossPaymentSuccess(@RequestBody PaymentRequsetDto paymentRequsetDto) throws JsonEOFException {
+        System.out.println("PaymentController.tossPaymentSuccess");
         String paymentKey = paymentRequsetDto.getPaymentKey();
         String orderId = paymentRequsetDto.getPaymentUid();
         Long amount = paymentRequsetDto.getAmount();
-        return ResponseEntity.ok().body(paymentService.tossPaymentSuccess(paymentKey,orderId,amount));
+        System.out.println("orderId = " + orderId);
+        return ResponseEntity.ok().body(paymentService.tossPaymentSuccess(paymentKey, orderId, amount));
+    }
+
+    @GetMapping("/toss/success")
+    public void method1(@RequestParam String paymentKey,
+                        @RequestParam String orderId,
+                        @RequestParam Long amount) {
+        System.out.println("PaymentController.method1");
     }
 }
