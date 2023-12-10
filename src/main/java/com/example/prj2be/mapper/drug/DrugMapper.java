@@ -30,10 +30,10 @@ public interface DrugMapper {
                     ON d.id = f.drugId
             WHERE 
             <trim prefixOverrides="OR">
-                    <if test="func == 'all' or func == 'name'">
+                    <if test="category == 'all' or category == 'name'">
                         OR d.name LIKE #{keyword}
                     </if>
-                    <if test="func == 'all' or func == 'function'">
+                    <if test="category == 'all' or category == 'function'">
                         OR d.function LIKE #{keyword}
                     </if>
                 </trim>
@@ -41,7 +41,7 @@ public interface DrugMapper {
             LIMIT #{from}, 6
             </script>
             """)
-    List<Drug> selectDrugList(Integer from, String keyword, String func);
+    List<Drug> selectDrugList(Integer from, String keyword, String category);
 
     @Select("""
             select d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
@@ -84,15 +84,15 @@ public interface DrugMapper {
     SELECT COUNT(*) FROM drug d
     WHERE 
         <trim prefixOverrides="OR">
-            <if test="function == 'all' or function == 'name'">
+            <if test="category == 'all' or category == 'name'">
                 OR d.name LIKE #{keyword}
             </if>
-            <if test="function == 'all' or function == 'function'">
+            <if test="category == 'all' or category == 'function'">
                 OR d.function LIKE #{keyword}
             </if>
         </trim>
     </script>
     """)
 
-    int countAll(String keyword, String function);
+    int countAll(String keyword, String category);
 }
