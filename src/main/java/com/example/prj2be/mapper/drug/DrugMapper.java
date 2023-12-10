@@ -30,23 +30,11 @@ public interface DrugMapper {
                     ON d.id = f.drugId
             WHERE 
             <trim prefixOverrides="OR">
-                    <if test="func == 'all' or func == '위 건강'">
+                    <if test="func == 'all' or func == 'name'">
                         OR d.name LIKE #{keyword}
                     </if>
-                    <if test="func == 'all' or func == '눈 건강'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="func == 'all' or func == '간 건강'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="func == 'all' or func == '피로 개선'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="func == 'all' or func == '어린이 성장'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="func == 'all' or func == '수면질 개선'">
-                        OR d.name LIKE #{keyword}
+                    <if test="func == 'all' or func == 'function'">
+                        OR d.function LIKE #{keyword}
                     </if>
                 </trim>
             ORDER BY d.id DESC 
@@ -92,30 +80,19 @@ public interface DrugMapper {
     List<Drug> selectDrugListByFunc(int from, String func);
 
     @Select("""
-            <script>
-            SELECT COUNT(*) FROM drug d
-            WHERE 
-                 <trim prefixOverrides="OR">
-                    <if test="function == 'all' or function == '위 건강'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="function == 'all' or function == '눈 건강'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="function == 'all' or function == '간 건강'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="function == 'all' or function == '피로 개선'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="function == 'all' or function == '어린이 성장'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                    <if test="function == 'all' or function == '수면질 개선'">
-                        OR d.name LIKE #{keyword}
-                    </if>
-                </trim>
-            </script>
-            """)
+    <script>
+    SELECT COUNT(*) FROM drug d
+    WHERE 
+        <trim prefixOverrides="OR">
+            <if test="function == 'all' or function == 'name'">
+                OR d.name LIKE #{keyword}
+            </if>
+            <if test="function == 'all' or function == 'function'">
+                OR d.function LIKE #{keyword}
+            </if>
+        </trim>
+    </script>
+    """)
+
     int countAll(String keyword, String function);
 }

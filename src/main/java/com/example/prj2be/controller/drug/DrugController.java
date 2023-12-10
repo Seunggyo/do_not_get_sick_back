@@ -53,6 +53,7 @@ public class DrugController {
                                   ) {
 
         System.out.println("keyword = " + keyword);
+        System.out.println("func = " + func);
 
         return service.drugList(page, func, keyword);
     }

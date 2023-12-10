@@ -112,6 +112,7 @@ public class DrugService {
 
         int countAll = mapper.countAll("%" + keyword + "%", func);
         System.out.println("countAll = " + countAll);
+        System.out.println("keyword = " + keyword);
 
         int lastPageNumber = (countAll - 1) / 6 + 1;
         int startPageNumber = (page - 1) / 6 * 6 + 1;
@@ -134,6 +135,7 @@ public class DrugService {
 
 
         List<Drug> drugList = mapper.selectDrugList(from, "%" + keyword + "%", func);
+        System.out.println("drugList = " + drugList);
 
         for (Drug drug : drugList) {
 
