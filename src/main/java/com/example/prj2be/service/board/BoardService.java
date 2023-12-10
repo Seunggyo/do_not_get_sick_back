@@ -75,7 +75,7 @@ public class BoardService {
    }
 
    public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
-      String keyword) {
+      String keyword, Integer countLike) {
 
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
@@ -101,7 +101,7 @@ public class BoardService {
       // 정렬된 데이터 조회
       List<Board> boardList;
       int from = (page - 1) * 10;
-      boardList = mapper.selectAll(from, "%" + keyword + "%");
+      boardList = mapper.selectAll(from, "%" + keyword + "%", countLike);
 
       // 필요한 경우 정렬을 적용하기
       if (orderByNum != null || orderByHit != null) {
@@ -119,9 +119,11 @@ public class BoardService {
       map.put("pageInfo", pageInfo);
 
       return map;
-//   public List<Board> list(Integer likeCount) {
-//      return mapper.selectAll(likeCount);
    }
+//   public List<Board> list(int countLike) {
+//
+//      return mapper.selectAll(countLike);
+//   }
 
    public Board get(Integer id) {
       return mapper.selectById(id);
@@ -163,5 +165,6 @@ public class BoardService {
       mapper.increaseHit(id);
 
    }
+
 
 }

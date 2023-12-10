@@ -1,6 +1,8 @@
 package com.example.prj2be.domain.cs_qa;
 
+import com.example.prj2be.utill.AppUtil;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -12,6 +14,10 @@ public class CustomerService {
    private String csContent;
    private String csWriter;
    private String csNickName;
-   private LocalDate inserted;
+   private LocalDateTime inserted;
    private Integer csHit;
+
+   public String getAgo() {
+      return AppUtil.getAgo(inserted);
+   }
 }

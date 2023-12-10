@@ -41,7 +41,7 @@ public interface BoardMapper {
         ORDER BY b.id DESC
         LIMIT #{from}, 10
         """)
-   List<Board> selectAll(Integer from, String keyword);
+   List<Board> selectAll(Integer from, String keyword, Integer countLike);
 
    @Select("""
       SELECT b.id, 

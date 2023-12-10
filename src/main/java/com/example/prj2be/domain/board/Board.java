@@ -1,5 +1,6 @@
 package com.example.prj2be.domain.board;
 
+import com.example.prj2be.utill.AppUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -13,13 +14,13 @@ public class Board {
    private String writer;
    private String nickName;
    private String category;
-   private LocalDate inserted;
+   private LocalDateTime inserted;
    private Integer increaseHit;
    private Integer countComment;
    private Integer countLike;
 
-//   public String getAgo() {
-//      return AppUtil.getAgo(inserted, LocalDateTime.now());
-//   }
+   public String getAgo() {
+      return AppUtil.getAgo(inserted);
+   }
 
 }
