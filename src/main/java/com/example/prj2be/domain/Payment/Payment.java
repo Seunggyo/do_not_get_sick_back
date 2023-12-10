@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Payment extends PaymentResDto {
@@ -20,6 +19,6 @@ public class Payment extends PaymentResDto {
     private String memberId;
     private String paymentKey;
     private String failReason;
-    private boolean cancelYN;
+    private boolean cancelYN = false;
     private String cancelReason;
 }
