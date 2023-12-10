@@ -105,12 +105,14 @@ public class DrugService {
         return true;
     }
 
-    public Map<String, Object> drugList(Integer page) {
+    public Map<String, Object> drugList(Integer page, String func, String keyword) {
 
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> pageInfo = new HashMap<>();
 
-        int countAll = mapper.countAll();
+        int countAll = mapper.countAll("%" + keyword + "%", func);
+        System.out.println("countAll = " + countAll);
+
         int lastPageNumber = (countAll - 1) / 6 + 1;
         int startPageNumber = (page - 1) / 6 * 6 + 1;
         int endPageNumber = startPageNumber + 5;
@@ -129,10 +131,9 @@ public class DrugService {
         }
 
         int from = (page - 1) * 6;
-        map.put("drugList", mapper.selectDrugList(from));
-        map.put("pageInfo", pageInfo);
 
-        List<Drug> drugList = mapper.selectDrugList(from);
+
+        List<Drug> drugList = mapper.selectDrugList(from, "%" + keyword + "%", func);
 
         for (Drug drug : drugList) {
 
@@ -145,6 +146,8 @@ public class DrugService {
             drug.setFiles(drugFiles);
         }
         map.put("drugList",drugList);
+        map.put("pageInfo", pageInfo);
+
         return map;
     }
 

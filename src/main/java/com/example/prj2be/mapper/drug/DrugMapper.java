@@ -23,14 +23,37 @@ public interface DrugMapper {
 
 
     @Select("""
+            <script>
             select DISTINCT d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
             FROM drug d
-            JOIN drugFile f
-            ON d.id = f.drugId
+                JOIN drugFile f
+                    ON d.id = f.drugId
+            WHERE 
+            <trim prefixOverrides="OR">
+                    <if test="func == 'all' or func == '위 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="func == 'all' or func == '눈 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="func == 'all' or func == '간 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="func == 'all' or func == '피로 개선'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="func == 'all' or func == '어린이 성장'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="func == 'all' or func == '수면질 개선'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                </trim>
             ORDER BY d.id DESC 
             LIMIT #{from}, 6
+            </script>
             """)
-    List<Drug> selectDrugList(Integer from);
+    List<Drug> selectDrugList(Integer from, String keyword, String func);
 
     @Select("""
             select d.id, d.name, d.function func, d.content, d.price, d.inserted, d.shipping
@@ -69,7 +92,30 @@ public interface DrugMapper {
     List<Drug> selectDrugListByFunc(int from, String func);
 
     @Select("""
-            SELECT COUNT(*) FROM drug;
+            <script>
+            SELECT COUNT(*) FROM drug d
+            WHERE 
+                 <trim prefixOverrides="OR">
+                    <if test="function == 'all' or function == '위 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="function == 'all' or function == '눈 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="function == 'all' or function == '간 건강'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="function == 'all' or function == '피로 개선'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="function == 'all' or function == '어린이 성장'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                    <if test="function == 'all' or function == '수면질 개선'">
+                        OR d.name LIKE #{keyword}
+                    </if>
+                </trim>
+            </script>
             """)
-    int countAll();
+    int countAll(String keyword, String function);
 }
