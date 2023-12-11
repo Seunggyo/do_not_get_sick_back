@@ -1,8 +1,6 @@
 package com.example.prj2be.service.hs;
 
 import com.example.prj2be.domain.business.BusinessHoliday;
-import com.example.prj2be.domain.ds.Ds;
-import com.example.prj2be.domain.ds.DsPicture;
 import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.hs.HsCourse;
 import com.example.prj2be.domain.hs.HsFile;
@@ -13,7 +11,10 @@ import com.example.prj2be.mapper.hs.HsLikeMapper;
 import com.example.prj2be.mapper.hs.HsMapper;
 import com.example.prj2be.mapper.hs.HsReservationMapper;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class HsService {
 
     }
 
-    public List<Hs> list(String category) {
+    public Map<String, Object> list(String category, String keyword) {
 
 //        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
 //
@@ -66,7 +67,9 @@ public class HsService {
 //
 //            ds.setFiles(dsPictures);
 //        }
-        List<Hs> hsList = mapper.selectByCategory(category);
+        Map<String, Object> map = new HashMap<>();
+
+        List<Hs> hsList = mapper.selectByCategory(category, "%" +  keyword + "%" );
 
         for (Hs hs : hsList) {
             List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
@@ -79,7 +82,9 @@ public class HsService {
 
         }
 
-        return hsList;
+        map.put("list", hsList);
+
+        return map;
     }
 
     public boolean add(Hs hs, String[] course, String[] holidays, MultipartFile[] hsFile,

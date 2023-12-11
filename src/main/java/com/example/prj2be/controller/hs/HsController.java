@@ -5,6 +5,8 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.hs.HsService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +30,9 @@ public class HsController {
 
 
     @GetMapping("list")
-    public List<Hs> list(@RequestParam(value = "category", required = false) String category) {
-        return service.list(category);
+    public Map<String, Object> list(@RequestParam(value = "c", defaultValue = "all") String category,
+                    @RequestParam(value = "k", defaultValue = "") String keyword) {
+        return service.list(category, keyword);
     }
 
     @PostMapping("add")
