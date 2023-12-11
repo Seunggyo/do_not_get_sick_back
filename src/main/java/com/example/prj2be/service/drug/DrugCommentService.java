@@ -6,9 +6,14 @@ import com.example.prj2be.mapper.drug.CartMapper;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +26,12 @@ public class DrugCommentService {
 
     private final DrugCommentMapper mapper;
     private final FileMapper fileMapper;
+
+    private final S3Client s3;
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
 
     public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) throws IOException {
 
@@ -42,17 +53,17 @@ public class DrugCommentService {
         return cnt == 1;
     }
 
-    private void upload(Integer commentId,MultipartFile file) throws IOException {
-        // 파일 저장 경로
-        // C:\Temp\prj2\댓글 번호\파일명
+    private void upload(Integer commentId, MultipartFile file) throws IOException {
 
-            File folder = new File("C:\\Temp\\prj2\\" + commentId);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
+        String key = "prj2/drug1/" + commentId + "/" + file.getOriginalFilename();
 
-            String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-            file.transferTo(new File(path));
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
+
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
 
     }
