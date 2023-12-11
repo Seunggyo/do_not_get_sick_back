@@ -48,4 +48,11 @@ public interface FileMapper {
             VALUES (#{commentId}, #{name})
             """)
     int CommentInsert(Integer commentId, String name);
+
+    @Select("""
+            SELECT id, name
+            FROM drugCommentFile
+            WHERE commentId = #{commentId}
+            """)
+    List<DrugFile> selectNamesByDrugComment(Integer commentId);
 }

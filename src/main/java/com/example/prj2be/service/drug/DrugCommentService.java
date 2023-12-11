@@ -1,6 +1,8 @@
 package com.example.prj2be.service.drug;
 
+import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.domain.drug.DrugComment;
+import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.CartMapper;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
@@ -83,7 +85,20 @@ public class DrugCommentService {
     }
 
     public List<DrugComment> list(Integer drugId) {
-        return mapper.selectByDrugId(drugId);
+
+        List<DrugComment> drugCommentList = mapper.selectByDrugId(drugId);
+
+        for (DrugComment drugComment : drugCommentList) {
+
+            List<DrugFile> drugFiles = fileMapper.selectNamesByDrugComment(drugComment.getId());
+
+            for (DrugFile drugFile : drugFiles) {
+                String url = urlPrefix + "prj2/drug1/" + drugComment.getId() + "/" + drugFile.getName();
+                drugFile.setUrl(url);
+            }
+            drugComment.setFiles(drugFiles);
+        }
+        return drugCommentList;
     }
 
     public boolean remove(Integer id) {
