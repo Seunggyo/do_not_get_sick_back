@@ -10,8 +10,10 @@ public class HsReservation {
     private String name;
     private Integer businessId;
     private String memberId;
+    private String nickName;
     private Date reservationDate;
     private Integer reservationHour;
     private Integer reservationMin;
     private String comment;
+    private Boolean isReservationCheck;
 }
