@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface PaymentMapper {
 
     @Insert("""
-        insert into payment (amount, paymentName, paymentUid, paySuccessYN)
-        values (#{amount}, #{paymentName}, #{paymentUid}, false)
+        insert into payment (amount, paymentName, paymentUid, paySuccessYN, status)
+        values (#{amount}, #{paymentName}, #{paymentUid}, false, #{status})
 """)
     int insertByDTO(PaymentDto paymentDto);
 
@@ -35,5 +35,5 @@ public interface PaymentMapper {
         select * from payment
         where paymentUid = #{orderId}
 """)
-    Optional<Payment> findByUid(String orderId);
+    Payment findByUid(String orderId);
 }

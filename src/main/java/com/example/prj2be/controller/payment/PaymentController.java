@@ -28,7 +28,7 @@ public class PaymentController {
 
     @PostMapping("/toss")
     public ResponseEntity requestTossPayment(@RequestBody @Valid PaymentDto paymentReqDto) throws CustomLogicException {
-        System.out.println("PaymentController.requestTossPayment");
+        System.out.println("paymentReqDto.getPaymentUid() = " + paymentReqDto.getPaymentUid());
         PaymentResDto paymentResDto = paymentService.requsetTossPayment(
                 paymentReqDto, paymentReqDto.getEmail());
         paymentResDto.setSuccessUrl(paymentReqDto.getSuccessUrl() == null ? paymentConfig.getSuccessUrl() : paymentReqDto.getSuccessUrl());
