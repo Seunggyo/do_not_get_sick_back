@@ -23,7 +23,7 @@ public class DrugCommentController {
 
     @PostMapping("add")
     public ResponseEntity add(DrugComment drugComment,
-                              @RequestParam(value = "uploadfiles[]", required = false) MultipartFile[] files,
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         
         if (login == null) {

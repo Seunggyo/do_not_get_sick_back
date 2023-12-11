@@ -103,6 +103,9 @@ public class DrugCommentService {
 
     public boolean remove(Integer id) {
 
+        // 첨부파일 레코드 지우기
+        fileMapper.deleteByCommentId(id);
+
         return mapper.deleteById(id) == 1;
 
     }

@@ -55,4 +55,10 @@ public interface FileMapper {
             WHERE commentId = #{commentId}
             """)
     List<DrugFile> selectNamesByDrugComment(Integer commentId);
+
+    @Delete("""
+            DELETE FROM drugCommentFile
+            WHERE commentId = #{commentId}
+            """)
+    int deleteByCommentId(Integer commentId);
 }
