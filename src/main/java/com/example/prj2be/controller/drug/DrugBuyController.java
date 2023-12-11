@@ -17,17 +17,6 @@ public class DrugBuyController {
 
     private final BuyService service;
 
-    @PostMapping("add/{id}")
-    public ResponseEntity add(@RequestBody Buy buy,
-                              @SessionAttribute(value = "login", required = false)Member login) {
-
-      if (login == null) {
-          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-      }
-      return ResponseEntity.ok(service.save(buy, login));
-
-    }
-
     @GetMapping("id/{id}")
     public Buy buy(@PathVariable Integer id){
         return service.getBuy(id);

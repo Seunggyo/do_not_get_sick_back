@@ -1,5 +1,6 @@
 package com.example.prj2be.service.drug;
 
+import com.example.prj2be.domain.drug.Buy;
 import com.example.prj2be.domain.drug.Cart;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.CartMapper;
@@ -60,11 +61,14 @@ public class CartService {
             return cartList;
         }
         return null;
+
     }
 
     public boolean remove(Integer id) {
         return mapper.deleteById(id) == 1;
     }
+
+
 }
 
 

@@ -8,10 +8,11 @@ public class Buy {
     private Integer id;
     private String memberId;
     private String nickName;
+    private String email;
     private String phone;
     private String address;
     private Integer drugId;
     private String drugName;
-    private Integer amount;
+    private Integer price;
     private Integer quantity;
 }
