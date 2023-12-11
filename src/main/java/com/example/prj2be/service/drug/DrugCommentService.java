@@ -19,7 +19,7 @@ import java.util.List;
 public class DrugCommentService {
 
     private final DrugCommentMapper mapper;
-    private FileMapper fileMapper;
+    private final FileMapper fileMapper;
 
     public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) {
 
@@ -36,7 +36,7 @@ public class DrugCommentService {
 
                  // 실제 파일을 S3 bucket에 upload
                 // 일단 local에 저장
-                upload(files[i]);
+                upload(drugComment.getId(), files[i]);
             }
         }
         return cnt == 1;

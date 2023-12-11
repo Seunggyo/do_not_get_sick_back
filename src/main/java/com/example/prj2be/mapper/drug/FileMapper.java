@@ -45,7 +45,7 @@ public interface FileMapper {
 
     @Insert("""
             INSERT INTO drugCommentFile (commentId, name)
-            VALUES (#{commentId}, ${name})
+            VALUES (#{commentId}, #{name})
             """)
     int CommentInsert(Integer commentId, String name);
 }
