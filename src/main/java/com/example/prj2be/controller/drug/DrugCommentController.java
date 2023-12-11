@@ -4,6 +4,8 @@ package com.example.prj2be.controller.drug;
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.DrugCommentService;
+
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,7 @@ public class DrugCommentController {
     @PostMapping("add")
     public ResponseEntity add(DrugComment drugComment,
                               @RequestParam(value = "files[]", required = false) MultipartFile[] files,
-                              @SessionAttribute(value = "login", required = false) Member login) {
+                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

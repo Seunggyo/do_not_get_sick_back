@@ -5,11 +5,13 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.drug.DrugLikeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class DrugLikeService {
 
     private final DrugLikeMapper mapper;

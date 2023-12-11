@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -21,14 +22,13 @@ public class DrugCommentService {
     private final DrugCommentMapper mapper;
     private final FileMapper fileMapper;
 
-    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) {
-
+    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) throws IOException {
 
         drugComment.setMemberId(login.getId());
 
         int cnt = mapper.insert(drugComment);
 
-                // drugCommentFile 테이블에 files 정보 저장
+        // drugCommentFile 테이블에 files 정보 저장
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 // drugCommentId, FileName
@@ -42,23 +42,19 @@ public class DrugCommentService {
         return cnt == 1;
     }
 
-    private void upload(Integer commentId,MultipartFile file) {
+    private void upload(Integer commentId,MultipartFile file) throws IOException {
         // 파일 저장 경로
         // C:\Temp\prj2\댓글 번호\파일명
 
-        try {
+            File folder = new File("C:\\Temp\\prj2\\" + commentId);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
 
-        File folder = new File("C:\\Temp\\prj2\\" + commentId);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
+            String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
+            file.transferTo(new File(path));
 
-        String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-        file.transferTo(new File(path));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public boolean validate(DrugComment drugComment) {

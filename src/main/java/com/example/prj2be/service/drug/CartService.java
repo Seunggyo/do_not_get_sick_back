@@ -6,6 +6,7 @@ import com.example.prj2be.mapper.drug.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class CartService {
 
     private final CartMapper mapper;
