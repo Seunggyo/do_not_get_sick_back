@@ -203,10 +203,7 @@ public class DsService {
         mapper.deleteHolidayByDsId(id);
 
         // 코멘트 삭제
-//        if (dsCommentMapper.findById(id) != 0) {
-//            System.out.println(dsCommentMapper.findById(id));
-            dsCommentMapper.deleteById(id);
-//        }
+        dsCommentMapper.deleteById(id);
 
         // 좋아요 삭제
         businessLikeMapper.deleteById(id);
