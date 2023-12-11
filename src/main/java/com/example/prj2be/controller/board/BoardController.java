@@ -32,7 +32,7 @@ public class BoardController {
    @PostMapping("add")
    public ResponseEntity add(
       Board board,
-      @RequestParam(value = "file[]", required = false) MultipartFile[] files,
+      @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
       @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
       if (login == null) {
@@ -55,14 +55,15 @@ public class BoardController {
       @RequestParam(value = "h", required = false) Boolean orderByHit,
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String  keyword,
-      @RequestParam(value = "b",defaultValue = "all") String keywordPop) {
+      @RequestParam(value = "b",defaultValue = "all") String keywordPop,
+      @RequestParam(value = "f",defaultValue = "") String filter) {
 
       int countLike=0;
       if (keywordPop.equals("pop")) {
          countLike=1;
       }
 
-      return service.list(orderByNum, orderByHit, page, keyword, countLike);
+      return service.list(orderByNum, orderByHit, page, keyword, countLike, "%"+filter+"%");
    }
 
 //   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
@@ -100,8 +101,10 @@ public class BoardController {
 
    @PutMapping("edit")
    public ResponseEntity edit(
-      @RequestBody Board board,
-      @SessionAttribute(value = "login", required = false) Member login) {
+      Board board,
+      @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+      @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
+      @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401 에러
@@ -110,7 +113,7 @@ public class BoardController {
          return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
       }
       if (service.validate(board)) {
-         if (service.update(board)) {
+         if (service.update(board, removeFileIds, uploadFiles)) {
             return ResponseEntity.ok().build();
          } else {
             return ResponseEntity.internalServerError().build();

@@ -54,8 +54,8 @@ public interface BoardCommentMapper {
 
    // 게시물 삭제시 댓글들도 삭제
    @Delete("""
-      DELETE FROM comment
-      WHERE boardId = #{BoardId}
+      DELETE FROM boardComment
+      WHERE boardId = #{boardId}
       """)
    int deleteByBoardId(Integer boardId);
 

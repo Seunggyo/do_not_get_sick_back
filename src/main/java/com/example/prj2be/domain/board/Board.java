@@ -1,8 +1,8 @@
 package com.example.prj2be.domain.board;
 
 import com.example.prj2be.utill.AppUtil;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -18,6 +18,8 @@ public class Board {
    private Integer increaseHit;
    private Integer countComment;
    private Integer countLike;
+
+   private List<NoticeBoardFile> files;
 
    public String getAgo() {
       return AppUtil.getAgo(inserted);

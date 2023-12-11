@@ -33,15 +33,16 @@ public interface BoardMapper {
         FROM board b JOIN member m ON b.writer = m.id
                      LEFT JOIN boardComment c ON b.id = c.boardId
                      LEFT JOIN boardLike l ON b.id = l.boardId
-        WHERE b.category LIKE #{keyword}
+        WHERE (b.category LIKE #{keyword}
            OR b.title LIKE #{keyword}
-           OR m.nickName Like #{keyword}
+           OR m.nickName Like #{keyword})
+           AND b.category LIKE #{filter}
         GROUP BY b.id
         having count(distinct l.memberId) >= #{countLike}
         ORDER BY b.id DESC
         LIMIT #{from}, 10
         """)
-   List<Board> selectAll(Integer from, String keyword, Integer countLike);
+   List<Board> selectAll(Integer from, String keyword, Integer countLike, String filter);
 
    @Select("""
       SELECT b.id, 
@@ -83,11 +84,12 @@ public interface BoardMapper {
 
    @Select("""
         SELECT COUNT(*) FROM board
-        WHERE title LIKE #{keyword}
+        WHERE (title LIKE #{keyword}
            OR content LIKE #{keyword}
-           OR category Like #{keyword}
+           OR category LIKE #{keyword})
+           AND category LIKE #{filter}
         """)
-   int countAll(String keyword);
+   int countAll(String keyword, Integer countLike, String filter);
 
    @Update("""
       UPDATE board

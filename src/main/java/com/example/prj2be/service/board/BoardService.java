@@ -1,21 +1,27 @@
 package com.example.prj2be.service.board;
 
 import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.board.NoticeBoardFile;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardCommentMapper;
-import com.example.prj2be.mapper.board.BoardFileMapper;
+import com.example.prj2be.mapper.board.NoticeBoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
-import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +31,19 @@ public class BoardService {
    private final BoardMapper mapper;
    private final BoardCommentMapper commentMapper;
    private final BoardLikeMapper likeMapper;
-   private final BoardFileMapper fileMapper;
+   private final NoticeBoardFileMapper fileMapper;
+
+   private final S3Client s3;
+
+   @Value("${image.file.prefix}")
+   private String urlPrefix;
+   @Value("${aws.s3.bucket.name}")
+   private String bucket;
 
    public boolean save(Board board, MultipartFile[] files, Member login) throws IOException {
       board.setWriter(login.getId());
 
-      // boardFile 테이블에 files 정보저장
+      // NoticeBoardFile 테이블에 files 정보저장
       // boardId, name - 어떤 게시물의 파일인지 알아야함.
       int cnt = mapper.insert(board);
 
@@ -46,16 +59,18 @@ public class BoardService {
       return cnt == 1;
    }
 
-   private void upload(Integer boardId, MultipartFile file) throws IOException {
+   private void upload(Integer fileId, MultipartFile file) throws IOException {
 
-      File folder = new File("C:\\Temp\\prj2\\" + boardId);
-      if(!folder.exists()) {
-         folder.mkdirs();
+      String key = "prj2/board/" + fileId + "/" + file.getOriginalFilename();
 
-         String path = folder.getAbsolutePath() + "\\" + file.getOriginalFilename();
-         File des = new File(path);
-         file.transferTo(des);
-      }
+      PutObjectRequest objectRequest = PutObjectRequest.builder()
+         .bucket(bucket)
+         .key(key)
+         .acl(ObjectCannedACL.PUBLIC_READ)
+         .build();
+
+      s3.putObject(objectRequest, RequestBody.fromInputStream(
+         file.getInputStream(), file.getSize()));
    }
 
    public boolean validate(Board board) {
@@ -75,12 +90,12 @@ public class BoardService {
    }
 
    public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
-      String keyword, Integer countLike) {
+      String keyword, Integer countLike, String filter) {
 
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%");
+      int countAll = mapper.countAll("%" + keyword + "%", countLike, filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -101,7 +116,7 @@ public class BoardService {
       // 정렬된 데이터 조회
       List<Board> boardList;
       int from = (page - 1) * 10;
-      boardList = mapper.selectAll(from, "%" + keyword + "%", countLike);
+      boardList = mapper.selectAll(from, "%" + keyword + "%", countLike, filter);
 
       // 필요한 경우 정렬을 적용하기
       if (orderByNum != null || orderByHit != null) {
@@ -120,13 +135,20 @@ public class BoardService {
 
       return map;
    }
-//   public List<Board> list(int countLike) {
-//
-//      return mapper.selectAll(countLike);
-//   }
 
    public Board get(Integer id) {
-      return mapper.selectById(id);
+      Board board = mapper.selectById(id);
+
+      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
+
+      for (NoticeBoardFile noticeBoardFile : noticeBoardFiles) {
+         String url = urlPrefix + "prj2/board/" + id + "/" + noticeBoardFile.getFileName();
+         noticeBoardFile.setUrl(url);
+      }
+
+      board.setFiles(noticeBoardFiles);
+
+      return board;
    }
 
    public boolean remove(Integer id) {
@@ -136,12 +158,59 @@ public class BoardService {
       // 좋아요 레코드 지우기
       likeMapper.deleteByBoardId(id);
 
+      fileMapper.deleteFile(id);
+
       return mapper.deleteById(id) == 1;
    }
 
-   public boolean update(Board board) {
-      return mapper.update(board) == 1;
+   private void deleteFile(Integer id) {
+      // 파일명 조회
+      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
 
+      // s3 bucket objects 지우기
+      for (NoticeBoardFile file : noticeBoardFiles) {
+         String key = "prj2/board/" + id + "/" + file.getFileName();
+
+         DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+            .bucket(bucket)
+            .key(key)
+            .build();
+
+         s3.deleteObject(objectRequest);
+      }
+
+      // 첨부파일 레코드 지우기
+      fileMapper.deleteByFileId(id);
+   }
+
+   public boolean update(Board board, List<Integer> removeFileIds, MultipartFile[] uploadFiles) throws IOException {
+
+      if (removeFileIds != null) {
+         for (Integer id : removeFileIds) {
+            // s3에서 지우기
+            NoticeBoardFile file = fileMapper.selectById(id);
+            String key = "prj2/board/" + board.getId() + "/" + file.getFileName();
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+               .bucket(bucket)
+               .key(key)
+               .build();
+            s3.deleteObject(objectRequest);
+
+            // db에서 지우기
+            fileMapper.deleteById(id);
+         }
+      }
+
+      if (uploadFiles != null) {
+         for (MultipartFile file : uploadFiles) {
+            // s3에 올리기
+            upload(board.getId(), file);
+            // db에 추가하기
+            fileMapper.insert(board.getId(), file.getOriginalFilename());
+         }
+      }
+
+      return mapper.update(board) == 1;
    }
 
    public boolean hasAccess(Integer id, Member login) {
@@ -155,7 +224,6 @@ public class BoardService {
       }
 
       Board board = mapper.selectById(id);
-      // mapper 에서 해당 게시물정보를 얻기
 
       return board.getWriter().equals(login.getId());
    }
