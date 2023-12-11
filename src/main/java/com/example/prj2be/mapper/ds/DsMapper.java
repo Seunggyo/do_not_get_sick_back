@@ -72,11 +72,11 @@ public interface DsMapper {
                 LEFT JOIN businessholiday bh
                     ON b.id = bh.businessId
             WHERE b.category = 'drugStore'
-
+                AND b.name LIKE #{keyword}
             GROUP BY b.id
             LIMIT #{from}, 10
             """)
-    List<Ds> selectAllByCategory(Integer from, String keyword, String category);
+    List<Ds> selectAllByCategory(Integer from, String keyword);
 
     @Select("""
             SELECT b.id,
@@ -105,20 +105,11 @@ public interface DsMapper {
     int deleteById(Integer id);
 
     @Select("""
-            <script>
-            SELECT COUNT(*) FROM business
-            WHERE
-                <trim prefixOverrides="OR">
-                    <if test="category == 'all' or category == 'name'">
-                        OR name LIKE #{keyword}
-                    </if>
-                    <if test="category == 'all' or category == 'category'">
-                        OR category LIKE #{keyword}
-                    </if>
-                </trim>
-            </script>
+            SELECT COUNT(*) FROM business b
+            WHERE b.category = 'drugStore'
+            AND b.name LIKE #{keyword}
             """)
-    int countAll(String keyword, String category);
+    int countAll(String keyword);
 
     @Insert("""
             INSERT INTO businessholiday (businessId, holiday)
@@ -180,5 +171,5 @@ public interface DsMapper {
             GROUP BY b.id
             LIMIT 0, 10
     """)
-    List<Ds> getListByCK(String keyword, String category);
+    List<Ds> getListByCK(String keyword);
 }
