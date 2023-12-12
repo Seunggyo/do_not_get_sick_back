@@ -18,6 +18,7 @@ public class Board {
    private Integer increaseHit;
    private Integer countComment;
    private Integer countLike;
+   private Integer countFile;
 
    private List<NoticeBoardFile> files;
 
