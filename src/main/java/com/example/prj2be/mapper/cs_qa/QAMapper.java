@@ -12,8 +12,8 @@ import org.apache.ibatis.annotations.Update;
 public interface QAMapper {
 
    @Insert("""
-      INSERT INTO customerqa (qaTitle, qaContent, qaWriter, qaCategory)
-      VALUES (#{qaTitle}, #{qaContent}, #{qaWriter}, #{qaCategory})
+      INSERT INTO customerqa (qaTitle, qaContent, qaWriter, qaCategory, category)
+      VALUES (#{qaTitle}, #{qaContent}, #{qaWriter}, #{qaCategory}, #{category})
       """)
    int insert(CustomerQA qa);
 
@@ -24,15 +24,20 @@ public interface QAMapper {
                q.qaWriter,
                q.qaCategory,
                m.nickName,
-               q.inserted
+               q.inserted,
+               COUNT(DISTINCT c.id) countComment
         FROM customerqa q JOIN member m ON q.qaWriter = m.id
-        WHERE q.qaContent LIKE #{keyword}
-           OR q.qaTitle LIKE #{keyword}
+        LEFT JOIN boardComment c 
+        ON q.id = c.boardId
+        and c.category = "qa"
+        WHERE (q.qaContent LIKE #{keyword}
+           OR q.qaTitle LIKE #{keyword})
+           AND q.qaCategory Like #{filter}
         GROUP BY q.id
         ORDER BY q.id DESC
         LIMIT #{from}, 10
         """)
-   List<CustomerQA> selectAll(Integer from, String keyword);
+   List<CustomerQA> selectAll(Integer from, String keyword, String filter);
 
    @Select("""
         SELECT q.id,
@@ -83,5 +88,5 @@ public interface QAMapper {
         WHERE qaTitle LIKE #{keyword}
            OR qaCategory LIKE #{keyword}
         """)
-   int countAll(String keyword);
+   int countAll(String keyword, String filter);
 }

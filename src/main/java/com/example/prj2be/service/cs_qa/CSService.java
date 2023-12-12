@@ -2,6 +2,7 @@ package com.example.prj2be.service.cs_qa;
 
 import com.example.prj2be.domain.cs_qa.CustomerService;
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.board.NoticeBoardFileMapper;
 import com.example.prj2be.mapper.cs_qa.CSMapper;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CSService {
 
    private final CSMapper mapper;
+   private final NoticeBoardFileMapper fileMapper;
 
    public boolean save(CustomerService cs, Member login) {
 
@@ -24,7 +27,7 @@ public class CSService {
       return mapper.insert(cs) == 1;
 
    }
-   public boolean validate(CustomerService cs) {
+   public boolean    validate(CustomerService cs) {
       if (cs == null) {
          return false;
       }
@@ -41,7 +44,7 @@ public class CSService {
    }
 
    public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
-      String keyword) {
+      String keyword, String filter) {
 
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
@@ -96,7 +99,7 @@ public class CSService {
       return mapper.deleteById(id) == 1;
    }
 
-   public boolean update(CustomerService cs) {
+   public boolean update(CustomerService cs, List<Integer> fileSwitch, MultipartFile[] uploadFiles) {
       return mapper.update(cs) == 1;
    }
 

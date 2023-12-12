@@ -11,6 +11,7 @@ public class BoardComment {
    private String memberId;
    private String memberNickName;
    private String comment;
+   private String category;
    private LocalDate inserted;
 }
 

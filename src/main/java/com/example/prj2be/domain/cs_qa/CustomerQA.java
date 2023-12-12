@@ -12,6 +12,8 @@ public class CustomerQA {
    private String qaContent;
    private String qaWriter;
    private String qaCategory;
+   private String category;
+   private Integer countComment;
    private LocalDateTime inserted;
    public String getAgo() {
       return AppUtil.getAgo(inserted);

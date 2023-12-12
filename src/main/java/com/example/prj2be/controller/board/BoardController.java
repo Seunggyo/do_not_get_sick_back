@@ -64,14 +64,6 @@ public class BoardController {
 
       return service.list(orderByNum, orderByHit, page,
          keyword, popCount, "%"+filter+"%");
-
-//   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
-//      int likeCount=0;
-//      if (keyword.equals("pop")) {
-//         likeCount=1;
-//      }
-//      return service.list(likeCount);
-//   }
    }
 
 

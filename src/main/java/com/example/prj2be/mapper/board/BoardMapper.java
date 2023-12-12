@@ -31,7 +31,9 @@ public interface BoardMapper {
                COUNT(DISTINCT c.id) countComment,
                COUNT(DISTINCT l.memberId) countLike
         FROM board b JOIN member m ON b.writer = m.id
-                     LEFT JOIN boardComment c ON b.id = c.boardId
+                     LEFT JOIN boardComment c 
+                     ON b.id = c.boardId
+                      and c.category = "board"
                      LEFT JOIN boardLike l ON b.id = l.boardId
         WHERE (b.category LIKE #{keyword}
            OR b.title LIKE #{keyword}

@@ -9,6 +9,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class QAService {
 
    private final QAMapper mapper;
-//   private final QACommentMapper qaCommentMapper;
 
-   public boolean save(CustomerQA qa, Member login) {
+   public boolean save(CustomerQA qa, MultipartFile[] files, Member login) {
       qa.setQaWriter(login.getId());
 
       return mapper.insert(qa) == 1;
@@ -40,11 +40,11 @@ public class QAService {
       return true;
    }
 
-   public Map<String, Object> qaList(Integer page, String keyword) {
+   public Map<String, Object> qaList(Integer page, String keyword, String filter) {
       Map<String, Object> map = new HashMap<>();
       Map<String, Object> pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%");
+      int countAll = mapper.countAll("%" + keyword + "%", filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -63,7 +63,7 @@ public class QAService {
       }
 
       int from = (page - 1) * 10;
-      map.put("qaList", mapper.selectAll(from, "%" + keyword + "%"));
+      map.put("qaList", mapper.selectAll(from, "%" + keyword + "%", filter));
       map.put("pageInfo", pageInfo);
       return map;
    }

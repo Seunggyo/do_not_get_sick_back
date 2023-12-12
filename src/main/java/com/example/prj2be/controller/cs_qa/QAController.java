@@ -3,6 +3,7 @@ package com.example.prj2be.controller.cs_qa;
 import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.cs_qa.QAService;
+import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api/qa")
 @RestController
@@ -28,8 +30,9 @@ public class QAController {
    @PostMapping("add")
 
    public ResponseEntity add(
-      @RequestBody CustomerQA qa,
-      @SessionAttribute(value = "login", required = false) Member login) {
+      CustomerQA qa,
+      @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
+      @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401
@@ -37,7 +40,7 @@ public class QAController {
       if (!service.validate(qa)) {
          return ResponseEntity.badRequest().build();
       }
-      if (service.save(qa, login)) {
+      if (service.save(qa, files, login)) {
          return ResponseEntity.ok().build();
       } else {
          return ResponseEntity.internalServerError().build();
@@ -46,10 +49,11 @@ public class QAController {
    @GetMapping("qaList")
    public Map<String, Object> list(
       @RequestParam(value = "p", defaultValue = "1") Integer page,
-      @RequestParam(value = "k", defaultValue = "") String keyword) {
+      @RequestParam(value = "k", defaultValue = "") String keyword,
+      @RequestParam(value = "f", defaultValue = "") String filter) {
 
 
-      return service.qaList(page, keyword);
+      return service.qaList(page, keyword, "%"+filter+"%");
    }
 
    @GetMapping("id/{id}")
