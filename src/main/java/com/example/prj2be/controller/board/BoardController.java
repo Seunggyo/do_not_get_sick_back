@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,7 +102,7 @@ public class BoardController {
    @PutMapping("edit")
    public ResponseEntity edit(
       Board board,
-      @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
+      @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
       @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
       @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
@@ -114,7 +113,7 @@ public class BoardController {
          return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 에러
       }
       if (service.validate(board)) {
-         if (service.update(board, removeFileIds, uploadFiles)) {
+         if (service.update(board, fileSwitch, uploadFiles)) {
             return ResponseEntity.ok().build();
          } else {
             return ResponseEntity.internalServerError().build();
