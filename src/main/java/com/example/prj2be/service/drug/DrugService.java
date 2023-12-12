@@ -12,6 +12,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(rollbackFor = Exception.class)
 public class DrugService {
 
     private final DrugMapper mapper;
@@ -105,12 +107,13 @@ public class DrugService {
         return true;
     }
 
-    public Map<String, Object> drugList(Integer page) {
+    public Map<String, Object> drugList(Integer page, String category, String keyword) {
 
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> pageInfo = new HashMap<>();
 
-        int countAll = mapper.countAll();
+        int countAll = mapper.countAll("%" + keyword + "%", category);
+
         int lastPageNumber = (countAll - 1) / 6 + 1;
         int startPageNumber = (page - 1) / 6 * 6 + 1;
         int endPageNumber = startPageNumber + 5;
@@ -129,10 +132,10 @@ public class DrugService {
         }
 
         int from = (page - 1) * 6;
-        map.put("drugList", mapper.selectDrugList(from));
-        map.put("pageInfo", pageInfo);
 
-        List<Drug> drugList = mapper.selectDrugList(from);
+
+        List<Drug> drugList = mapper.selectDrugList(from, "%" + keyword + "%", category);
+        System.out.println("drugList = " + drugList);
 
         for (Drug drug : drugList) {
 
@@ -145,6 +148,8 @@ public class DrugService {
             drug.setFiles(drugFiles);
         }
         map.put("drugList",drugList);
+        map.put("pageInfo", pageInfo);
+
         return map;
     }
 

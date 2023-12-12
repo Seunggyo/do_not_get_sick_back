@@ -33,20 +33,20 @@ public interface BoardCommentMapper {
 
 
    @Delete("""
-      DELETE FROM comment
+      DELETE FROM boardComment
       WHERE id = #{id}
       """)
    int deleteById(Integer id);
 
    @Select("""
       SELECT *
-      FROM comment
+      FROM boardComment
       WHERE id = #{id}
       """)
    BoardComment selectById(Integer id);
 
    @Update("""
-      UPDATE comment
+      UPDATE boardComment
       SET comment = #{comment}
       WHERE id = #{id}
       """)
@@ -54,8 +54,8 @@ public interface BoardCommentMapper {
 
    // 게시물 삭제시 댓글들도 삭제
    @Delete("""
-      DELETE FROM comment
-      WHERE boardId = #{BoardId}
+      DELETE FROM boardComment
+      WHERE boardId = #{boardId}
       """)
    int deleteByBoardId(Integer boardId);
 

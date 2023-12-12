@@ -11,7 +11,10 @@ import com.example.prj2be.mapper.hs.HsLikeMapper;
 import com.example.prj2be.mapper.hs.HsMapper;
 import com.example.prj2be.mapper.hs.HsReservationMapper;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,8 +53,38 @@ public class HsService {
 
     }
 
-    public List<Hs> list(String category) {
-        return mapper.selectByCategory(category);
+    public Map<String, Object> list(String category, String keyword) {
+
+//        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
+//
+//        for (Ds ds : dsList) {
+//            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+//
+//            for (DsPicture dsPicture : dsPictures){
+//                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
+//                dsPicture.setUrl(url);
+//            }
+//
+//            ds.setFiles(dsPictures);
+//        }
+        Map<String, Object> map = new HashMap<>();
+
+        List<Hs> hsList = mapper.selectByCategory(category, "%" +  keyword + "%" );
+
+        for (Hs hs : hsList) {
+            List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
+
+            for (HsFile hsFile : hsFiles) {
+                String url = urlPrefix + "prj2/hospital/" + hs.getId() + "/" + hsFile.getName();
+                hsFile.setUrl(url);
+            }
+            hs.setFiles(hsFiles);
+
+        }
+
+        map.put("list", hsList);
+
+        return map;
     }
 
     public boolean add(Hs hs, String[] course, String[] holidays, MultipartFile[] hsFile,
@@ -59,11 +92,13 @@ public class HsService {
         throws IOException {
         hs.setMemberId(login.getId());
         int cnt = mapper.insert(hs);
+
         if (course != null) {
             for (String hsCourse : course) {
                 mapper.insertCourse(hs.getId(), hsCourse);
             }
         }
+        
         if (holidays != null) {
             for (String holiday : holidays) {
                 mapper.insertHoliday(hs.getId(), holiday);
@@ -133,6 +168,7 @@ public class HsService {
         hs.setFiles(hsFiles);
         List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
         List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
+        hs.setMedicalCourse(hsCourses);
         hs.setHolidays(businessHolidays);
         return hs;
     }
