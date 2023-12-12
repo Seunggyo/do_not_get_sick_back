@@ -33,20 +33,20 @@ public interface BoardCommentMapper {
 
 
    @Delete("""
-      DELETE FROM comment
+      DELETE FROM boardComment
       WHERE id = #{id}
       """)
    int deleteById(Integer id);
 
    @Select("""
       SELECT *
-      FROM comment
+      FROM boardComment
       WHERE id = #{id}
       """)
    BoardComment selectById(Integer id);
 
    @Update("""
-      UPDATE comment
+      UPDATE boardComment
       SET comment = #{comment}
       WHERE id = #{id}
       """)

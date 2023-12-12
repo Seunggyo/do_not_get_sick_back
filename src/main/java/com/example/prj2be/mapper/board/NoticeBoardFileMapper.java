@@ -43,9 +43,4 @@ public interface NoticeBoardFileMapper {
         """)
    int deleteById(Integer id);
 
-   @Delete("""
-           DELETE FROM noticeBoardFile
-           WHERE boardId = #{boardId}
-           """)
-   int deleteFile(Integer boardId);
 }

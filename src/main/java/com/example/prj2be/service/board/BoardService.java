@@ -158,7 +158,7 @@ public class BoardService {
       // 좋아요 레코드 지우기
       likeMapper.deleteByBoardId(id);
 
-      fileMapper.deleteFile(id);
+      deleteFile(id);
 
       return mapper.deleteById(id) == 1;
    }
@@ -201,6 +201,7 @@ public class BoardService {
          }
       }
 
+      // 파일 추가하기
       if (uploadFiles != null) {
          for (MultipartFile file : uploadFiles) {
             // s3에 올리기
