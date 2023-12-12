@@ -68,7 +68,9 @@ public class DrugCommentController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity update(@RequestBody DrugComment comment,
+    public ResponseEntity update(DrugComment comment,
+                                 @RequestParam(value = "removeFileIds[]", required = false)List<Integer> removeFileIds,
+                                 @RequestParam("uploadFiles[]")
                                  @SessionAttribute(value = "login", required = false) Member login) {
 
         if (login == null) {
