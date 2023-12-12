@@ -49,7 +49,6 @@ public class HsReservationService {
         if (login.isAdmin()) {
             return true;
         }
-        System.out.println(reservation.getMemberId());
         return reservation.getMemberId().equals(login.getId());
     }
 
@@ -60,5 +59,25 @@ public class HsReservationService {
 
     public List<HsReservation> reservationGet(String memberId) {
         return mapper.selectByMemberId(memberId);
+    }
+
+    public List<HsReservation> checkGet(String memberId) {
+        return mapper.selectByCheckMemberId(memberId);
+    }
+
+    public List<HsReservation> businessGet(Integer memberId) {
+        return mapper.selectByBusinessMemberId(memberId);
+    }
+
+    public List<Hs> memberToBList(String memberId) {
+        return mapper.selectByMemberIdBList(memberId);
+    }
+
+    public Integer reservationOk(Integer reservationId) {
+        return mapper.updateByReservationId(reservationId);
+    }
+
+    public List<HsReservation> bIdCheckGet(Integer businessId) {
+        return mapper.bIdCheckGet(businessId);
     }
 }

@@ -7,5 +7,5 @@ public class HsCourse {
 
     private Integer id;
     private Integer medicalCourseId;
-    private String medicalCourse;
+    private String medicalCourseCategory;
 }

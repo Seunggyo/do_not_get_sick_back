@@ -55,24 +55,25 @@ public class BoardController {
       @RequestParam(value = "h", required = false) Boolean orderByHit,
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String  keyword,
-      @RequestParam(value = "b",defaultValue = "all") String keywordPop,
-      @RequestParam(value = "f",defaultValue = "") String filter) {
+      @RequestParam(value = "b", defaultValue = "all") String b,
+      @RequestParam(value = "f", defaultValue = "") String filter) {
 
-      int countLike=0;
-      if (keywordPop.equals("pop")) {
-         countLike=1;
+      int popCount = 0;
+      if (b.equals("pop")) {
+         popCount = 1 ;
       }
 
-      return service.list(orderByNum, orderByHit, page, keyword, countLike, "%"+filter+"%");
-   }
+      return service.list(orderByNum, orderByHit, page,
+         keyword, popCount, "%"+filter+"%");
 
 //   public List<Board> list(@RequestParam(value = "b",defaultValue = "all") String keyword) {
-//      int countLike=0;
+//      int likeCount=0;
 //      if (keyword.equals("pop")) {
-//         countLike=1;
+//         likeCount=1;
 //      }
-//      return service.list(countLike);
+//      return service.list(likeCount);
 //   }
+   }
 
 
    @GetMapping("id/{id}")

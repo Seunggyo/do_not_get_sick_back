@@ -4,13 +4,14 @@ package com.example.prj2be.controller.drug;
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.DrugCommentService;
+
+import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -21,15 +22,16 @@ public class DrugCommentController {
     private final DrugCommentService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody DrugComment drugComment,
-                              @SessionAttribute(value = "login", required = false) Member login) {
-
+    public ResponseEntity add(DrugComment drugComment,
+                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
+                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+        
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         if (service.validate(drugComment)) {
-            if (service.add(drugComment, login)) {
+            if (service.add(drugComment, files, login)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();

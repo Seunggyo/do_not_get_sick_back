@@ -42,4 +42,23 @@ public interface FileMapper {
             WHERE id = #{id}
             """)
     void deleteById(Integer id);
+
+    @Insert("""
+            INSERT INTO drugCommentFile (commentId, name)
+            VALUES (#{commentId}, #{name})
+            """)
+    int CommentInsert(Integer commentId, String name);
+
+    @Select("""
+            SELECT id, name
+            FROM drugCommentFile
+            WHERE commentId = #{commentId}
+            """)
+    List<DrugFile> selectNamesByDrugComment(Integer commentId);
+
+    @Delete("""
+            DELETE FROM drugCommentFile
+            WHERE commentId = #{commentId}
+            """)
+    int deleteByCommentId(Integer commentId);
 }

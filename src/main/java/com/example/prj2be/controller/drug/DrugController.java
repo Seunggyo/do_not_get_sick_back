@@ -47,10 +47,13 @@ public class DrugController {
     }
 
     @GetMapping("drugList")
-    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page
+    public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
+                                    @RequestParam(value = "c", defaultValue = "all") String category,
+                                    @RequestParam(value = "k", defaultValue = "") String keyword
                                   ) {
 
-        return service.drugList(page);
+
+        return service.drugList(page, category, keyword);
     }
 
     @GetMapping("id/{id}")

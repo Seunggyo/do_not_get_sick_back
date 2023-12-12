@@ -5,6 +5,8 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.hs.HsService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +30,15 @@ public class HsController {
 
 
     @GetMapping("list")
-    public List<Hs> list(@RequestParam(value = "category", required = false) String category) {
-        return service.list(category);
+    public Map<String, Object> list(@RequestParam(value = "c", defaultValue = "all") String category,
+                    @RequestParam(value = "k", defaultValue = "") String keyword) {
+        return service.list(category, keyword);
     }
 
     @PostMapping("add")
     public ResponseEntity add(Hs hs,
         @RequestParam(value = "course[]", required = false) String[] course,
-        @RequestParam(value = "holiday[]", required = false) String[] holiday,
+        @RequestParam(value = "holiday[]", required = false) String[] holidays,
         @RequestParam(value = "hsFiles[]", required = false)
         MultipartFile[] hsFile,
         @SessionAttribute(value = "login", required = false) Member login) throws IOException {
@@ -43,7 +46,7 @@ public class HsController {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (service.add(hs, holiday, course, hsFile, login)) {
+        if (service.add(hs, course, holidays, hsFile, login)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
@@ -58,7 +61,7 @@ public class HsController {
     @PutMapping("edit")
     public ResponseEntity edit(Hs hs,
         @RequestParam(value = "holiday[]", required = false) String[] holiday,
-        @RequestParam(value = "course", required = false) String[] course,
+        @RequestParam(value = "course[]", required = false) String[] course,
         @RequestParam(value = "removeFileIds[]", required = false) List<Integer> removeFileIds,
         @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFile)
         throws IOException {

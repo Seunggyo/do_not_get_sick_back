@@ -7,6 +7,7 @@ import com.example.prj2be.mapper.board.BoardCommentMapper;
 import com.example.prj2be.mapper.board.NoticeBoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -90,12 +91,12 @@ public class BoardService {
    }
 
    public Map<String, Object> list(Boolean orderByNum, Boolean orderByHit, Integer page,
-      String keyword, Integer countLike, String filter) {
+      String keyword, Integer popCount, String filter) {
 
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%", countLike, filter);
+      int countAll = mapper.countAll("%" + keyword + "%", popCount, filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -116,7 +117,7 @@ public class BoardService {
       // 정렬된 데이터 조회
       List<Board> boardList;
       int from = (page - 1) * 10;
-      boardList = mapper.selectAll(from, "%" + keyword + "%", countLike, filter);
+      boardList = mapper.selectAll(from, "%" + keyword + "%", popCount, filter);
 
       // 필요한 경우 정렬을 적용하기
       if (orderByNum != null || orderByHit != null) {
@@ -134,6 +135,8 @@ public class BoardService {
       map.put("pageInfo", pageInfo);
 
       return map;
+//   public List<Board> list(Integer likeCount) {
+//      return mapper.selectAll(likeCount);
    }
 
    public Board get(Integer id) {
@@ -212,6 +215,7 @@ public class BoardService {
       }
 
       return mapper.update(board) == 1;
+
    }
 
    public boolean hasAccess(Integer id, Member login) {
@@ -225,6 +229,7 @@ public class BoardService {
       }
 
       Board board = mapper.selectById(id);
+      // mapper 에서 해당 게시물정보를 얻기
 
       return board.getWriter().equals(login.getId());
    }
@@ -234,6 +239,5 @@ public class BoardService {
       mapper.increaseHit(id);
 
    }
-
 
 }

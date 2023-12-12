@@ -14,6 +14,7 @@ public interface DrugCommentMapper {
             INSERT INTO drugComment(drugId, comment, memberId)
             VALUES (#{drugId}, #{comment}, #{memberId})
             """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(DrugComment drugComment);
 
     @Select("""

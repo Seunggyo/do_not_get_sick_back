@@ -15,29 +15,20 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
-        FROM prj2.business b left join prj2.businessmap bm on b.id = bm.businessId
-        left join prj2.businesslike b2 on b.id = b2.businessId
-        WHERE b.category = #{category}
+            FROM prj2.business b
+                left join prj2.businessmap bm
+                    on b.id = bm.businessId
+                left join prj2.businesslike b2
+                    on b.id = b2.businessId
+        WHERE b.category = 'hospital'
+        AND b.name LIKE #{keyword}
         GROUP BY
-            b.id,
-            b.name,
-            b.address,
-            b.homePage,
-            b.openHour,
-            b.openMin,
-            b.closeHour,
-            b.closeMin,
-            bm.lat,
-            bm.lng,
-            b.content,
-            b.category,
-            b.nightCare,
-            b.phone
-        ORDER BY COUNT(DISTINCT b2.id) DESC 
+            b.id
+        ORDER BY COUNT(DISTINCT b2.id) DESC
         """)
-    List<Hs> selectByCategory(String category);
+    List<Hs> selectByCategory(String category, String keyword);
 
     @Insert("""
         INSERT INTO prj2.business(name,memberId,address,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
@@ -88,7 +79,7 @@ public interface HsMapper {
     void insertCourse(Integer id, String medicalCourse);
 
     @Select("""
-        SELECT id,medicalCourseCategory
+        SELECT id,medicalCourseId,medicalCourseCategory
         FROM prj2.medicalcourse
         WHERE medicalCourseId =#{id}
         """)
