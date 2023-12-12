@@ -59,11 +59,13 @@ public class HsService {
         throws IOException {
         hs.setMemberId(login.getId());
         int cnt = mapper.insert(hs);
+
         if (course != null) {
             for (String hsCourse : course) {
                 mapper.insertCourse(hs.getId(), hsCourse);
             }
         }
+        
         if (holidays != null) {
             for (String holiday : holidays) {
                 mapper.insertHoliday(hs.getId(), holiday);
@@ -133,6 +135,7 @@ public class HsService {
         hs.setFiles(hsFiles);
         List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
         List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
+        hs.setMedicalCourse(hsCourses);
         hs.setHolidays(businessHolidays);
         return hs;
     }

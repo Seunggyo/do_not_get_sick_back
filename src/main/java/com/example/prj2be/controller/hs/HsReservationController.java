@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,5 +69,30 @@ public class HsReservationController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @GetMapping("check")
+    public List<HsReservation> checkGet(@RequestParam("id") String memberId) {
+        return service.checkGet(memberId);
+    }
+
+    @GetMapping("business/{id}")
+    public List<HsReservation> businessGet(@PathVariable("id") Integer memberId) {
+        return service.businessGet(memberId);
+    }
+
+    @GetMapping("list")
+    public List<Hs> businessList(@RequestParam("id") String memberId) {
+        return service.memberToBList(memberId);
+    }
+
+    @PutMapping("ok/{id}")
+    public Integer reservationOk(@PathVariable("id") Integer reservationId) {
+        return service.reservationOk(reservationId);
+    }
+
+    @GetMapping("business/check/{id}")
+    public List<HsReservation> checkGet(@PathVariable("id") Integer businessId) {
+        return service.bIdCheckGet(businessId);
     }
 }

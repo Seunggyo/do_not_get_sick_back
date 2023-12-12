@@ -88,7 +88,7 @@ public interface HsMapper {
     void insertCourse(Integer id, String medicalCourse);
 
     @Select("""
-        SELECT id,medicalCourseCategory
+        SELECT id,medicalCourseId,medicalCourseCategory
         FROM prj2.medicalcourse
         WHERE medicalCourseId =#{id}
         """)
