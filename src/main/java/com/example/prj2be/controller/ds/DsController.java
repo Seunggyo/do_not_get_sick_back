@@ -24,12 +24,12 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add(Ds ds,
-                              @RequestParam(value = "holiday[]",required = false) String[] holidays,
+                              @RequestParam(value = "holiday[]", required = false) String[] holidays,
                               @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 기입
 
-        if ( login == null) {
+        if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -44,26 +44,26 @@ public class DsController {
         }
 
     }
+
     // list?p=? 로 받아야 하기 떄문에 수정
 //    TODO : 진료명 카테고리 추가 해야함
     @GetMapping("list")
     public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
-                                    @RequestParam(value = "k", defaultValue = "") String keyword,
-                                    @RequestParam(value = "c", defaultValue = "all") String category) {
+                                    @RequestParam(value = "k", defaultValue = "") String keyword) {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
-        return service.list(page, keyword, category);
+        return service.list(page, keyword);
     }
 
     // soowan's code
-    @GetMapping("listByCK")
-    public List<Ds> getListByCK(@RequestParam(value = "k", defaultValue = "") String keyword,
-                                @RequestParam(value = "c", defaultValue = "all") String category) {
-        return service.getListByCK(keyword, category);
-    }
+//    @GetMapping("listByCK")
+//    public List<Ds> getListByCK(@RequestParam(value = "k", defaultValue = "") String keyword,
+//                                @RequestParam(value = "c", defaultValue = "all") String category) {
+//        return service.getListByCK(keyword, category);
+//    }
 
     @GetMapping("kakao")
-    public List<DsKakao> map (DsKakao dsKakao){
+    public List<DsKakao> map(DsKakao dsKakao) {
         return service.kakao(dsKakao);
     }
 
@@ -82,7 +82,7 @@ public class DsController {
                                @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
                                @RequestParam(value = "uploadFile[]", required = false) MultipartFile[] uploadFile,
                                @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds,
-                               @SessionAttribute(value = "login",required = false) Member login) throws IOException {
+                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 수정
         if (login == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -106,12 +106,12 @@ public class DsController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity delete(@PathVariable Integer id,
-                                 @SessionAttribute(value = "login", required = false)Member login) {
+                                 @SessionAttribute(value = "login", required = false) Member login) {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (!service.hasAccess(id, login)){
+        if (!service.hasAccess(id, login)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

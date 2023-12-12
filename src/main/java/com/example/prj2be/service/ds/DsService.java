@@ -141,14 +141,14 @@ public class DsService {
         return mapper.updateById(ds) == 1;
     }
 
-    public Map<String,Object> list(Integer page, String keyword, String category) {
+    public Map<String,Object> list(Integer page, String keyword) {
         Map<String,Object> map = new HashMap<>();
         Map<String,Object> pageInfo = new HashMap<>();
 
         // 현재 페이지
         int from = (page - 1 ) * 10 ;
         // 총 게시글이 몇개 인지, 어떤 키워드로 검색할 껏인지 등등 총 게시물에서 하는 키워드
-        int countAll = mapper.countAll("%" + keyword + "%", category);
+        int countAll = mapper.countAll("%" + keyword + "%");
 
         int lastPageNumber = (countAll -1) / 10 + 1;
         int startPageNumber = ((page -1) / 10 * 10) + 1;
@@ -159,7 +159,7 @@ public class DsService {
         pageInfo.put("endPageNumber", endPageNumber);
 
         // view안에 있는 사진리스트를 리스트 안에 사진 받아 오는 방법
-        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
+        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%");
 
         for (Ds ds : dsList) {
             List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
@@ -203,10 +203,7 @@ public class DsService {
         mapper.deleteHolidayByDsId(id);
 
         // 코멘트 삭제
-        if (dsCommentMapper.findById(id) != 0) {
-//            System.out.println(dsCommentMapper.findById(id));
-            dsCommentMapper.deleteById(id);
-        }
+        dsCommentMapper.deleteById(id);
 
         // 좋아요 삭제
         businessLikeMapper.deleteById(id);
@@ -240,7 +237,7 @@ public class DsService {
         return ds.getMemberId().equals(login.getId());
     }
 
-    public List<Ds> getListByCK(String keyword, String category) {
-        return mapper.getListByCK("%" + keyword + "%", category);
-    }
+//    public List<Ds> getListByCK(String keyword, String category) {
+//        return mapper.getListByCK("%" + keyword + "%", category);
+//    }
 }
