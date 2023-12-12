@@ -1,13 +1,24 @@
 package com.example.prj2be.service.drug;
 
+import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.domain.drug.DrugComment;
+import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.drug.CartMapper;
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
+import com.example.prj2be.mapper.drug.FileMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -16,10 +27,47 @@ import java.util.List;
 public class DrugCommentService {
 
     private final DrugCommentMapper mapper;
+    private final FileMapper fileMapper;
 
-    public boolean add(DrugComment drugComment, Member login) {
+    private final S3Client s3;
+    @Value("${image.file.prefix}")
+    private String urlPrefix;
+    @Value("${aws.s3.bucket.name}")
+    private String bucket;
+
+    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) throws IOException {
+
         drugComment.setMemberId(login.getId());
-        return mapper.insert(drugComment) == 1;
+
+        int cnt = mapper.insert(drugComment);
+
+        // drugCommentFile 테이블에 files 정보 저장
+        if (files != null) {
+            for (int i = 0; i < files.length; i++) {
+                // drugCommentId, FileName
+                fileMapper.CommentInsert(drugComment.getId(), files[i].getOriginalFilename());
+
+                 // 실제 파일을 S3 bucket에 upload
+                // 일단 local에 저장
+                upload(drugComment.getId(), files[i]);
+            }
+        }
+        return cnt == 1;
+    }
+
+    private void upload(Integer commentId, MultipartFile file) throws IOException {
+
+        String key = "prj2/drug1/" + commentId + "/" + file.getOriginalFilename();
+
+        PutObjectRequest objectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .acl(ObjectCannedACL.PUBLIC_READ)
+                .build();
+
+        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
+
     }
 
     public boolean validate(DrugComment drugComment) {
@@ -37,10 +85,26 @@ public class DrugCommentService {
     }
 
     public List<DrugComment> list(Integer drugId) {
-        return mapper.selectByDrugId(drugId);
+
+        List<DrugComment> drugCommentList = mapper.selectByDrugId(drugId);
+
+        for (DrugComment drugComment : drugCommentList) {
+
+            List<DrugFile> drugFiles = fileMapper.selectNamesByDrugComment(drugComment.getId());
+
+            for (DrugFile drugFile : drugFiles) {
+                String url = urlPrefix + "prj2/drug1/" + drugComment.getId() + "/" + drugFile.getName();
+                drugFile.setUrl(url);
+            }
+            drugComment.setFiles(drugFiles);
+        }
+        return drugCommentList;
     }
 
     public boolean remove(Integer id) {
+
+        // 첨부파일 레코드 지우기
+        fileMapper.deleteByCommentId(id);
 
         return mapper.deleteById(id) == 1;
 
