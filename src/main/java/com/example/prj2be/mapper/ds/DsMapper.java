@@ -14,12 +14,12 @@ public interface DsMapper {
             INSERT INTO
             business(name, address, phone, openHour, openMin, closeHour,
                     closeMin, content, category, nightCare, restHour, restMin,
-                    restCloseHour, restCloseMin, info, memberId)
+                    restCloseHour, restCloseMin, info, memberId, oldAddress)
             VALUES (#{name}, #{address}, #{phone},
                     #{openHour}, #{openMin}, #{closeHour},
                     #{closeMin}, #{content},'drugStore', #{nightCare},
                     #{restHour}, #{restMin}, #{restCloseHour}, #{restCloseMin},
-                    #{info}, #{memberId} )
+                    #{info}, #{memberId}, #{oldAddress} )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ds ds);
@@ -28,6 +28,7 @@ public interface DsMapper {
             UPDATE business
             SET name = #{name},
                 address = #{address},
+                oldAddress = #{oldAddress},
                 phone = #{phone},
                 openHour = #{openHour},
                 openMin = #{openMin},
@@ -51,6 +52,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,
@@ -83,6 +85,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,
@@ -147,6 +150,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,

@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
+        SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
             FROM prj2.business b
                 left join prj2.businessmap bm
@@ -31,8 +31,8 @@ public interface HsMapper {
     List<Hs> selectByCategory(String category, String keyword);
 
     @Insert("""
-        INSERT INTO prj2.business(name,memberId,address,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
-        VALUES (#{name},#{memberId},#{address},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{restCloseHour},#{restCloseMin},#{closeHour},#{closeMin},#{info},#{content},'hospital',#{nightCare},#{homePage})
+        INSERT INTO prj2.business(name,memberId,address,oldAddress,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
+        VALUES (#{name},#{memberId},#{address},#{oldAddress},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{restCloseHour},#{restCloseMin},#{closeHour},#{closeMin},#{info},#{content},'hospital',#{nightCare},#{homePage})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Hs hs);
@@ -41,6 +41,7 @@ public interface HsMapper {
         UPDATE prj2.business
         SET name = #{name},
         address = #{address},
+        oldAddress = #{oldAddress},
         phone =#{phone},
         openHour = #{openHour},
         openMin = #{openMin},
