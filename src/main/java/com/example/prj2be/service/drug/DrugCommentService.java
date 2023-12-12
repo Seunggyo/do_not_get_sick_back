@@ -1,10 +1,9 @@
 package com.example.prj2be.service.drug;
 
-import com.example.prj2be.domain.drug.Drug;
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.mapper.drug.CartMapper;
+
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -103,12 +102,33 @@ public class DrugCommentService {
 
     public boolean remove(Integer id) {
 
-        // 첨부파일 레코드 지우기
-        fileMapper.deleteByCommentId(id);
+        deleteFile(id);
 
         return mapper.deleteById(id) == 1;
 
     }
+
+    private void deleteFile(Integer id) {
+        //파일명 조회
+        List<DrugFile> drugFiles = fileMapper.selectNamesByDrugComment(id);
+
+        // s3 bucket objects 지우기
+        for (DrugFile file : drugFiles) {
+            String key = "prj2/drug1/" + id + "/" + file.getName();
+
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(bucket)
+                    .build();
+
+            s3.deleteObject(objectRequest);
+        }
+
+        // 첨부파일 레코드 지우기
+        fileMapper.deleteByCommentId(id);
+    }
+
+
 
     public boolean hasAccess(Integer id, Member login) {
         DrugComment drugComment = mapper.selectById(id);
