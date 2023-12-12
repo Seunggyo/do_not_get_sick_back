@@ -1,5 +1,6 @@
 package com.example.prj2be.controller.drug;
 
+import com.example.prj2be.domain.drug.Buy;
 import com.example.prj2be.domain.drug.Cart;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.drug.CartService;
@@ -52,4 +53,5 @@ public class DrugCartController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
 }

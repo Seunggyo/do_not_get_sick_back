@@ -1,5 +1,6 @@
 package com.example.prj2be.mapper.drug;
 
+import com.example.prj2be.domain.drug.Buy;
 import com.example.prj2be.domain.drug.Cart;
 import org.apache.ibatis.annotations.*;
 
@@ -44,7 +45,7 @@ public interface CartMapper {
     int updateIncreaseQuantity(Cart cart);
 
     @Select("""
-            SELECT c.id, d.name drugName, c.quantity, d.price*c.quantity total, d.id drugId,
+            SELECT distinct c.id, d.name drugName, c.quantity, d.price*c.quantity total, d.id drugId,
             (select name from drugFile where drugId = d.id limit 1) fileName
             FROM drugCart c
             JOIN drug d ON d.id = c.drugId
@@ -59,4 +60,14 @@ public interface CartMapper {
 
             """)
     int deleteById(Integer id);
+
+    @Select("""
+        select c.memberId, m.nickName, m.phone, m.address,
+        c.drugId, c.quantity, d.price, m.email
+        from drugCart c
+        join member m on m.id = c.memberId
+        join drug d on d.id = c.drugId
+        where c.id = #{id}
+""")
+    Buy selectBuyById(Integer id);
 }
