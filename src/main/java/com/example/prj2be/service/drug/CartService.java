@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,16 +54,24 @@ public class CartService {
         return Map.of("cart", cart != null, "countCart", countCart);
     }
 
-    public List<Cart> cartList(Member login) {
+    public Map<String, Object> cartList(Member login) {
+        int amount = 0;
+        Map<String, Object> map = new HashMap<>();
         if (login != null) {
             List<Cart> cartList = mapper.selectCartList(login.getId());
             for (Cart cart : cartList) {
                 String url = urlPrefix + "prj2/drug/" + cart.getDrugId() + "/" + cart.getFileName();
                 cart.setUrl(url);
             }
-            return cartList;
+            map.put("cartList", cartList);
+
+            for (Cart cart : cartList) {
+                amount += cart.getTotal();
+            }
+            map.put("amount", amount);
         }
-        return null;
+
+        return map;
 
     }
 

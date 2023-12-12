@@ -2,10 +2,12 @@ package com.example.prj2be.controller.payment;
 
 import com.example.prj2be.config.PaymentConfig;
 import com.example.prj2be.domain.Payment.Payment;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.dto.PaymentDto;
 import com.example.prj2be.dto.PaymentRequsetDto;
 import com.example.prj2be.dto.PaymentResDto;
 import com.example.prj2be.exception.CustomLogicException;
+import com.example.prj2be.mapper.order.OrderWaitMapper;
 import com.example.prj2be.service.payment.EntityService;
 import com.example.prj2be.service.payment.PaymentService;
 import com.fasterxml.jackson.core.io.JsonEOFException;
@@ -38,19 +40,21 @@ public class PaymentController {
     }
 
     @PostMapping("/toss/success")
-    public ResponseEntity tossPaymentSuccess(@RequestBody PaymentRequsetDto paymentRequsetDto) throws JsonEOFException {
+    public ResponseEntity tossPaymentSuccess(@RequestBody PaymentRequsetDto paymentRequsetDto,
+                                             @SessionAttribute(value = "login", required = false)Member login) throws JsonEOFException {
         System.out.println("PaymentController.tossPaymentSuccess");
         String paymentKey = paymentRequsetDto.getPaymentKey();
         String orderId = paymentRequsetDto.getPaymentUid();
         Long amount = paymentRequsetDto.getAmount();
         System.out.println("orderId = " + orderId);
-        return ResponseEntity.ok().body(paymentService.tossPaymentSuccess(paymentKey, orderId, amount));
+        return ResponseEntity.ok().body(paymentService.tossPaymentSuccess(paymentKey, orderId, amount, login));
     }
 
     @GetMapping("/toss/success")
     public void method1(@RequestParam String paymentKey,
                         @RequestParam String orderId,
-                        @RequestParam Long amount) {
+                        @RequestParam Long amount,
+                        @SessionAttribute(value = "login", required = false)Member login) {
         System.out.println("PaymentController.method1");
     }
 }

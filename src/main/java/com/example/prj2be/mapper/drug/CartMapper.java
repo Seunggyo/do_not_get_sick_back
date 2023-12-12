@@ -46,7 +46,7 @@ public interface CartMapper {
 
     @Select("""
             SELECT distinct c.id, d.name drugName, c.quantity, d.price*c.quantity total, d.id drugId,
-            (select name from drugFile where drugId = d.id limit 1) fileName
+            c.memberId, (select name from drugFile where drugId = d.id limit 1) fileName
             FROM drugCart c
             JOIN drug d ON d.id = c.drugId
             join drugFile df on d.id = df.drugId
@@ -70,4 +70,10 @@ public interface CartMapper {
         where c.id = #{id}
 """)
     Buy selectBuyById(Integer id);
+
+    @Delete("""
+        delete from drugCart
+        where memberId = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
 }

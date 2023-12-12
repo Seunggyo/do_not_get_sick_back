@@ -2,12 +2,18 @@ package com.example.prj2be.service.payment;
 
 import com.example.prj2be.config.PaymentConfig;
 import com.example.prj2be.domain.Payment.Payment;
+import com.example.prj2be.domain.drug.Cart;
+import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.dto.PaymentDto;
 import com.example.prj2be.dto.PaymentResDto;
 import com.example.prj2be.dto.PaymentSuccessDto;
 import com.example.prj2be.exception.CustomLogicException;
 import com.example.prj2be.exception.ExceptionCode;
+import com.example.prj2be.mapper.drug.CartMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
+import com.example.prj2be.mapper.order.OrderListMapper;
+import com.example.prj2be.mapper.order.OrderWaitMapper;
+import com.example.prj2be.mapper.order.OrdersMapper;
 import com.example.prj2be.mapper.payment.PaymentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -18,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional
@@ -32,6 +35,10 @@ public class PaymentService {
     private final MemberMapper memberMapper;
     private final PaymentConfig paymentConfig;
     private final EntityService entityService;
+    private final OrderWaitMapper orderWaitMapper;
+    private final OrdersMapper ordersMapper;
+    private final OrderListMapper orderListMapper;
+    private final CartMapper cartMapper;
 
 
     public PaymentResDto requsetTossPayment(PaymentDto paymentDto, String email) throws CustomLogicException {
@@ -55,12 +62,14 @@ public class PaymentService {
         return paymentResDto;
     }
 
-    public PaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount) {
+    public PaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount, Member login) {
         System.out.println("orderId = " + orderId);
         Payment payment = verifyPayment(orderId, amount);
         PaymentSuccessDto result = requestPaymentAccept(paymentKey, orderId, amount);
         payment.setPaymentKey(paymentKey);
         payment.setPaySuccessYN(true);
+
+        oders(orderId, login.getId());
 
         return result;
     }
@@ -111,5 +120,21 @@ public class PaymentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
+    }
+
+    public void oders(String orderId, String memberId) {
+        if (ordersMapper.insert(
+                orderWaitMapper.seletByOrderId(orderId)
+        ) == 1) {
+            List<Cart> cartList = cartMapper.selectCartList(memberId);
+            for (Cart cart : cartList) {
+                orderListMapper.insertByCart(cart, orderId);
+            }
+
+            cartMapper.deleteByMemberId(memberId);
+            orderWaitMapper.deleteByOrderId(orderId);
+
+
+        }
     }
 }
