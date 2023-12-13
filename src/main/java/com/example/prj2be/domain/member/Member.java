@@ -15,6 +15,7 @@ public class Member {
     private String address;
     private String auth;
     private String fileName;
+    private String profile;
     private LocalDateTime inserted;
 
     public boolean isAdmin() {

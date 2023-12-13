@@ -29,11 +29,11 @@ public interface MemberMapper {
     @Insert("""
         insert into member (
         id, password, nickName, birthday, phone,
-        email, address, auth, fileName)
+        email, address, auth, fileName, profile)
         values (
         #{member.id}, #{member.password}, #{member.nickName}, #{member.birthday},
         #{member.phone}, #{member.email}, #{member.address},
-        #{member.auth}, #{fileName})
+        #{member.auth}, #{fileName}, #{profile})
 """)
     int insertMember(Member member, String fileName);
 
