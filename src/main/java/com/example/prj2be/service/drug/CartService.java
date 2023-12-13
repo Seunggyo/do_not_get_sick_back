@@ -58,6 +58,7 @@ public class CartService {
         int amount = 0;
         Map<String, Object> map = new HashMap<>();
         if (login != null) {
+
             List<Cart> cartList = mapper.selectCartList(login.getId());
             for (Cart cart : cartList) {
                 String url = urlPrefix + "prj2/drug/" + cart.getDrugId() + "/" + cart.getFileName();

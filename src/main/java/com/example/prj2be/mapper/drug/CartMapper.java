@@ -45,8 +45,11 @@ public interface CartMapper {
     int updateIncreaseQuantity(Cart cart);
 
     @Select("""
-            SELECT distinct c.id, d.name drugName, c.quantity, d.price*c.quantity total, d.id drugId,
-            c.memberId, (select name from drugFile where drugId = d.id limit 1) fileName
+            SELECT distinct 
+            c.id, d.name drugName, 
+            c.quantity, d.price*c.quantity total,
+            d.id drugId, d.`function` func, c.memberId,
+            (select name from drugFile where drugId = d.id limit 1) fileName
             FROM drugCart c
             JOIN drug d ON d.id = c.drugId
             join drugFile df on d.id = df.drugId
