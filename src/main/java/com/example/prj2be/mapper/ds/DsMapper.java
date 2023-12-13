@@ -73,9 +73,8 @@ public interface DsMapper {
                     ON b.id = bc.businessId
                 LEFT JOIN businessholiday bh
                     ON b.id = bh.businessId
-            WHERE b.category = 'drugStore'
-                AND b.name LIKE #{keyword}
-                
+            WHERE b.category='drugStore'
+                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
             GROUP BY b.id
             LIMIT #{from}, 15
             """)
