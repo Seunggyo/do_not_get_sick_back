@@ -35,6 +35,11 @@ public class HsController {
         return service.list(category, keyword);
     }
 
+    @GetMapping(value = "list", params = "course")
+    public Map<String, Object> list(@RequestParam(value = "course") String course) {
+        return service.courseList(course);
+    }
+
     @PostMapping("add")
     public ResponseEntity add(Hs hs,
         @RequestParam(value = "course[]", required = false) String[] course,

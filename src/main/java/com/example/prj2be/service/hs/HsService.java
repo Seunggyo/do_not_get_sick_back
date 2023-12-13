@@ -55,21 +55,30 @@ public class HsService {
 
     public Map<String, Object> list(String category, String keyword) {
 
-//        List<Ds> dsList = mapper.selectAllByCategory(from, "%" + keyword + "%", category);
-//
-//        for (Ds ds : dsList) {
-//            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
-//
-//            for (DsPicture dsPicture : dsPictures){
-//                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
-//                dsPicture.setUrl(url);
-//            }
-//
-//            ds.setFiles(dsPictures);
-//        }
         Map<String, Object> map = new HashMap<>();
 
-        List<Hs> hsList = mapper.selectByCategory(category, "%" +  keyword + "%" );
+        List<Hs> hsList = mapper.selectByKeyword(category, "%" +  keyword + "%" );
+
+        for (Hs hs : hsList) {
+            List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
+
+            for (HsFile hsFile : hsFiles) {
+                String url = urlPrefix + "prj2/hospital/" + hs.getId() + "/" + hsFile.getName();
+                hsFile.setUrl(url);
+            }
+            hs.setFiles(hsFiles);
+
+        }
+
+        map.put("list", hsList);
+
+        return map;
+    }
+
+    public Map<String, Object> courseList(String course) {
+        Map<String, Object> map = new HashMap<>();
+
+        List<Hs> hsList = mapper.selectByCategory(course);
 
         for (Hs hs : hsList) {
             List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
