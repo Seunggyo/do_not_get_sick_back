@@ -3,6 +3,9 @@ package com.example.prj2be.mapper.order;
 import com.example.prj2be.domain.order.Orders;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface OrdersMapper {
@@ -16,4 +19,10 @@ public interface OrdersMapper {
         #{deliveryPhone}, #{deliveryAddress}, #{deliveryComment})
 """)
     int insert(Orders orders);
+
+    @Select("""
+        select * from orders
+        where ordererName = #{id}
+""")
+    List<Orders> selectById(String id);
 }
