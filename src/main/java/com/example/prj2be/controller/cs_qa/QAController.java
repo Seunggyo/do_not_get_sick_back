@@ -4,6 +4,7 @@ import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.cs_qa.QAService;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class QAController {
    public ResponseEntity add(
       CustomerQA qa,
       @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
-      @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+      @SessionAttribute(value = "login", required = false) Member login) throws Exception {
 
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401
@@ -80,8 +81,12 @@ public class QAController {
    }
 
    @PutMapping("edit")
-   public ResponseEntity edit(@RequestBody CustomerQA qa,
-      @SessionAttribute(value = "login", required = false) Member login) {
+   public ResponseEntity edit(
+      CustomerQA qa,
+      @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
+      @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles,
+      @SessionAttribute(value = "login", required = false) Member login) throws Exception{
+
       if (login == null) {
          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // 401
       }
@@ -91,7 +96,7 @@ public class QAController {
       }
 
       if (service.validate(qa)) {
-         if (service.update(qa)) {
+         if (service.update(qa, fileSwitch, uploadFiles)) {
             return ResponseEntity.ok().build();
          } else {
             return ResponseEntity.internalServerError().build();

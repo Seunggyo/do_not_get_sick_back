@@ -1,16 +1,26 @@
 package com.example.prj2be.service.cs_qa;
 
+import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.board.BoardFile;
 import com.example.prj2be.domain.cs_qa.CustomerService;
+import com.example.prj2be.domain.cs_qa.NoticeBoardFile;
 import com.example.prj2be.domain.member.Member;
-import com.example.prj2be.mapper.board.NoticeBoardFileMapper;
 import com.example.prj2be.mapper.cs_qa.CSMapper;
+import com.example.prj2be.mapper.cs_qa.NoticeBoardFileMapper;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +30,47 @@ public class CSService {
    private final CSMapper mapper;
    private final NoticeBoardFileMapper fileMapper;
 
-   public boolean save(CustomerService cs, Member login) {
+   private final S3Client s3;
+
+   @Value("${image.file.prefix}")
+   private String urlPrefix;
+   @Value("${aws.s3.bucket.name}")
+   private String bucket;
+
+   public boolean save(
+      CustomerService cs, MultipartFile[] files, Member login) throws IOException {
 
       cs.setCsWriter(login.getId());
 
-      return mapper.insert(cs) == 1;
+      int cnt = mapper.insert(cs);
+
+      if (files != null) {
+         for (int i = 0; i < files.length; i++) {
+            fileMapper.insert(cs.getId(), files[i].getOriginalFilename());
+
+            // 실제 파일 s3 bucket 에 넣어야지만 일단 연습중이니 local에 저장.
+            upload(cs.getId(),files[i]);
+         }
+      }
+
+      return cnt == 1;
 
    }
+
+   private void upload(Integer fileId, MultipartFile file) throws IOException {
+
+      String key = "prj2/CS/" + fileId + "/" + file.getOriginalFilename();
+
+      PutObjectRequest objectRequest = PutObjectRequest.builder()
+         .bucket(bucket)
+         .key(key)
+         .acl(ObjectCannedACL.PUBLIC_READ)
+         .build();
+
+      s3.putObject(objectRequest, RequestBody.fromInputStream(
+         file.getInputStream(), file.getSize()));
+   }
+
    public boolean    validate(CustomerService cs) {
       if (cs == null) {
          return false;
@@ -92,15 +136,77 @@ public class CSService {
    }
 
    public CustomerService get(Integer id) {
-      return mapper.selectById(id);
+      CustomerService cs = mapper.selectById(id);
+
+      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
+
+      for (NoticeBoardFile noticeBoardFile: noticeBoardFiles) {
+         String url = urlPrefix + "prj2/CS/" + id + "/" + noticeBoardFile.getFileName();
+         noticeBoardFile.setUrl(url);
+      }
+
+      cs.setFiles(noticeBoardFiles);
+
+      return cs;
    }
 
+
    public boolean remove(Integer id) {
+      deleteFile(id);
+
       return mapper.deleteById(id) == 1;
    }
 
-   public boolean update(CustomerService cs, List<Integer> fileSwitch, MultipartFile[] uploadFiles) {
+   private void deleteFile(Integer id) {
+      // 파일명 조회
+      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
+
+      // s3 bucket objects 지우기
+      for (NoticeBoardFile file : noticeBoardFiles) {
+         String key = "prj2/CS/" + id + "/" + file.getFileName();
+
+         DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+            .bucket(bucket)
+            .key(key)
+            .build();
+
+         s3.deleteObject(objectRequest);
+      }
+
+      // 첨부파일 레코드 지우기
+      fileMapper.deleteByFileId(id);
+   }
+
+   public boolean update(CustomerService cs, List<Integer> removeFileIds, MultipartFile[] uploadFiles) throws IOException {
+
+      if (removeFileIds != null) {
+         for (Integer id : removeFileIds) {
+            // s3에서 지우기
+            BoardFile file = fileMapper.selectById(id);
+            String key = "prj2/CS/" + cs.getId() + "/" + file.getFileName();
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+               .bucket(bucket)
+               .key(key)
+               .build();
+            s3.deleteObject(objectRequest);
+
+            // db에서 지우기
+            fileMapper.deleteById(id);
+         }
+      }
+
+      // 파일 추가하기
+      if (uploadFiles != null) {
+         for (MultipartFile file : uploadFiles) {
+            // s3에 올리기
+            upload(cs.getId(), file);
+            // db에 추가하기
+            fileMapper.insert(cs.getId(), file.getOriginalFilename());
+         }
+      }
+
       return mapper.update(cs) == 1;
+
    }
 
    public boolean hasAccess(Integer id, Member login) {

@@ -20,7 +20,7 @@ public class Board {
    private Integer countLike;
    private Integer countFile;
 
-   private List<NoticeBoardFile> files;
+   private List<BoardFile> files;
 
    public String getAgo() {
       return AppUtil.getAgo(inserted);

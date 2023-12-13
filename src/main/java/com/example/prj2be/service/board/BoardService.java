@@ -1,13 +1,12 @@
 package com.example.prj2be.service.board;
 
 import com.example.prj2be.domain.board.Board;
-import com.example.prj2be.domain.board.NoticeBoardFile;
+import com.example.prj2be.domain.board.BoardFile;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardCommentMapper;
-import com.example.prj2be.mapper.board.NoticeBoardFileMapper;
+import com.example.prj2be.mapper.board.BoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
-import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class BoardService {
    private final BoardMapper mapper;
    private final BoardCommentMapper commentMapper;
    private final BoardLikeMapper likeMapper;
-   private final NoticeBoardFileMapper fileMapper;
+   private final BoardFileMapper fileMapper;
 
    private final S3Client s3;
 
@@ -44,8 +43,7 @@ public class BoardService {
    public boolean save(Board board, MultipartFile[] files, Member login) throws IOException {
       board.setWriter(login.getId());
 
-      // NoticeBoardFile 테이블에 files 정보저장
-      // boardId, name - 어떤 게시물의 파일인지 알아야함.
+      // Id, name - 어떤 게시물의 파일인지 알아야함.
       int cnt = mapper.insert(board);
 
       if (files != null) {
@@ -142,14 +140,14 @@ public class BoardService {
    public Board get(Integer id) {
       Board board = mapper.selectById(id);
 
-      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
+      List<BoardFile> boardFiles = fileMapper.selectNamesByFileId(id);
 
-      for (NoticeBoardFile noticeBoardFile : noticeBoardFiles) {
-         String url = urlPrefix + "prj2/board/" + id + "/" + noticeBoardFile.getFileName();
-         noticeBoardFile.setUrl(url);
+      for (BoardFile boardFile : boardFiles) {
+         String url = urlPrefix + "prj2/board/" + id + "/" + boardFile.getFileName();
+         boardFile.setUrl(url);
       }
 
-      board.setFiles(noticeBoardFiles);
+      board.setFiles(boardFiles);
 
       return board;
    }
@@ -168,10 +166,10 @@ public class BoardService {
 
    private void deleteFile(Integer id) {
       // 파일명 조회
-      List<NoticeBoardFile> noticeBoardFiles = fileMapper.selectNamesByFileId(id);
+      List<BoardFile> boardFiles = fileMapper.selectNamesByFileId(id);
 
       // s3 bucket objects 지우기
-      for (NoticeBoardFile file : noticeBoardFiles) {
+      for (BoardFile file : boardFiles) {
          String key = "prj2/board/" + id + "/" + file.getFileName();
 
          DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
@@ -191,7 +189,7 @@ public class BoardService {
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {
             // s3에서 지우기
-            NoticeBoardFile file = fileMapper.selectById(id);
+            BoardFile file = fileMapper.selectById(id);
             String key = "prj2/board/" + board.getId() + "/" + file.getFileName();
             DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                .bucket(bucket)

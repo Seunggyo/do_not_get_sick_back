@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -12,9 +13,10 @@ import org.apache.ibatis.annotations.Update;
 public interface QAMapper {
 
    @Insert("""
-      INSERT INTO customerqa (qaTitle, qaContent, qaWriter, qaCategory, category)
-      VALUES (#{qaTitle}, #{qaContent}, #{qaWriter}, #{qaCategory}, #{category})
+      INSERT INTO customerqa (qaTitle, qaContent, qaWriter, qaCategory)
+      VALUES (#{qaTitle}, #{qaContent}, #{qaWriter}, #{qaCategory})
       """)
+   @Options(useGeneratedKeys = true, keyProperty = "id")
    int insert(CustomerQA qa);
 
    @Select("""
@@ -25,8 +27,10 @@ public interface QAMapper {
                q.qaCategory,
                m.nickName,
                q.inserted,
-               COUNT(DISTINCT c.id) countComment
+               COUNT(DISTINCT c.id) countComment,
+               COUNT(DISTINCT f.id) countFile
         FROM customerqa q JOIN member m ON q.qaWriter = m.id
+        LEFT JOIN noticeQaBoardFile f ON q.id = f.fileId
         LEFT JOIN boardComment c 
         ON q.id = c.boardId
         and c.category = "qa"
