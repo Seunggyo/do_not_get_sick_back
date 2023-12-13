@@ -75,6 +75,7 @@ public interface DsMapper {
                     ON b.id = bh.businessId
             WHERE b.category = 'drugStore'
                 AND b.name LIKE #{keyword}
+                
             GROUP BY b.id
             LIMIT #{from}, 15
             """)

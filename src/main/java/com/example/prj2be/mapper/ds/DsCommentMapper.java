@@ -19,10 +19,11 @@ public interface DsCommentMapper {
             FROM businesscomment bc
                 JOIN member m
                     ON bc.memberId = m.id
-            WHERE businessId = #{businessId}
-            ORDER By id DESC ;
+            WHERE businessId = #{id}
+            ORDER By id DESC
+            LIMIT #{from}, 5
             """)
-    List<DsComment> selectByBusinessId(Integer id);
+    List<DsComment> selectByBusinessId(Integer from, Integer id);
 
     @Select("""
             SELECT * FROM businesscomment
@@ -61,4 +62,10 @@ public interface DsCommentMapper {
             WHERE name = #{name}
             """)
     Integer selectIdByName(String name);
+
+    @Select("""
+            SELECT COUNT(*) FROM businesscomment
+            WHERE businessId = #{id}
+            """)
+    int countAll(Integer id);
 }
