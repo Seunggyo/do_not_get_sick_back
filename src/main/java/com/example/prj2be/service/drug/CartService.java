@@ -55,6 +55,7 @@ public class CartService {
 
     public List<Cart> cartList(Member login) {
         if (login != null) {
+
             List<Cart> cartList = mapper.selectCartList(login.getId());
             for (Cart cart : cartList) {
                 String url = urlPrefix + "prj2/drug/" + cart.getDrugId() + "/" + cart.getFileName();

@@ -12,5 +12,5 @@ public class Cart {
     private Integer total;
     private String fileName;
     private String url;
-
+    private String func;
 }
