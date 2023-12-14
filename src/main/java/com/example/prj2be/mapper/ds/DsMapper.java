@@ -109,6 +109,7 @@ public interface DsMapper {
             WHERE b.category='drugStore'
                 AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
             GROUP BY b.id
+            ORDER BY count(distinct bl.id) DESC
             """)
     List<Ds> selectAllByCategoryMap(String keyword);
 
@@ -127,7 +128,10 @@ public interface DsMapper {
                    b.restMin,
                    b.restCloseHour,
                    b.restCloseMin,
-                   b.memberId
+                   b.nightCare,
+                   b.memberId,
+                   b.content,
+                   b.info
             FROM business b
             WHERE b.id = #{id};
             """)

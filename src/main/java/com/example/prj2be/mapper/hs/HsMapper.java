@@ -29,7 +29,7 @@ public interface HsMapper {
             WHERE b.category = 'hospital'
                 AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword} OR mc.medicalCourseCategory LIKE #{keyword})
             GROUP BY b.id
-            ORDER BY b.id
+            ORDER BY count(distinct b2.id) DESC
             """)
     List<Hs> selectByKeyword(String category, String keyword);
 
@@ -46,7 +46,7 @@ public interface HsMapper {
             WHERE b.category = 'hospital'
                 AND mc.medicalCourseCategory = #{course}
             GROUP BY b.id
-            ORDER BY b.id
+            ORDER BY count(distinct b2.id) DESC
             """)
     List<Hs> selectByCategory(String course);
 
