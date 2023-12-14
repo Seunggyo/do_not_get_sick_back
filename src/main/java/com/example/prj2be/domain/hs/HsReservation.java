@@ -14,6 +14,8 @@ public class HsReservation {
     private Date reservationDate;
     private Integer reservationHour;
     private Integer reservationMin;
+    private Integer people;
     private String comment;
+    private String phone;
     private Boolean isReservationCheck;
 }

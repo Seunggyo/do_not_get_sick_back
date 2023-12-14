@@ -15,11 +15,9 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-               bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
+        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,b.memberId,
+               b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
             FROM prj2.business b
-                left join prj2.businessmap bm
-                    on b.id = bm.businessId
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
         WHERE b.category = 'hospital'
@@ -109,4 +107,18 @@ public interface HsMapper {
         WHERE businessId = #{id}
         """)
     List<BusinessHoliday> holidaySelectByBusinessId(Integer id);
+
+    @Select("""
+        SELECT *
+        FROM business
+        WHERE memberId = #{memberId}
+        """)
+    Hs selectBymemberId(String memberId);
+
+    @Select("""
+        SELECT id
+        FROM business
+        WHERE memberId = #{memberId}
+        """)
+    Integer selectIdByMemberId(String memberId);
 }

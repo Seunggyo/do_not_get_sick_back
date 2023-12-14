@@ -6,7 +6,6 @@ import com.example.prj2be.service.hs.HsService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +29,9 @@ public class HsController {
 
 
     @GetMapping("list")
-    public Map<String, Object> list(@RequestParam(value = "c", defaultValue = "all") String category,
-                    @RequestParam(value = "k", defaultValue = "") String keyword) {
+    public Map<String, Object> list(
+        @RequestParam(value = "c", defaultValue = "all") String category,
+        @RequestParam(value = "k", defaultValue = "") String keyword) {
         return service.list(category, keyword);
     }
 
@@ -88,6 +88,11 @@ public class HsController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @GetMapping("get")
+    public Hs getId(@RequestParam("id") String memberId) {
+        return service.getId(memberId);
     }
 
 
