@@ -15,24 +15,44 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-        SELECT b.id,b.name,b.address,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-               bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone, COUNT(DISTINCT b2.id) countLike
+            SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+                    b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
+                   b.content,b.category,b.nightCare,b.phone,
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory `medicalCourse`, bh.holiday
+                FROM prj2.business b
+                    left join prj2.businesslike b2
+                        on b.id = b2.businessId
+                    left join prj2.medicalcourse mc
+                        on b.id = mc.medicalCourseId
+                    left join prj2.businessholiday bh
+                        on b.id = bh.businessId
+            WHERE b.category = 'hospital'
+                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword} OR mc.medicalCourseCategory LIKE #{keyword})
+            GROUP BY b.id
+            ORDER BY count(distinct b2.id) DESC
+            """)
+    List<Hs> selectByKeyword(String category, String keyword);
+
+    @Select("""
+            SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+                    b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
+                   b.content,b.category,b.nightCare,b.phone,
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory
             FROM prj2.business b
-                left join prj2.businessmap bm
-                    on b.id = bm.businessId
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
-        WHERE b.category = 'hospital'
-        AND b.name LIKE #{keyword}
-        GROUP BY
-            b.id
-        ORDER BY COUNT(DISTINCT b2.id) DESC
-        """)
-    List<Hs> selectByCategory(String category, String keyword);
+                left join prj2.medicalcourse mc
+                    on b.id = mc.medicalCourseId
+            WHERE b.category = 'hospital'
+                AND mc.medicalCourseCategory = #{course}
+            GROUP BY b.id
+            ORDER BY count(distinct b2.id) DESC
+            """)
+    List<Hs> selectByCategory(String course);
 
     @Insert("""
-        INSERT INTO prj2.business(name,memberId,address,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
-        VALUES (#{name},#{memberId},#{address},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{restCloseHour},#{restCloseMin},#{closeHour},#{closeMin},#{info},#{content},'hospital',#{nightCare},#{homePage})
+        INSERT INTO prj2.business(name,memberId,address,oldAddress,phone,openHour,openMin,restHour,restMin,restCloseHour,restCloseMin,closeHour,closeMin,info,content,category,nightCare,homePage)
+        VALUES (#{name},#{memberId},#{address},#{oldAddress},#{phone},#{openHour},#{openMin},#{restHour},#{restMin},#{restCloseHour},#{restCloseMin},#{closeHour},#{closeMin},#{info},#{content},'hospital',#{nightCare},#{homePage})
         """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Hs hs);
@@ -41,6 +61,7 @@ public interface HsMapper {
         UPDATE prj2.business
         SET name = #{name},
         address = #{address},
+        oldAddress = #{oldAddress},
         phone =#{phone},
         openHour = #{openHour},
         openMin = #{openMin},
@@ -109,4 +130,6 @@ public interface HsMapper {
         WHERE businessId = #{id}
         """)
     List<BusinessHoliday> holidaySelectByBusinessId(Integer id);
+
+
 }

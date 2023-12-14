@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,16 +39,17 @@ public class DsCommentController {
     }
 
     @GetMapping("list")
-    public List<DsComment> list (@RequestParam("id") Integer businessId) {
-        return service.list(businessId);
+    public Map<String, Object> list (@RequestParam("id") Integer businessId,
+                                     @RequestParam(value = "p", defaultValue = "1") Integer page) {
+        return service.list(businessId, page);
     }
 
-    @GetMapping("listName")
-    public List<DsComment> listName (@RequestParam("name") String name) {
-        Integer id = service.getIdByName(name);
-
-        return service.list(id);
-    }
+//    @GetMapping("listName")
+//    public List<DsComment> listName (@RequestParam("name") String name) {
+//        Integer id = service.getIdByName(name);
+//
+//        return service.list(name);
+//    }
 
     @PutMapping("edit")
     public boolean edit(@RequestBody DsComment comment) {
