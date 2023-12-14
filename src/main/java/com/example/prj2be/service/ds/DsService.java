@@ -178,6 +178,30 @@ public class DsService {
         return map;
     }
 
+    public Map<String, Object> listMap(String keyword) {
+        Map<String,Object> map = new HashMap<>();
+
+        int countAll = mapper.countAll("%" + keyword + "%");
+
+        // view안에 있는 사진리스트를 리스트 안에 사진 받아 오는 방법
+        List<Ds> dsList = mapper.selectAllByCategoryMap("%" + keyword + "%");
+
+        for (Ds ds : dsList) {
+            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+
+            for (DsPicture dsPicture : dsPictures){
+                String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
+                dsPicture.setUrl(url);
+            }
+
+            ds.setFiles(dsPictures);
+        }
+
+        map.put("dsList", dsList);
+
+        return map;
+    }
+
     public Ds get(Integer id) {
         Ds ds = mapper.selectById(id);
 
@@ -236,6 +260,8 @@ public class DsService {
 
         return ds.getMemberId().equals(login.getId());
     }
+
+
 
 //    public List<Ds> getListByCK(String keyword, String category) {
 //        return mapper.getListByCK("%" + keyword + "%", category);

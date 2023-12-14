@@ -95,6 +95,38 @@ public interface DsMapper {
                    b.restMin,
                    b.restCloseHour,
                    b.restCloseMin,
+                   b.memberId,
+                   bh.holiday,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+            FROM business b
+                LEFT JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
+                LEFT JOIN businessholiday bh
+                    ON b.id = bh.businessId
+            WHERE b.category='drugStore'
+                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
+            GROUP BY b.id
+            """)
+    List<Ds> selectAllByCategoryMap(String keyword);
+
+    @Select("""
+            SELECT b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.oldAddress,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
                    b.memberId
             FROM business b
             WHERE b.id = #{id};
@@ -176,4 +208,6 @@ public interface DsMapper {
             LIMIT 0, 10
     """)
     List<Ds> getListByCK(String keyword);
+
+
 }

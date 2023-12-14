@@ -55,6 +55,13 @@ public class DsController {
         return service.list(page, keyword);
     }
 
+    @GetMapping("listMap")
+    public Map<String, Object> list( @RequestParam(value = "k", defaultValue = "") String keyword) {
+        // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
+
+        return service.listMap(keyword);
+    }
+
     // soowan's code
 //    @GetMapping("listByCK")
 //    public List<Ds> getListByCK(@RequestParam(value = "k", defaultValue = "") String keyword,
