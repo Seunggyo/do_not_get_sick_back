@@ -107,7 +107,7 @@ public class HsService {
                 mapper.insertCourse(hs.getId(), hsCourse);
             }
         }
-        
+
         if (holidays != null) {
             for (String holiday : holidays) {
                 mapper.insertHoliday(hs.getId(), holiday);
@@ -219,9 +219,25 @@ public class HsService {
         if (login == null) {
             return false;
         }
-        if (login.isAdmin()) {
-            return true;
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("admin") == true;
         }
         return hospital.getMemberId().equals(login.getId());
+    }
+
+    public Hs getId(String memberId) {
+        Hs hs = mapper.selectBymemberId(memberId);
+        Integer id = mapper.selectIdByMemberId(memberId);
+        List<HsFile> hsFiles = fileMapper.selectByHsId(id);
+        for (HsFile hsFile : hsFiles) {
+            String url = urlPrefix + "prj2/hospital/" + id + "/" + hsFile.getName();
+            hsFile.setUrl(url);
+        }
+        hs.setFiles(hsFiles);
+        List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
+        List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
+        hs.setMedicalCourse(hsCourses);
+        hs.setHolidays(businessHolidays);
+        return hs;
     }
 }

@@ -39,8 +39,8 @@ public class HsCommentService {
         if (login == null) {
             return false;
         }
-        if (login.isAdmin()) {
-            return true;
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("admin") == true;
         }
         HsComment comment = mapper.selectById(id);
 

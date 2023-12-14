@@ -95,4 +95,13 @@ public class HsReservationController {
     public List<HsReservation> checkGet(@PathVariable("id") Integer businessId) {
         return service.bIdCheckGet(businessId);
     }
+
+
+    @GetMapping("month")
+    public List<HsReservation> month(
+        @RequestParam("id") String businessId,
+        @RequestParam(value = "startDate", required = false) String start,
+        @RequestParam(value = "endDate", required = false) String end) {
+        return service.monthCheck(businessId, start, end);
+    }
 }

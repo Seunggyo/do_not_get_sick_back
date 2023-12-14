@@ -46,8 +46,8 @@ public class HsReservationService {
         if (login == null) {
             return false;
         }
-        if (login.isAdmin()) {
-            return true;
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("admin") == true;
         }
         return reservation.getMemberId().equals(login.getId());
     }
@@ -79,5 +79,10 @@ public class HsReservationService {
 
     public List<HsReservation> bIdCheckGet(Integer businessId) {
         return mapper.bIdCheckGet(businessId);
+    }
+
+
+    public List<HsReservation> monthCheck(String businessId, String start, String end) {
+        return mapper.monthCheck(businessId, start, end);
     }
 }

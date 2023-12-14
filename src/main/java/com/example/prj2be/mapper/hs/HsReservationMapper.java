@@ -63,7 +63,8 @@ public interface HsReservationMapper {
     @Select("""
         SELECT m.nickName, r.reservationDate, r.reservationHour, r.reservationMin, r.id, r.comment, r.isReservationCheck
         FROM prj2.businessreservation r JOIN prj2.member m on m.id = r.memberId
-        WHERE r.businessId = #{id} AND isReservationCheck = false
+        WHERE r.businessId = #{id}
+        ORDER BY r.reservationDate
         """)
     List<HsReservation> selectByBusinessMemberId(Integer id);
 
@@ -72,6 +73,7 @@ public interface HsReservationMapper {
         SELECT id, name
         FROM prj2.business
         WHERE memberId = #{memberId}
+        AND category = 'hospital'
         """)
     List<Hs> selectByMemberIdBList(String memberId);
 
@@ -86,6 +88,37 @@ public interface HsReservationMapper {
         SELECT m.nickName, r.reservationDate, r.reservationHour, r.reservationMin, r.id, r.comment, r.isReservationCheck
         From businessreservation r JOIN prj2.member m on m.id = r.memberId
         WHERE businessId = #{businessId} AND isReservationCheck = TRUE
+        ORDER BY r.reservationDate
         """)
     List<HsReservation> bIdCheckGet(Integer businessId);
+
+    @Select("""
+        SELECT r.reservationDate, COUNT(*) people
+        FROM businessreservation r
+        WHERE businessId = #{businessId}
+        GROUP BY r.reservationDate
+        ORDER BY r.reservationDate
+        """)
+    List<HsReservation> dayCheckFromBid(Integer businessId);
+
+    @Select("""
+        <script>
+        SELECT r.id, r.businessId, r.memberId, r.reservationDate, r.reservationHour, r.reservationMin, r.isReservationCheck, m.nickName, m.phone
+        FROM businessreservation r JOIN member m on m.id = r.memberId
+        WHERE
+        <choose>
+        <when test="start != null and end != null">
+        <![CDATA[
+        r.reservationDate >= #{start}
+        AND r.reservationDate < #{end}
+        AND r.businessId = #{businessId}
+        ]]>
+        </when>
+        <otherwise>
+        r.businessId = #{businessId}
+        </otherwise>
+        </choose>
+        </script>
+        """)
+    List<HsReservation> monthCheck(String businessId, String start, String end);
 }

@@ -131,5 +131,17 @@ public interface HsMapper {
         """)
     List<BusinessHoliday> holidaySelectByBusinessId(Integer id);
 
+    @Select("""
+        SELECT *
+        FROM business
+        WHERE memberId = #{memberId}
+        """)
+    Hs selectBymemberId(String memberId);
 
+    @Select("""
+        SELECT id
+        FROM business
+        WHERE memberId = #{memberId}
+        """)
+    Integer selectIdByMemberId(String memberId);
 }
