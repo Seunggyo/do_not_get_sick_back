@@ -28,6 +28,8 @@ public interface DrugMapper {
             FROM drug d
                 JOIN drugFile f
                     ON d.id = f.drugId
+                LEFT JOIN drugLike l
+                    ON l.drugId = d.id
             WHERE 
             <trim prefixOverrides="OR">
                     <if test="category == 'all' or category == 'name'">
@@ -37,7 +39,8 @@ public interface DrugMapper {
                         OR d.function LIKE #{keyword}
                     </if>
                 </trim>
-            ORDER BY d.id DESC 
+            GROUP BY d.id
+            ORDER BY COUNT(distinct l.memberId) DESC 
             LIMIT #{from}, 6
             </script>
             """)
