@@ -15,4 +15,5 @@ public class Buy {
     private String drugName;
     private Integer price;
     private Integer quantity;
+    private String orderCode;
 }

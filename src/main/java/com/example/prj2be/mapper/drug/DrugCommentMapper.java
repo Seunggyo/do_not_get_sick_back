@@ -18,8 +18,11 @@ public interface DrugCommentMapper {
     int insert(DrugComment drugComment);
 
     @Select("""
-            SELECT *
-            FROM drugComment
+            SELECT c.id, c.drugId, c.memberId, c.comment,
+            c.inserted, m.nickName memberNickName
+            FROM drugComment c
+            join member m
+            on c.memberId = m.id
             WHERE drugId = #{drugId}
             ORDER BY id DESC
             """)
