@@ -26,211 +26,243 @@ import java.util.Map;
 @Transactional(rollbackFor = Exception.class)
 public class MemberService {
 
-    private final MemberMapper mapper;
-    private final MemberJoinMapper memberJoinMapper;
+   private final MemberMapper mapper;
+   private final MemberJoinMapper memberJoinMapper;
 
-    private final S3Client s3;
-    @Value("${image.file.prefix}")
-    private String urlPrefix;
-    @Value("${aws.s3.bucket.name}")
-    private String bucket;
+   private final S3Client s3;
+   @Value("${image.file.prefix}")
+   private String urlPrefix;
+   @Value("${aws.s3.bucket.name}")
+   private String bucket;
 
-    public String getId(String id) {
-        return mapper.selectIdById(id);
-    }
+   public String getId(String id) {
+      return mapper.selectIdById(id);
+   }
 
-    public String getNickName(String nickName) {
-        return mapper.selectNickNameByNickName(nickName);
-    }
+   public String getNickName(String nickName) {
+      return mapper.selectNickNameByNickName(nickName);
+   }
 
-    public String getEmail(String email) {
-        return mapper.selectEmailByEmail(email);
-    }
+   public String getEmail(String email) {
+      return mapper.selectEmailByEmail(email);
+   }
 
-    public boolean validate(Member member, MultipartFile file) {
+   public boolean validate(Member member, MultipartFile file) {
 
-        if (member == null) {
+      if (member == null) {
+         return false;
+      }
+      if (member.getId().isBlank()) {
+         return false;
+      }
+      if (member.getPassword().isBlank()) {
+         return false;
+      }
+      if (member.getNickName().isBlank()) {
+         return false;
+      }
+      if (member.getAuth().equals("user")) {
+         if (member.getBirthday().isBlank()) {
             return false;
-        }
-        if (member.getId().isBlank()) {
+         }
+      }
+      if (member.getPhone().isBlank()) {
+         return false;
+      }
+      if (member.getEmail().isBlank()) {
+         return false;
+      }
+      if (member.getAddress().isBlank()) {
+         return false;
+      }
+      if (member.getAuth().isBlank()) {
+         return false;
+      }
+
+      // 병원, 약국 계정 가입시 파일 체크
+      if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
+         if (file == null) {
             return false;
-        }
-        if (member.getPassword().isBlank()) {
-            return false;
-        }
-        if (member.getNickName().isBlank()) {
-            return false;
-        }
-        if (member.getAuth().equals("user")) {
-            if (member.getBirthday().isBlank()) {
-                return false;
+         }
+      }
+
+      return true;
+   }
+
+   public boolean add(Member member, MultipartFile file, MultipartFile profile) throws IOException {
+      if (member.getAuth().equals("user")) {
+         if (profile != null) {
+            uploadProfile(member.getId(), profile);
+            return mapper.insertMember(member, "", profile.getOriginalFilename()) == 1;
+         } else {
+            return mapper.insertMember(member, "", "") == 1;
+         }
+      }
+      if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
+         if (file != null) {
+            upload(member.getId(), file);
+            return memberJoinMapper.insertMember(member, file.getOriginalFilename(), profile.getOriginalFilename()) == 1;
+         }
+      }
+
+      return false;
+   }
+
+   private void uploadProfile(String memberId, MultipartFile profile) throws IOException {
+      String key = "prj2/profile/" + memberId + "/" + profile.getOriginalFilename();
+
+      PutObjectRequest objectRequest = PutObjectRequest.builder()
+         .bucket(bucket)
+         .key(key)
+         .acl(ObjectCannedACL.PUBLIC_READ)
+         .build();
+
+      s3.putObject(objectRequest,
+         RequestBody.fromInputStream(profile.getInputStream(), profile.getSize()));
+   }
+
+   public void upload(String memberId, MultipartFile file) throws IOException {
+      String key = "prj2/license/" + memberId + "/" + file.getOriginalFilename();
+
+      PutObjectRequest objectRequest = PutObjectRequest.builder()
+         .bucket(bucket)
+         .key(key)
+         .acl(ObjectCannedACL.PUBLIC_READ)
+         .build();
+
+      s3.putObject(objectRequest,
+         RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+
+   }
+
+   public Map<String, Object> selectAll(String keyword, Integer page) {
+      Map<String, Object> map = new HashMap<>();
+      Map<String, Object> pageInfo = new HashMap<>();
+
+      int countAll = mapper.countAll("%" + keyword + "%");
+      int lastPageNumber = (countAll - 1) / 10 + 1;
+      int startPageNumber = (page - 1) / 10 * 10 + 1;
+      int endPageNumber = startPageNumber + 9;
+      endPageNumber = Math.min(endPageNumber, lastPageNumber);
+      int prevPageNumber = startPageNumber - 10;
+      int nextPageNumber = endPageNumber + 1;
+
+      pageInfo.put("currentPageNumber", page);
+      pageInfo.put("startPageNumber", startPageNumber);
+      pageInfo.put("endPageNumber", endPageNumber);
+      if (prevPageNumber > 0) {
+         pageInfo.put("prevPageNumber", prevPageNumber);
+      }
+      if (nextPageNumber <= lastPageNumber) {
+         pageInfo.put("nextPageNumber", nextPageNumber);
+      }
+
+      int from = (page - 1) * 10;
+      map.put("pageInfo", pageInfo);
+      map.put("memberList", mapper.selectAll(from, "%" + keyword + "%"));
+      return map;
+   }
+
+   public Map<String, Object> selectJoinAll(String keyword, Integer page) {
+      Map<String, Object> map = new HashMap<>();
+      Map<String, Object> pageInfo = new HashMap<>();
+
+      int countAll = memberJoinMapper.countAll("%" + keyword + "%");
+      int lastPageNumber = (countAll - 1) / 10 + 1;
+      int startPageNumber = (page - 1) / 10 * 10 + 1;
+      int endPageNumber = startPageNumber + 9;
+      endPageNumber = Math.min(endPageNumber, lastPageNumber);
+      int prevPageNumber = startPageNumber - 10;
+      int nextPageNumber = endPageNumber + 1;
+
+      pageInfo.put("currentPageNumber", page);
+      pageInfo.put("startPageNumber", startPageNumber);
+      pageInfo.put("endPageNumber", endPageNumber);
+      if (prevPageNumber > 0) {
+         pageInfo.put("prevPageNumber", prevPageNumber);
+      }
+      if (nextPageNumber <= lastPageNumber) {
+         pageInfo.put("nextPageNumber", nextPageNumber);
+      }
+
+      int from = (page - 1) * 10;
+      map.put("pageInfo", pageInfo);
+      map.put("memberList", memberJoinMapper.selectAll(from, "%" + keyword + "%"));
+      return map;
+   }
+
+   public Member selectById(String id) {
+      return mapper.selectById(id);
+   }
+
+   public boolean login(Member member, WebRequest request) {
+      Member dbMember = mapper.selectById(member.getId());
+
+      if (member != null) {
+         if (dbMember.getPassword().equals(member.getPassword())) {
+            String auth = mapper.selectAuthById(member.getId());
+            dbMember.setAuth(auth);
+            dbMember.setPassword("");
+
+            if (dbMember.getProfile() != null && !dbMember.getProfile().isBlank()) {
+               String profileUrl = urlPrefix + "prj2/profile/" + dbMember.getId() + "/" + dbMember.getProfile();
+               dbMember.setProfile(profileUrl);
             }
-        }
-        if (member.getPhone().isBlank()) {
-            return false;
-        }
-        if (member.getEmail().isBlank()) {
-            return false;
-        }
-        if (member.getAddress().isBlank()) {
-            return false;
-        }
-        if (member.getAuth().isBlank()) {
-            return false;
-        }
 
-        // 병원, 약국 계정 가입시 파일 체크
-        if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
-            if (file == null) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public boolean add(Member member,MultipartFile file) throws IOException {
-        if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
-            if (file != null) {
-                upload(member.getId(), file);
-                return memberJoinMapper.insertMember(member, file.getOriginalFilename()) == 1;
-            }
-        }
-
-        return mapper.insertMember(member, "") == 1;
-    }
-
-    public void upload(String memberId, MultipartFile file) throws IOException {
-        String key = "prj2/license/" + memberId + "/" + file.getOriginalFilename();
-
-        PutObjectRequest objectRequest = PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(key)
-                .acl(ObjectCannedACL.PUBLIC_READ)
-                .build();
-
-        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
-    }
-
-    public Map<String, Object> selectAll(String keyword, Integer page) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> pageInfo = new HashMap<>();
-
-        int countAll = mapper.countAll("%"+keyword+"%");
-        int lastPageNumber = (countAll -1) / 10 + 1;
-        int startPageNumber = (page -1) / 10 * 10 + 1;
-        int endPageNumber = startPageNumber + 9;
-        endPageNumber = Math.min(endPageNumber, lastPageNumber);
-        int prevPageNumber = startPageNumber - 10;
-        int nextPageNumber = endPageNumber + 1;
-
-        pageInfo.put("currentPageNumber", page);
-        pageInfo.put("startPageNumber", startPageNumber);
-        pageInfo.put("endPageNumber", endPageNumber);
-        if (prevPageNumber > 0) {
-            pageInfo.put("prevPageNumber", prevPageNumber);
-        }
-        if (nextPageNumber <= lastPageNumber) {
-            pageInfo.put("nextPageNumber", nextPageNumber);
-        }
-
-        int from = (page - 1) * 10;
-        map.put("pageInfo", pageInfo);
-        map.put("memberList" , mapper.selectAll(from, "%"+keyword+"%"));
-        return map;
-    }
-
-    public Map<String, Object> selectJoinAll(String keyword, Integer page) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> pageInfo = new HashMap<>();
-
-        int countAll = memberJoinMapper.countAll("%"+keyword+"%");
-        int lastPageNumber = (countAll -1) / 10 + 1;
-        int startPageNumber = (page -1) / 10 * 10 + 1;
-        int endPageNumber = startPageNumber + 9;
-        endPageNumber = Math.min(endPageNumber, lastPageNumber);
-        int prevPageNumber = startPageNumber - 10;
-        int nextPageNumber = endPageNumber + 1;
-
-        pageInfo.put("currentPageNumber", page);
-        pageInfo.put("startPageNumber", startPageNumber);
-        pageInfo.put("endPageNumber", endPageNumber);
-        if (prevPageNumber > 0) {
-            pageInfo.put("prevPageNumber", prevPageNumber);
-        }
-        if (nextPageNumber <= lastPageNumber) {
-            pageInfo.put("nextPageNumber", nextPageNumber);
-        }
-
-        int from = (page - 1) * 10;
-        map.put("pageInfo", pageInfo);
-        map.put("memberList" , memberJoinMapper.selectAll(from, "%"+keyword+"%"));
-        return map;
-    }
-
-    public Member selectById(String id) {
-        return mapper.selectById(id);
-    }
-
-    public boolean login(Member member, WebRequest request) {
-        Member dbMember = mapper.selectById(member.getId());
-
-        if (member != null) {
-            if (dbMember.getPassword().equals(member.getPassword())) {
-                String auth = mapper.selectAuthById(member.getId());
-                dbMember.setAuth(auth);
-                dbMember.setPassword("");
-                request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isAdmin(Member login) {
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("admin");
-        }
-        return false;
-    }
-
-    public boolean isHs(Member login) {
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("hs");
-        }
-        return false;
-    }
-
-    public boolean isDs(Member login) {
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("ds");
-        }
-        return false;
-    }
-
-    public boolean hasAccess(String id, Member login) {
-        if (isAdmin(login)) {
+            request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
             return true;
-        }
-        return login.getId().equals(id);
-    }
+         }
 
-    public boolean update(Member member) {
-        return mapper.update(member) == 1;
-    }
+      }
+      return false;
+   }
 
-    public String findIdByEmail(String email) {
-        return mapper.findIdByEmail(email);
-    }
+   public boolean isAdmin(Member login) {
+      if (login.getAuth() != null) {
+         return login.getAuth().equals("admin");
+      }
+      return false;
+   }
 
-    public boolean accept(Member member) {
-        memberJoinMapper.deleteById(member.getId());
-        return mapper.acceptMember(member) == 1;
-    }
+   public boolean isHs(Member login) {
+      if (login.getAuth() != null) {
+         return login.getAuth().equals("hs");
+      }
+      return false;
+   }
 
-    public boolean cancel(Member member) {
-        return memberJoinMapper.deleteById(member.getId()) == 1;
-    }
+   public boolean isDs(Member login) {
+      if (login.getAuth() != null) {
+         return login.getAuth().equals("ds");
+      }
+      return false;
+   }
+
+   public boolean hasAccess(String id, Member login) {
+      if (isAdmin(login)) {
+         return true;
+      }
+      return login.getId().equals(id);
+   }
+
+   public boolean update(Member member) {
+      return mapper.update(member) == 1;
+   }
+
+   public String findIdByEmail(String email) {
+      return mapper.findIdByEmail(email);
+   }
+
+   public boolean accept(Member member) {
+      memberJoinMapper.deleteById(member.getId());
+      return mapper.acceptMember(member) == 1;
+   }
+
+   public boolean cancel(Member member) {
+      return memberJoinMapper.deleteById(member.getId()) == 1;
+   }
+
+   public Member get(Integer loggedUserId) {
+      return null;
+   }
 }

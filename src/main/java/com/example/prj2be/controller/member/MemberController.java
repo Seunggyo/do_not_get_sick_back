@@ -47,9 +47,12 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity signup( Member member,
-                                 @RequestParam(value = "uploadFile[]",required = false)MultipartFile file) throws IOException {
+       @RequestParam(value = "uploadFileImg[]",required = false)MultipartFile profile,
+
+       @RequestParam(value = "uploadFile[]",required = false)MultipartFile file
+    ) throws IOException {
         if (service.validate(member, file)) {
-            if (service.add(member, file)) {
+            if (service.add(member, file, profile)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.badRequest().build();
