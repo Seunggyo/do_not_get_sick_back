@@ -14,12 +14,12 @@ public interface DsMapper {
             INSERT INTO
             business(name, address, phone, openHour, openMin, closeHour,
                     closeMin, content, category, nightCare, restHour, restMin,
-                    restCloseHour, restCloseMin, info, memberId)
+                    restCloseHour, restCloseMin, info, memberId, oldAddress)
             VALUES (#{name}, #{address}, #{phone},
                     #{openHour}, #{openMin}, #{closeHour},
                     #{closeMin}, #{content},'drugStore', #{nightCare},
                     #{restHour}, #{restMin}, #{restCloseHour}, #{restCloseMin},
-                    #{info}, #{memberId} )
+                    #{info}, #{memberId}, #{oldAddress} )
             """)
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Ds ds);
@@ -28,6 +28,7 @@ public interface DsMapper {
             UPDATE business
             SET name = #{name},
                 address = #{address},
+                oldAddress = #{oldAddress},
                 phone = #{phone},
                 openHour = #{openHour},
                 openMin = #{openMin},
@@ -51,6 +52,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,
@@ -71,8 +73,8 @@ public interface DsMapper {
                     ON b.id = bc.businessId
                 LEFT JOIN businessholiday bh
                     ON b.id = bh.businessId
-            WHERE b.category = 'drugStore'
-                AND b.name LIKE #{keyword}
+            WHERE b.category='drugStore'
+                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
             GROUP BY b.id
             LIMIT #{from}, 15
             """)
@@ -83,6 +85,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,
@@ -92,7 +95,43 @@ public interface DsMapper {
                    b.restMin,
                    b.restCloseHour,
                    b.restCloseMin,
-                   b.memberId
+                   b.memberId,
+                   bh.holiday,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+            FROM business b
+                LEFT JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
+                LEFT JOIN businessholiday bh
+                    ON b.id = bh.businessId
+            WHERE b.category='drugStore'
+                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
+            GROUP BY b.id
+            ORDER BY count(distinct bl.id) DESC
+            """)
+    List<Ds> selectAllByCategoryMap(String keyword);
+
+    @Select("""
+            SELECT b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.oldAddress,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
+                   b.nightCare,
+                   b.memberId,
+                   b.content,
+                   b.info
             FROM business b
             WHERE b.id = #{id};
             """)
@@ -147,6 +186,7 @@ public interface DsMapper {
                    b.name,
                    b.phone,
                    b.address,
+                   b.oldAddress,
                    b.category,
                    b.openHour,
                    b.openMin,
@@ -172,4 +212,6 @@ public interface DsMapper {
             LIMIT 0, 10
     """)
     List<Ds> getListByCK(String keyword);
+
+
 }

@@ -11,8 +11,8 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface BoardCommentMapper {
    @Insert("""
-      INSERT INTO boardComment(boardId, comment, memberId)
-      VALUES (#{boardId}, #{comment}, #{memberId})
+      INSERT INTO boardComment(boardId, comment, memberId, category)
+      VALUES (#{boardId}, #{comment}, #{memberId}, #{category})
      
       """)
    int insert(BoardComment comment);
@@ -26,10 +26,10 @@ public interface BoardCommentMapper {
           c.memberId,
           m.nickName memberNickName
       FROM boardComment c JOIN member m ON c.memberId = m.id
-      WHERE c.boardId = #{boardId}
+      WHERE c.boardId = #{boardId} AND c.category = #{category}
       ORDER BY c.id DESC
       """)
-   List<BoardComment> selectByBoardId(Integer boardId);
+   List<BoardComment> selectByBoardId(Integer boardId, String category);
 
 
    @Delete("""

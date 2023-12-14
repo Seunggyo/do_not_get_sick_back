@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -15,6 +16,7 @@ public interface QAMapper {
       INSERT INTO customerqa (qaTitle, qaContent, qaWriter, qaCategory)
       VALUES (#{qaTitle}, #{qaContent}, #{qaWriter}, #{qaCategory})
       """)
+   @Options(useGeneratedKeys = true, keyProperty = "id")
    int insert(CustomerQA qa);
 
    @Select("""
@@ -24,15 +26,22 @@ public interface QAMapper {
                q.qaWriter,
                q.qaCategory,
                m.nickName,
-               q.inserted
+               q.inserted,
+               COUNT(DISTINCT c.id) countComment,
+               COUNT(DISTINCT f.id) countFile
         FROM customerqa q JOIN member m ON q.qaWriter = m.id
-        WHERE q.qaContent LIKE #{keyword}
-           OR q.qaTitle LIKE #{keyword}
+        LEFT JOIN noticeQaBoardFile f ON q.id = f.fileId
+        LEFT JOIN boardComment c 
+        ON q.id = c.boardId
+        and c.category = "qa"
+        WHERE (q.qaContent LIKE #{keyword}
+           OR q.qaTitle LIKE #{keyword})
+           AND q.qaCategory Like #{filter}
         GROUP BY q.id
         ORDER BY q.id DESC
         LIMIT #{from}, 10
         """)
-   List<CustomerQA> selectAll(Integer from, String keyword);
+   List<CustomerQA> selectAll(Integer from, String keyword, String filter);
 
    @Select("""
         SELECT q.id,
@@ -83,5 +92,5 @@ public interface QAMapper {
         WHERE qaTitle LIKE #{keyword}
            OR qaCategory LIKE #{keyword}
         """)
-   int countAll(String keyword);
+   int countAll(String keyword, String filter);
 }

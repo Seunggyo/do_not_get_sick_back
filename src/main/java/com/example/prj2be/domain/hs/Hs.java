@@ -11,6 +11,7 @@ public class Hs {
     private String memberId;
     private String name;
     private String address;
+    private String oldAddress;
     private String phone;
     private Integer openHour;
     private Integer openMin;

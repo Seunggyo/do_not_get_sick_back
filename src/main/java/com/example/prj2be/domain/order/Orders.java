@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 public class Orders {
     private Integer orderNumber;
     private String orderId;
-    private String productName;
-    private Integer quantity;
     private Long amount;
     private String orderName;
+    private String orderCode;
 
     private String ordererName;
     private String ordererPhone;

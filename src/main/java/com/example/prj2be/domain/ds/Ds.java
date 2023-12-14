@@ -13,6 +13,7 @@ public class Ds {
     private String name;
     private String memberId;
     private String address;
+    private String oldAddress;
     private String phone;
     private Integer openHour;
     private Integer openMin;

@@ -41,7 +41,7 @@ public class DrugCartController {
     }
 
     @GetMapping("cartList")
-    public List<Cart> cartList(@SessionAttribute(value = "login", required = false) Member login) {
+    public Map<String, Object> cartList(@SessionAttribute(value = "login", required = false) Member login) {
         return service.cartList(login);
     }
 
