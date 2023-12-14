@@ -17,15 +17,15 @@ public interface HsMapper {
     @Select("""
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-                   bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory
+                   b.content,b.category,b.nightCare,b.phone,
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory `medicalCourse`, bh.holiday
                 FROM prj2.business b
-                    left join prj2.businessmap bm
-                        on b.id = bm.businessId
                     left join prj2.businesslike b2
                         on b.id = b2.businessId
                     left join prj2.medicalcourse mc
                         on b.id = mc.medicalCourseId
+                    left join prj2.businessholiday bh
+                        on b.id = bh.businessId
             WHERE b.category = 'hospital'
                 AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword} OR mc.medicalCourseCategory LIKE #{keyword})
             GROUP BY b.id
@@ -36,11 +36,9 @@ public interface HsMapper {
     @Select("""
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-                   bm.lat,bm.lng,b.content,b.category,b.nightCare,b.phone,
+                   b.content,b.category,b.nightCare,b.phone,
                     COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory
             FROM prj2.business b
-                left join prj2.businessmap bm
-                    on b.id = bm.businessId
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
                 left join prj2.medicalcourse mc
