@@ -36,8 +36,8 @@ public class BoardCommentService {
       return true;
    }
 
-   public List<BoardComment> list(Integer boardId) {
-      return mapper.selectByBoardId(boardId);
+   public List<BoardComment> list(Integer boardId, String category) {
+      return mapper.selectByBoardId(boardId, category);
    }
 
    public boolean remove(Integer id) {

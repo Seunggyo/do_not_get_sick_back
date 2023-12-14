@@ -14,13 +14,13 @@ public interface MemberJoinMapper {
     @Insert("""
         insert into memberJoin (
         id, password, nickName, phone,
-        email, address, auth, fileName)
+        email, address, auth, fileName, profile)
         values (
         #{member.id}, #{member.password}, #{member.nickName},
         #{member.phone}, #{member.email}, #{member.address},
-        #{member.auth}, #{fileName})
+        #{member.auth}, #{fileName}, #{profileName})
 """)
-    int insertMember(Member member, String fileName);
+    int insertMember(Member member, String fileName, String profileName);
 
     @Select("""
         select * from memberJoin

@@ -1,6 +1,6 @@
 package com.example.prj2be.mapper.board;
 
-import com.example.prj2be.domain.board.NoticeBoardFile;
+import com.example.prj2be.domain.board.BoardFile;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -8,10 +8,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface NoticeBoardFileMapper {
+public interface BoardFileMapper {
 
    @Insert("""
-      INSERT INTO NoticeBoardFile (fileId, fileName)
+      INSERT INTO boardFile (fileId, fileName)
       VALUES (#{fileId}, #{fileName})
       """)
 
@@ -19,26 +19,26 @@ public interface NoticeBoardFileMapper {
 
    @Select("""
         SELECT id, fileName
-        FROM noticeBoardFile
+        FROM boardFile
         WHERE fileId = #{fileId}
         """)
-   List<NoticeBoardFile> selectNamesByFileId(Integer fileId);
+   List<BoardFile> selectNamesByFileId(Integer fileId);
 
    @Delete("""
-        DELETE FROM noticeBoardFile
+        DELETE FROM boardFile
         WHERE fileId = #{fileId}
         """)
    int deleteByFileId(Integer fileId);
 
    @Select("""
         SELECT * 
-        FROM noticeBoardFile 
+        FROM boardFile 
         WHERE id = #{id}
         """)
-   NoticeBoardFile selectById(Integer id);
+   BoardFile selectById(Integer id);
 
    @Delete("""
-        DELETE FROM noticeBoardFile
+        DELETE FROM boardFile
         WHERE id = #{id}
         """)
    int deleteById(Integer id);

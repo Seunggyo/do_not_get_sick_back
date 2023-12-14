@@ -46,8 +46,10 @@ public class BoardCommentController {
    }
 
    @GetMapping("list")
-   public List<BoardComment> list(@RequestParam("id") Integer boardId) {
-      return service.list(boardId);
+   public List<BoardComment> list(
+      @RequestParam("id") Integer boardId,
+      @RequestParam("category") String category) {
+      return service.list(boardId, category);
    }
 
    @DeleteMapping("{id}")

@@ -1,4 +1,4 @@
-package com.example.prj2be.domain.board;
+package com.example.prj2be.domain.cs_qa;
 
 import lombok.Data;
 
