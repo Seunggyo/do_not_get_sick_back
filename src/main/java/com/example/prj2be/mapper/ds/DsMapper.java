@@ -76,7 +76,7 @@ public interface DsMapper {
             WHERE b.category='drugStore'
                 AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword})
             GROUP BY b.id
-            LIMIT #{from}, 15
+            LIMIT #{from}, 10
             """)
     List<Ds> selectAllByCategory(Integer from, String keyword);
 
