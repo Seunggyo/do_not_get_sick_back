@@ -75,6 +75,54 @@ public class HsService {
         return map;
     }
 
+    public Map<String, Object> listAdmin(Integer page, String list, String keyword) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String,Object> pageInfo = new HashMap<>();
+
+        // 현재 페이지
+        int from = (page - 1 ) * 10 ;
+        // 총 게시글이 몇개 인지, 어떤 키워드로 검색할 껏인지 등등 총 게시물에서 하는 키워드
+        int countAll = mapper.countAll(list, "%" + keyword + "%");
+
+        int lastPageNumber = (countAll -1) / 10 + 1;
+        int startPageNumber = ((page -1) / 10 * 10) + 1;
+        int endPageNumber = startPageNumber + 9;
+        endPageNumber = Math.min(endPageNumber, lastPageNumber);
+        int prevPageNumber = startPageNumber - 10;
+        int nextPageNumber = endPageNumber + 1;
+
+        pageInfo.put("currentPageNumber", page);
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+        if (prevPageNumber > 0) {
+            pageInfo.put("prevPageNumber", prevPageNumber);
+        }
+        if (nextPageNumber <= lastPageNumber) {
+            pageInfo.put("nextPageNumber", nextPageNumber);
+        }
+
+        pageInfo.put("startPageNumber", startPageNumber);
+        pageInfo.put("endPageNumber", endPageNumber);
+
+        List<Hs> hsList = mapper.selectByPagingById(from ,list, "%" +  keyword + "%" );
+
+        for (Hs hs : hsList) {
+            List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
+
+            for (HsFile hsFile : hsFiles) {
+                String url = urlPrefix + "prj2/hospital/" + hs.getId() + "/" + hsFile.getName();
+                hsFile.setUrl(url);
+            }
+            hs.setFiles(hsFiles);
+
+        }
+
+        map.put("list", hsList);
+        map.put("pageInfo", pageInfo);
+
+        return map;
+    }
+
     public Map<String, Object> courseList(String course) {
         Map<String, Object> map = new HashMap<>();
 
@@ -240,4 +288,6 @@ public class HsService {
         hs.setHolidays(businessHolidays);
         return hs;
     }
+
+
 }

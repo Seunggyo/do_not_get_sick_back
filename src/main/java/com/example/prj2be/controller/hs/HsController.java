@@ -40,6 +40,14 @@ public class HsController {
         return service.courseList(course);
     }
 
+    @GetMapping("listAdmin")
+    public Map<String, Object> listAdmin(
+            @RequestParam(value = "p", defaultValue = "1") Integer page,
+            @RequestParam(value = "l", defaultValue = "all") String list,
+            @RequestParam(value = "k", defaultValue = "") String keyword) {
+        return service.listAdmin(page, list, keyword);
+    }
+
     @PostMapping("add")
     public ResponseEntity add(Hs hs,
         @RequestParam(value = "course[]", required = false) String[] course,

@@ -144,4 +144,74 @@ public interface HsMapper {
         WHERE memberId = #{memberId}
         """)
     Integer selectIdByMemberId(String memberId);
+
+    @Select("""
+            <script>
+            SELECT COUNT(*)
+            FROM business b
+                JOIN prj2.medicalcourse m on b.id = m.medicalCourseId
+                <where prefixOverrides="OR">
+                    <if test="list == 'all' or list == 'name'">
+                        OR b.name LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                        OR m.medicalCourseCategory LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'address'">
+                        OR b.address LIKE #{keyword}
+                    </if>
+                </where>
+            </script>
+            """)
+    int countAll(String list, String keyword);
+
+    @Select("""
+            <script>
+            SELECT 
+                   b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.oldAddress,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
+                   b.memberId,
+                   bh.holiday,
+                   m.medicalCourseCategory,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+             FROM business b
+                LEFT JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
+                LEFT JOIN businessholiday bh
+                    ON b.id = bh.businessId
+                LEFT JOIN medicalcourse m
+                    ON b.id = m.medicalCourseId
+            WHERE
+                b.category = 'hospital' 
+                <trim prefixOverrides="OR" prefix="AND (" suffix=")" >
+                    <if test="list == 'all' or list == 'name'">
+                        OR name LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                        OR medicalCourseCategory LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'address'">
+                        OR address LIKE #{keyword}
+                    </if>
+                </trim>
+            GROUP BY b.id
+            LIMIT #{from}, 10
+            </script>
+            """)
+    List<Hs> selectByPagingById(int from, String list, String keyword);
 }
