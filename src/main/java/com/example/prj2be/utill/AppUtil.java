@@ -9,6 +9,9 @@ import java.time.temporal.ChronoUnit;
 public class AppUtil {
 
     public static String getAgo(LocalDateTime a) {
+        if (a == null) {
+            return "";
+        }
         LocalDateTime b = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         if (a.isBefore(b.minusYears(1))) {

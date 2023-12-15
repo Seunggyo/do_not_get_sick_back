@@ -21,27 +21,30 @@ public interface BoardMapper {
    int insert(Board board);
 
    @Select("""  
-      SELECT b.id,
-            b.title,
-            b.writer,
-            m.nickName,
-            b.category,
-            b.inserted,
-            b.increaseHit,
-            COUNT(DISTINCT c.id)       countComment,
-            COUNT(DISTINCT l.memberId) countLike,
-            COUNT(DISTINCT f.id)       countFile
+      SELECT   b.id,
+               b.title,
+               b.category,
+               b.writer,
+               m.nickName,
+               b.inserted,
+               b.increaseHit,
+               COUNT(DISTINCT c.id)       countComment,
+               COUNT(DISTINCT l.memberId) countLike,
+               COUNT(DISTINCT f.id)       countFile
      FROM board b
-             LEFT JOIN boardFile f ON b.id = f.fileId
-         JOIN member m ON b.writer = m.id
-         LEFT JOIN boardComment c
-             ON b.id = c.boardId   
-             and c.category = "board"
-             LEFT JOIN boardLike l ON b.id = l.boardId
-     WHERE (b.category LIKE #{keyword}
-             OR b.title LIKE #{keyword}
-             OR m.nickName Like #{keyword})
-             and b.category like #{filter}
+               LEFT JOIN boardFile f 
+                  ON b.id = f.fileId
+               JOIN member m
+                  ON b.writer = m.id
+               LEFT JOIN boardComment c
+                  ON b.id = c.boardId   
+               and c.category = "board"
+               LEFT JOIN boardLike l 
+                  ON b.id = l.boardId
+     WHERE     (b.category    LIKE #{keyword}
+               OR b.title     LIKE #{keyword}
+               OR m.nickName  Like #{keyword})
+               and b.category like #{filter}
      GROUP BY b.id
      having count(distinct l.memberId) >= #{popCount}
      ORDER BY b.id DESC
@@ -70,11 +73,10 @@ public interface BoardMapper {
 
    @Update("""
       UPDATE board
-      SET 
-      title = #{title},
-      content = #{content},
-      writer = #{writer},
-      category = #{category}
+      SET   title = #{title},
+            content = #{content},
+            writer = #{writer},
+            category = #{category}
       WHERE id = #{id}
       """)
    int update(Board board);
@@ -104,6 +106,6 @@ public interface BoardMapper {
       SET increaseHit = increaseHit + 1
       WHERE id = #{id}
       """)
-   int increaseHit(int id);
+   void increaseHit(int id);
 
 }
