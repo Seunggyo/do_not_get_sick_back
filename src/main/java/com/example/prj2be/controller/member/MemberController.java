@@ -55,6 +55,7 @@ public class MemberController {
             if (service.add(member, file, profile)) {
                 return ResponseEntity.ok().build();
             } else {
+                System.out.println("MemberController.signup");;
                 return ResponseEntity.badRequest().build();
             }
         } else {

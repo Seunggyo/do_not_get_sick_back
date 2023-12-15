@@ -90,7 +90,8 @@ public class MemberService {
    }
 
    public boolean add(Member member, MultipartFile file, MultipartFile profile) throws IOException {
-      if (member.getAuth().equals("user")) {
+      System.out.println("member = " + member);
+      if (member.getAuth().equals("user") || member.getAuth().equals("admin")) {
          if (profile != null) {
             uploadProfile(member.getId(), profile);
             return mapper.insertMember(member, "", profile.getOriginalFilename()) == 1;
