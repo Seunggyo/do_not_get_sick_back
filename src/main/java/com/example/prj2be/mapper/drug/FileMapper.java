@@ -61,4 +61,11 @@ public interface FileMapper {
             WHERE commentId = #{commentId}
             """)
     int deleteByCommentId(Integer commentId);
+
+    @Select("""
+            SELECT *
+            FROM drugCommentFile
+            WHERE commentId = #{commentId}
+            """)
+    DrugFile selectByCommentId(Integer commentId);
 }

@@ -71,20 +71,17 @@ public class DrugCommentController {
     public ResponseEntity update(DrugComment comment,
                                  @RequestParam(value = "removeFileIds[]", required = false)List<Integer> removeFileIds,
                                  @RequestParam(value = "uploadFiles[]", required = false)MultipartFile[] uploadFiles,
-                                 @SessionAttribute(value = "login", required = false) Member login) {
-        System.out.println("comment = " + comment);
-        System.out.println("removeFileIds = " + removeFileIds);
-        System.out.println("uploadFiles = " + uploadFiles);
+                                 @SessionAttribute(value = "login", required = false) Member login) throws IOException {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (service.update(comment)) {
+        if (service.update(comment, removeFileIds, uploadFiles)) {
             if (!service.updateValidate(comment)) {
                 return ResponseEntity.badRequest().build();
             }
-            if (service.update(comment)) {
+            if (service.update(comment, removeFileIds, uploadFiles)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.internalServerError().build();

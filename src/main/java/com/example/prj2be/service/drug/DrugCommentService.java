@@ -46,7 +46,7 @@ public class DrugCommentService {
                 // drugCommentId, FileName
                 fileMapper.CommentInsert(drugComment.getId(), files[i].getOriginalFilename());
 
-                 // 실제 파일을 S3 bucket에 upload
+                // 실제 파일을 S3 bucket에 upload
                 // 일단 local에 저장
                 upload(drugComment.getId(), files[i]);
             }
@@ -71,13 +71,13 @@ public class DrugCommentService {
 
     public boolean validate(DrugComment drugComment) {
 
-        if (drugComment == null){
+        if (drugComment == null) {
             return false;
         }
-        if (drugComment.getDrugId() == null || drugComment.getDrugId() <1) {
+        if (drugComment.getDrugId() == null || drugComment.getDrugId() < 1) {
             return false;
         }
-        if (drugComment.getComment() == null || drugComment.getComment().isBlank()){
+        if (drugComment.getComment() == null || drugComment.getComment().isBlank()) {
             return false;
         }
         return true;
@@ -129,7 +129,6 @@ public class DrugCommentService {
     }
 
 
-
     public boolean hasAccess(Integer id, Member login) {
         DrugComment drugComment = mapper.selectById(id);
 
@@ -137,7 +136,35 @@ public class DrugCommentService {
     }
 
 
-    public boolean update(DrugComment comment) {
+    public boolean update(DrugComment comment, List<Integer> removeFileIsd, MultipartFile[] uploadFiles) throws IOException {
+
+        //파일 지우기
+        if (removeFileIsd != null) {
+            for (Integer id : removeFileIsd) {
+                //s3 에서 지우기
+                DrugFile file = fileMapper.selectByCommentId(id);
+                String key = "prj2/drug1/" + comment.getId() + "/" + file.getName();
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
+                s3.deleteObject(objectRequest);
+
+                //db에서 지우기
+                fileMapper.deleteByCommentId(id);
+            }
+        }
+
+        //파일 추가히기
+        if (uploadFiles != null) {
+            for (MultipartFile file : uploadFiles){
+            //s3에 올리기
+            upload(comment.getId(), file);
+            //db에 추가하기
+            fileMapper.insert(comment.getId(), file.getOriginalFilename());
+            }
+        }
+
         return mapper.update(comment) == 1;
     }
 
@@ -146,10 +173,10 @@ public class DrugCommentService {
             return false;
         }
 
-        if (comment.getId() == null){
+        if (comment.getId() == null) {
             return false;
         }
-        if (comment.getComment() == null || comment.getComment().isBlank()){
+        if (comment.getComment() == null || comment.getComment().isBlank()) {
             return false;
         }
         return true;
