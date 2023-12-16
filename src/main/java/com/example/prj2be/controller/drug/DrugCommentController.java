@@ -70,9 +70,12 @@ public class DrugCommentController {
     @PutMapping("edit")
     public ResponseEntity update(DrugComment comment,
                                  @RequestParam(value = "removeFileIds[]", required = false)List<Integer> removeFileIds,
-                                 @RequestParam("uploadFiles[]")
+                                 @RequestParam(value = "uploadFiles[]", required = false)MultipartFile[] uploadFiles,
                                  @SessionAttribute(value = "login", required = false) Member login) {
-//            1시 44분
+        System.out.println("comment = " + comment);
+        System.out.println("removeFileIds = " + removeFileIds);
+        System.out.println("uploadFiles = " + uploadFiles);
+
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
