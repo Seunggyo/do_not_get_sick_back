@@ -122,8 +122,13 @@ public class MemberController {
     }
 
     @PutMapping("edit")
-    public ResponseEntity edit(@RequestBody Member member,
-                               @SessionAttribute(value = "login",required = false)Member login) {
+    public ResponseEntity edit(Member member,
+       @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
+       @RequestParam(value = "uploadFileImg[]", required = false) MultipartFile profile,
+
+       @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
+       @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -132,8 +137,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-
-        if (service.update(member)) {
+        if (service.update(member, fileSwitch, profile, file)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
