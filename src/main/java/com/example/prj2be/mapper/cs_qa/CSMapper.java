@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -28,14 +27,14 @@ public interface CSMapper {
                c.increaseHit,
                COUNT(DISTINCT f.id) countFile
       FROM customerService c 
-               LEFT JOIN noticeBoardFile f 
-                  ON c.id = f.fileId
                JOIN member m 
                   ON c.csWriter = m.id
-      WHERE   c.csTitle      LIKE #{keyword}
+               LEFT JOIN noticeBoardFile f 
+                  ON c.id = f.fileId
+      WHERE   (c.csTitle      LIKE #{keyword}
             or c.csCategory   LIKE #{keyword}
-            or m.nickName     LIKE #{keyword}
-   
+            or m.nickName     LIKE #{keyword})
+            AND c.csCategory Like #{filter}
       ORDER BY c.id DESC 
       LIMIT #{from}, 10
    """)
@@ -89,11 +88,12 @@ public interface CSMapper {
 
    @Select("""
       SELECT COUNT(*) FROM customerService 
-      WHERE csTitle LIKE #{keyword}
+      WHERE (csTitle LIKE #{keyword}
          OR csContent LIKE #{keyword}
-         OR csCategory LIKE #{keyword}
+         OR csCategory LIKE #{keyword})
+         AND csCategory Like #{filter}
       """)
-   int countAll(String keyword);
+   int countAll(String keyword, String filter);
 
    @Update("""
       UPDATE customerService

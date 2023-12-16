@@ -72,7 +72,7 @@ public class CSService {
          file.getInputStream(), file.getSize()));
    }
 
-   public boolean    validate(CustomerService cs) {
+   public boolean validate(CustomerService cs) {
       if (cs == null) {
          return false;
       }
@@ -94,7 +94,7 @@ public class CSService {
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%");
+      int countAll = mapper.countAll("%" + keyword + "%", filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
