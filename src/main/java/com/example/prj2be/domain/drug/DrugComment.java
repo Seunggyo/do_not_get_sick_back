@@ -1,6 +1,7 @@
 package com.example.prj2be.domain.drug;
 
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
+import com.example.prj2be.utill.AppUtil;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,4 +17,8 @@ public class DrugComment {
     private LocalDateTime inserted;
 
     private List<DrugFile> files;
+
+    public String getAgo(){
+        return AppUtil.getAgo(inserted);
+    }
 }
