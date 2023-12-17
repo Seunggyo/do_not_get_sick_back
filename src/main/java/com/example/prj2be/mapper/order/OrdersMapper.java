@@ -26,7 +26,8 @@ public interface OrdersMapper {
             join orderlist l
             on o.orderId  = l.orderId
         where ordererName = #{id}
-        group by l.orderId;
+        group by l.orderId
+        order by o.inserted desc
 """)
     List<Orders> selectById(String id);
 }
