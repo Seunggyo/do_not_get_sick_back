@@ -77,7 +77,7 @@ public class DrugCommentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        if (service.update(comment, removeFileIds, uploadFiles)) {
+        if (service.hasAccess(comment.getId(), login)) {
             if (!service.updateValidate(comment)) {
                 return ResponseEntity.badRequest().build();
             }

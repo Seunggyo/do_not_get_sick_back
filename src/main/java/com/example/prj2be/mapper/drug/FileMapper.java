@@ -58,14 +58,20 @@ public interface FileMapper {
 
     @Delete("""
             DELETE FROM drugCommentFile
-            WHERE commentId = #{commentId}
+            WHERE id = #{commentId}
             """)
     int deleteByCommentId(Integer commentId);
 
     @Select("""
             SELECT *
             FROM drugCommentFile
-            WHERE commentId = #{commentId}
+            WHERE id = #{commentId}
             """)
     DrugFile selectByCommentId(Integer commentId);
+
+    @Insert("""
+            INSERT INTO drugCommentFile (commentId, name)
+            VALUES (#{id}, #{originalFilename})
+            """)
+    int insertCommentFile(Integer id, String originalFilename);
 }

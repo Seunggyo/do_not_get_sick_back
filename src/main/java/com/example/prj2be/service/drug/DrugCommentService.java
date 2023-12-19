@@ -143,15 +143,18 @@ public class DrugCommentService {
             for (Integer id : removeFileIsd) {
                 //s3 에서 지우기
                 DrugFile file = fileMapper.selectByCommentId(id);
-                String key = "prj2/drug1/" + comment.getId() + "/" + file.getName();
-                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(key)
-                        .build();
-                s3.deleteObject(objectRequest);
+                if (file != null) {
 
-                //db에서 지우기
-                fileMapper.deleteByCommentId(id);
+                    String key = "prj2/drug1/" + comment.getId() + "/" + file.getName();
+                    DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(key)
+                            .build();
+                    s3.deleteObject(objectRequest);
+
+                    //db에서 지우기
+                    fileMapper.deleteByCommentId(id);
+                }
             }
         }
 
@@ -161,7 +164,8 @@ public class DrugCommentService {
             //s3에 올리기
             upload(comment.getId(), file);
             //db에 추가하기
-            fileMapper.insert(comment.getId(), file.getOriginalFilename());
+//            fileMapper.insert(comment.getId(), file.getOriginalFilename());
+                fileMapper.insertCommentFile(comment.getId(), file.getOriginalFilename());
             }
         }
 
