@@ -22,4 +22,8 @@ public class Orders {
     private String deliveryAddress;
     private String deliveryComment;
     private LocalDateTime inserted;
+
+    private String fileName;
+    private String drugId;
+    private String url;
 }

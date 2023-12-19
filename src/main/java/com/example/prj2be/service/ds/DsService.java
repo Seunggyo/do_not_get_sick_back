@@ -252,8 +252,8 @@ public class DsService {
             return false;
         }
 
-        if (login.isAdmin()) {
-            return true;
+        if (login.getAuth() != null) {
+            return login.getAuth().equals("admin") == true;
         }
 
         Ds ds = mapper.selectById(id);

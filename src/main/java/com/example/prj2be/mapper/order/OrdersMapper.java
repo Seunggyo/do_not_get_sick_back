@@ -21,8 +21,13 @@ public interface OrdersMapper {
     int insert(Orders orders);
 
     @Select("""
-        select * from orders
+        select distinct o.*, (select name from drugFile where drugId = l.drugId limit 1) fileName, l.drugId
+            from orders o
+            join orderlist l
+            on o.orderId  = l.orderId
         where ordererName = #{id}
+        group by l.orderId
+        order by o.inserted desc
 """)
     List<Orders> selectById(String id);
 }
