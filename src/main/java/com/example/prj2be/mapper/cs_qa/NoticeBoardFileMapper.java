@@ -1,6 +1,5 @@
 package com.example.prj2be.mapper.cs_qa;
 
-import com.example.prj2be.domain.board.BoardFile;
 import com.example.prj2be.domain.cs_qa.NoticeBoardFile;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
@@ -35,7 +34,7 @@ public interface NoticeBoardFileMapper {
         FROM noticeBoardFile 
         WHERE id = #{id}
         """)
-   BoardFile selectById(Integer id);
+   NoticeBoardFile selectById(Integer id);
 
    @Delete("""
         DELETE FROM noticeBoardFile

@@ -59,6 +59,11 @@ public interface BoardCommentMapper {
       """)
    int deleteByBoardId(Integer boardId);
 
+   @Delete("""
+      DELETE FROM boardComment
+      WHERE boardId = #{boardId}
+      """)
+   void deleteByQaBoardId(Integer id);
 
    // TODO: 멤버탈퇴시 쿼리 넣어야댐..
 }

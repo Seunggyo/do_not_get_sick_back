@@ -17,11 +17,13 @@ public class CustomerService {
    private String csWriter;
    private String csNickName;
    private LocalDateTime inserted;
-   private Integer csHit;
+   private Integer increaseHit;
+   private Integer countFile;
 
    private List<NoticeBoardFile> files;
 
    public String getAgo() {
       return AppUtil.getAgo(inserted);
    }
+
 }

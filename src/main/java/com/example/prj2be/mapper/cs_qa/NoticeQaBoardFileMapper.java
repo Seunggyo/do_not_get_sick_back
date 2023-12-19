@@ -1,6 +1,6 @@
 package com.example.prj2be.mapper.cs_qa;
 
-import com.example.prj2be.domain.board.BoardFile;
+import com.example.prj2be.domain.cs_qa.NoticeQaBoardFile;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -22,7 +22,7 @@ public interface NoticeQaBoardFileMapper {
         FROM noticeQaBoardFile
         WHERE fileId = #{fileId}
         """)
-   List<com.example.prj2be.domain.cs_qa.NoticeQaBoardFile> selectNamesByFileId(Integer fileId);
+   List<NoticeQaBoardFile> selectNamesByFileId(Integer fileId);
 
    @Delete("""
         DELETE FROM noticeQaBoardFile
@@ -35,7 +35,7 @@ public interface NoticeQaBoardFileMapper {
         FROM noticeQaBoardFile 
         WHERE id = #{id}
         """)
-   BoardFile selectById(Integer id);
+   NoticeQaBoardFile selectById(Integer id);
 
    @Delete("""
         DELETE FROM noticeQaBoardFile

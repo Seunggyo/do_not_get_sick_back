@@ -88,4 +88,21 @@ public interface MemberMapper {
         where id like #{id}
 """)
     int countAll(String id);
+
+    @Delete("""
+       SELECT *
+       FROM member
+       WHERE id = #{id}
+       """)
+    void deleteById(Integer id);
+
+
+    @Select("""
+       SELECT profile
+       FROM member
+       WHERE id = #{id}
+       """)
+    String getFileNameById(Integer id);
+
+    void insert(String id, String originalFilename);
 }

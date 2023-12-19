@@ -48,6 +48,7 @@ public class QAController {
       }
    }
    @GetMapping("qaList")
+
    public Map<String, Object> list(
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String keyword,

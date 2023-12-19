@@ -135,7 +135,6 @@ public class DrugService {
 
 
         List<Drug> drugList = mapper.selectDrugList(from, "%" + keyword + "%", category);
-        System.out.println("drugList = " + drugList);
 
         for (Drug drug : drugList) {
 

@@ -8,6 +8,7 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.cs_qa.CSMapper;
 import com.example.prj2be.mapper.cs_qa.NoticeBoardFileMapper;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class CSService {
          file.getInputStream(), file.getSize()));
    }
 
-   public boolean    validate(CustomerService cs) {
+   public boolean validate(CustomerService cs) {
       if (cs == null) {
          return false;
       }
@@ -93,7 +94,7 @@ public class CSService {
       Map<String, Object> map = new HashMap<>();
       Map<String, Object>  pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%");
+      int countAll = mapper.countAll("%" + keyword + "%", filter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -114,20 +115,17 @@ public class CSService {
       // 정렬된 데이터 조회
       List<CustomerService> csList;
       int from = (page - 1) * 10;
-      csList = mapper.selectAll(from, "%" + keyword + "%");
+      csList = mapper.selectAll(from, "%" + keyword + "%", filter);
 
-      if (orderByNum != null) {
-         if (orderByNum) {
-            csList = csList.stream().sorted((a, b) -> b.getId() - a.getId()).toList();
-         } else {
-            csList = csList.stream().sorted((a, b) -> a.getId() - b.getId()).toList();
+      if (orderByNum != null || orderByHit != null) {
+         Comparator<CustomerService> comparator = Comparator.comparing(CustomerService::getId);
+         if (orderByNum != null && orderByNum) {
+            comparator = comparator.reversed();
          }
-      } else if (orderByHit != null) {
-         if (orderByHit) {
-           csList = csList.stream().sorted((a, b) -> b.getId() - a.getId()).toList();
-         } else {
-            csList = csList.stream().sorted((a, b) -> a.getId() - b.getId()).toList();
+         if (orderByHit != null && orderByHit) {
+            comparator = comparator.thenComparing(CustomerService::getIncreaseHit).reversed();
          }
+         csList = csList.stream().sorted(comparator).toList();
       }
       map.put("csList", csList);
       map.put("pageInfo", pageInfo);
@@ -182,7 +180,7 @@ public class CSService {
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {
             // s3에서 지우기
-            BoardFile file = fileMapper.selectById(id);
+            NoticeBoardFile file = fileMapper.selectById(id);
             String key = "prj2/CS/" + cs.getId() + "/" + file.getFileName();
             DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                .bucket(bucket)

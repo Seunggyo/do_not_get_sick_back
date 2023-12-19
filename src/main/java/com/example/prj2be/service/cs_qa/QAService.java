@@ -4,6 +4,7 @@ import com.example.prj2be.domain.board.BoardFile;
 import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.cs_qa.NoticeQaBoardFile;
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.board.BoardCommentMapper;
 import com.example.prj2be.mapper.cs_qa.NoticeQaBoardFileMapper;
 import com.example.prj2be.mapper.cs_qa.QAMapper;
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class QAService {
 
    private final QAMapper mapper;
    private final NoticeQaBoardFileMapper fileMapper;
+   private final BoardCommentMapper commentMapper;
 
    private final S3Client s3;
 
@@ -131,7 +133,10 @@ public class QAService {
    }
    public boolean remove(Integer id) {
 
+      commentMapper.deleteByQaBoardId(id);
+
       deleteFile(id);
+
       return mapper.deleteById(id) == 1;
    }
 
@@ -160,7 +165,7 @@ public class QAService {
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {
             // s3에서 지우기
-            BoardFile file = fileMapper.selectById(id);
+            NoticeQaBoardFile file = fileMapper.selectById(id);
             String key = "prj2/customerQA/" + qa.getId() + "/" + file.getFileName();
             DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
                .bucket(bucket)

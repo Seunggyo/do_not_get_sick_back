@@ -5,7 +5,6 @@ import com.example.prj2be.mapper.member.MemberJoinMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
@@ -13,6 +12,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value.Str;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -90,7 +91,8 @@ public class MemberService {
    }
 
    public boolean add(Member member, MultipartFile file, MultipartFile profile) throws IOException {
-      if (member.getAuth().equals("user")) {
+
+      if (member.getAuth().equals("user") || member.getAuth().equals("admin")) {
          if (profile != null) {
             uploadProfile(member.getId(), profile);
             return mapper.insertMember(member, "", profile.getOriginalFilename()) == 1;
@@ -245,7 +247,36 @@ public class MemberService {
       return login.getId().equals(id);
    }
 
-   public boolean update(Member member) {
+   public boolean update(Member member, List<Integer> removeFileIds, MultipartFile profile,
+      MultipartFile file) throws IOException{
+
+      System.out.println("MemberService.update");
+
+      if (removeFileIds != null) {
+         for (Integer id : removeFileIds) {
+
+            // s3 에서 지우기
+            String key = "prj2/profile/" + member.getId() + "/" + profile.getOriginalFilename();
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+               .bucket(bucket)
+               .key(key)
+               .build();
+            s3.deleteObject(objectRequest);
+
+            mapper.deleteById(id);
+         }
+      }
+
+      // 파일 추가하기
+      if (profile != null ) {
+
+            // s3에 올리기
+            upload(member.getId(), profile);
+
+            // db에 파일 추가하기
+            mapper.insert(member.getId(), profile.getOriginalFilename());
+         }
+
       return mapper.update(member) == 1;
    }
 
@@ -262,7 +293,5 @@ public class MemberService {
       return memberJoinMapper.deleteById(member.getId()) == 1;
    }
 
-   public Member get(Integer loggedUserId) {
-      return null;
-   }
+
 }
