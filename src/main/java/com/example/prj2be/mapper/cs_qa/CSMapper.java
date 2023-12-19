@@ -19,7 +19,7 @@ public interface CSMapper {
    int insert(CustomerService cs);
 
    @Select("""
-      SELECT c.id, c.csTitle, c.csCategory, c.csWriter, m.nickName, c.inserted, c.csHit
+      SELECT c.id, c.csTitle, c.csCategory, c.csWriter, m.nickName, c.inserted, c.increaseHit
       FROM customerService c JOIN member m ON c.csWriter = m.id
       WHERE c.csTitle LIKE #{keyword}
       or c.csCategory LIKE #{keyword}
@@ -76,7 +76,7 @@ public interface CSMapper {
 
    @Update("""
       UPDATE customerService
-      SET csHit = csHit + 1
+      SET increaseHit = increaseHit + 1
       WHERE id = #{id}
       """)
    void increaseHit(int id);

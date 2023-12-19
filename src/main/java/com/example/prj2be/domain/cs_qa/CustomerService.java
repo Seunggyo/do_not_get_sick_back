@@ -17,7 +17,7 @@ public class CustomerService {
    private String csWriter;
    private String csNickName;
    private LocalDateTime inserted;
-   private Integer csHit;
+   private Integer increaseHit;
 
    private List<NoticeBoardFile> files;
 
