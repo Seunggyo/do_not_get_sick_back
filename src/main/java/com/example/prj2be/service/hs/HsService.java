@@ -110,12 +110,17 @@ public class HsService {
 
         for (Hs hs : hsList) {
             List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
+            List<HsCourse> hsCourseList = mapper.courseSelectByCategory(hs.getId());
+            List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(hs.getId());
 
             for (HsFile hsFile : hsFiles) {
                 String url = urlPrefix + "prj2/hospital/" + hs.getId() + "/" + hsFile.getName();
                 hsFile.setUrl(url);
             }
+
             hs.setFiles(hsFiles);
+            hs.setMedicalCourse(hsCourseList);
+            hs.setHolidays(businessHolidays);
 
         }
 

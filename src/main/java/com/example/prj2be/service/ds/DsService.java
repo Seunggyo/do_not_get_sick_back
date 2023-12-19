@@ -164,6 +164,7 @@ public class DsService {
 
         for (Ds ds : dsList) {
             List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(ds.getId());
+            List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(ds.getId());
 
             for (DsPicture dsPicture : dsPictures) {
                 String url = urlPrefix + "prj2/Ds/" + ds.getId() + "/" + dsPicture.getName();
@@ -171,6 +172,7 @@ public class DsService {
             }
 
             ds.setFiles(dsPictures);
+            ds.setHolidays(businessHolidays);
         }
 
         map.put("dsList", dsList);

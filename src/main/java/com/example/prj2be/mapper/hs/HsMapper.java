@@ -217,9 +217,11 @@ public interface HsMapper {
             """)
     List<Hs> selectByPagingById(int from, String list, String keyword);
 
+
     @Select("""
             SELECT * FROM medicalCourse
-            WHERE id = #{medicalCourseId}
+            WHERE medicalCourseId = #{id}
             """)
-    List<HsCourse> courseSelectByCategory(String category);
+    List<HsCourse> courseSelectByCategory(Integer id);
+
 }
