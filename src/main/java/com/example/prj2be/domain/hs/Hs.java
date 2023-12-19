@@ -27,6 +27,7 @@ public class Hs {
     private String lng;
     private String category;
     private List<HsCourse> medicalCourse;
+    private List<String> medicalCourseCategory;
     private List<BusinessHoliday> holidays;
     private String homePage;
     private Integer countLike;

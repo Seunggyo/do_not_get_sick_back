@@ -18,7 +18,7 @@ public interface HsMapper {
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                    b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory `medicalCourse`, bh.holiday
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
                 FROM prj2.business b
                     left join prj2.businesslike b2
                         on b.id = b2.businessId
@@ -37,12 +37,14 @@ public interface HsMapper {
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                    b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
             FROM prj2.business b
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
                 left join prj2.medicalcourse mc
                     on b.id = mc.medicalCourseId
+                left join prj2.businessholiday bh
+                    on b.id = bh.businessId
             WHERE b.category = 'hospital'
                 AND mc.medicalCourseCategory = #{course}
             GROUP BY b.id
@@ -144,4 +146,80 @@ public interface HsMapper {
         WHERE memberId = #{memberId}
         """)
     Integer selectIdByMemberId(String memberId);
+
+    @Select("""
+            <script>
+            SELECT COUNT(*)
+            FROM business b
+                JOIN prj2.medicalcourse m on b.id = m.medicalCourseId
+                <where prefixOverrides="OR">
+                    <if test="list == 'all' or list == 'name'">
+                        OR b.name LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                        OR m.medicalCourseCategory LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'address'">
+                        OR b.address LIKE #{keyword}
+                    </if>
+                </where>
+            </script>
+            """)
+    int countAll(String list, String keyword);
+
+    @Select("""
+            <script>
+            SELECT 
+                   b.id,
+                   b.name,
+                   b.phone,
+                   b.address,
+                   b.oldAddress,
+                   b.category,
+                   b.openHour,
+                   b.openMin,
+                   b.closeHour,
+                   b.closeMin,
+                   b.restHour,
+                   b.restMin,
+                   b.restCloseHour,
+                   b.restCloseMin,
+                   b.memberId,
+                   bh.holiday,
+                   m.medicalCourseCategory,
+                   COUNT(DISTINCT bl.id) `likeCount`,
+                   COUNT(DISTINCT bc.id) `commentCount`
+             FROM business b
+                LEFT JOIN businesslike bl
+                    ON b.id = bl.businessId
+                LEFT JOIN businesscomment bc
+                    ON b.id = bc.businessId
+                LEFT JOIN businessholiday bh
+                    ON b.id = bh.businessId
+                LEFT JOIN medicalcourse m
+                    ON b.id = m.medicalCourseId
+            WHERE
+                b.category = 'hospital' 
+                <trim prefixOverrides="OR" prefix="AND (" suffix=")" >
+                    <if test="list == 'all' or list == 'name'">
+                        OR name LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                        OR medicalCourseCategory LIKE #{keyword}
+                    </if>
+                    <if test="list == 'all' or list == 'address'">
+                        OR address LIKE #{keyword}
+                    </if>
+                </trim>
+            GROUP BY b.id
+            LIMIT #{from}, 10
+            </script>
+            """)
+    List<Hs> selectByPagingById(int from, String list, String keyword);
+
+    @Select("""
+            SELECT * FROM medicalCourse
+            WHERE id = #{medicalCourseId}
+            """)
+    List<HsCourse> courseSelectByCategory(String category);
 }
