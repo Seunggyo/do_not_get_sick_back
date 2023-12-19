@@ -156,7 +156,7 @@ public interface HsMapper {
                     <if test="list == 'all' or list == 'name'">
                         OR b.name LIKE #{keyword}
                     </if>
-                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                    <if test="list == 'all' or list == 'medicalCourse'">
                         OR m.medicalCourseCategory LIKE #{keyword}
                     </if>
                     <if test="list == 'all' or list == 'address'">
@@ -204,7 +204,7 @@ public interface HsMapper {
                     <if test="list == 'all' or list == 'name'">
                         OR name LIKE #{keyword}
                     </if>
-                    <if test="list == 'all' or list == 'medicalCourseCategory'">
+                    <if test="list == 'all' or list == 'medicalCourse'">
                         OR medicalCourseCategory LIKE #{keyword}
                     </if>
                     <if test="list == 'all' or list == 'address'">
