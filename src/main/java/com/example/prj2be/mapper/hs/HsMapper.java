@@ -18,7 +18,7 @@ public interface HsMapper {
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                    b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory `medicalCourse`, bh.holiday
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
                 FROM prj2.business b
                     left join prj2.businesslike b2
                         on b.id = b2.businessId
@@ -37,12 +37,14 @@ public interface HsMapper {
             SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
                     b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
                    b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory
+                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
             FROM prj2.business b
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
                 left join prj2.medicalcourse mc
                     on b.id = mc.medicalCourseId
+                left join prj2.businessholiday bh
+                    on b.id = bh.businessId
             WHERE b.category = 'hospital'
                 AND mc.medicalCourseCategory = #{course}
             GROUP BY b.id
@@ -214,4 +216,10 @@ public interface HsMapper {
             </script>
             """)
     List<Hs> selectByPagingById(int from, String list, String keyword);
+
+    @Select("""
+            SELECT * FROM medicalCourse
+            WHERE id = #{medicalCourseId}
+            """)
+    List<HsCourse> courseSelectByCategory(String category);
 }
