@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -15,6 +16,7 @@ public interface CSMapper {
       INSERT INTO customerService (csTitle, csCategory, csContent, csWriter)
       VALUES (#{csTitle}, #{csCategory}, #{csContent}, #{csWriter})
       """)
+   @Options(useGeneratedKeys = true, keyProperty = "id")
    int insert(CustomerService cs);
 
    @Select("""
@@ -35,6 +37,7 @@ public interface CSMapper {
             or c.csCategory   LIKE #{keyword}
             or m.nickName     LIKE #{keyword})
             AND c.csCategory Like #{filter}
+      Group BY c.id
       ORDER BY c.id DESC 
       LIMIT #{from}, 10
    """)
@@ -56,7 +59,7 @@ public interface CSMapper {
 
    @Delete("""
       DELETE FROM customerService 
-      WHERE id=#{id}
+      WHERE id = #{id}
    """)
    int deleteById(Integer id);
 

@@ -51,7 +51,6 @@ public class CSController {
 
    @GetMapping("list")
 
-   // api/cs/list?p=
    public Map<String, Object> list(
       @RequestParam(value = "n", required = false) Boolean orderByNum,
       @RequestParam(value = "h", required = false) Boolean orderByHit,

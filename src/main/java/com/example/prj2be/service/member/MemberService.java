@@ -255,9 +255,6 @@ public class MemberService {
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {
 
-            // 파일 이름 조회
-            String filename = mapper.getFileNameById(id);
-
             // s3 에서 지우기
             String key = "prj2/profile/" + member.getId() + "/" + profile.getOriginalFilename();
             DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
