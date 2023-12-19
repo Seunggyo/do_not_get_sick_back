@@ -22,7 +22,13 @@ public class OrderService {
     private String urlPrefix;
 
     public List<Orders> selectById(String id) {
-        return ordersMapper.selectById(id);
+        List<Orders> ordersList = ordersMapper.selectById(id);
+        for (Orders order : ordersList) {
+            String url = urlPrefix + "prj2/drug/" + order.getDrugId() + "/" + order.getFileName();
+            order.setUrl(url);
+        }
+
+        return ordersList;
     }
 
     public List<Cart> orderLIst(String orderId) {
