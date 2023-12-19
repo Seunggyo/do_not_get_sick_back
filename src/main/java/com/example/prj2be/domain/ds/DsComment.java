@@ -13,6 +13,7 @@ public class DsComment {
     private Integer id;
     private Integer businessId;
     private String memberId;
+    private String memberNickName;
     private String comment;
     private LocalDateTime inserted;
 
