@@ -12,7 +12,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value.Str;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -249,6 +248,11 @@ public class MemberService {
 
    public boolean update(Member member, List<Integer> removeFileIds, MultipartFile profile,
       MultipartFile file) throws IOException{
+      // TODO: file에 대한 코드가 이미 없음...
+      // 아마 병원멤버와 약국 멤버에 관한 코드인 것 같은데...
+      // 일단 profile이 동작하도록 코드를 작성할 테니
+      // 병원멤버와 약국멤버에 대한 코드를 이후에 수정해야할 것 같아요...
+
 
       System.out.println("MemberService.update");
 
@@ -267,15 +271,38 @@ public class MemberService {
          }
       }
 
-      // 파일 추가하기
+      // 프로필 파일 삭제하고 추가하기
       if (profile != null ) {
 
-            // s3에 올리기
-            upload(member.getId(), profile);
+         Member member1 = mapper.selectById(member.getId());
+         if (member1.getProfile() != null && !member1.getProfile().isBlank()) {
 
-            // db에 파일 추가하기
-            mapper.insert(member.getId(), profile.getOriginalFilename());
+            // 프로필 파일 삭제하기
+            String deleteKey = "prj2/profile/" + member.getId() + "/" + profile.getOriginalFilename();
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+               .bucket(bucket)
+               .key(deleteKey)
+               .build();
+            s3.deleteObject(objectRequest);
          }
+
+
+         // 프로필 파일 추가하기
+         // s3에 올리기
+         String key = "prj2/profile/" + member.getId() + "/" + profile.getOriginalFilename();
+
+         PutObjectRequest objectRequest = PutObjectRequest.builder()
+            .bucket(bucket)
+            .key(key)
+            .acl(ObjectCannedACL.PUBLIC_READ)
+            .build();
+
+         s3.putObject(objectRequest,
+            RequestBody.fromInputStream(profile.getInputStream(), profile.getSize()));
+
+         // db에 파일 추가하기
+         mapper.updateProfile(member.getId(), profile.getOriginalFilename());
+      }
 
       return mapper.update(member) == 1;
    }
@@ -294,4 +321,21 @@ public class MemberService {
    }
 
 
+   public void loginUpdate(Member member, WebRequest request) {
+      Member dbMember = mapper.selectById(member.getId());
+
+      if (member != null) {
+         String auth = mapper.selectAuthById(member.getId());
+         dbMember.setAuth(auth);
+         dbMember.setPassword("");
+
+         if (dbMember.getProfile() != null && !dbMember.getProfile().isBlank()) {
+            String profileUrl = urlPrefix + "prj2/profile/" + dbMember.getId() + "/" + dbMember.getProfile();
+            dbMember.setProfile(profileUrl);
+         }
+
+         request.setAttribute("login", dbMember, RequestAttributes.SCOPE_SESSION);
+      }
+
+   }
 }

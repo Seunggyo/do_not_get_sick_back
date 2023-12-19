@@ -124,10 +124,11 @@ public class MemberController {
     @PutMapping("edit")
     public ResponseEntity edit(Member member,
        @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
-       @RequestParam(value = "uploadFileImg[]", required = false) MultipartFile profile,
+       @RequestParam(value = "profileFile", required = false) MultipartFile profile,
 
        @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
-       @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+       @SessionAttribute(value = "login", required = false) Member login,
+       WebRequest request) throws IOException {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -138,6 +139,9 @@ public class MemberController {
         }
 
         if (service.update(member, fileSwitch, profile, file)) {
+
+            // update된 회원정보로 세션의 login 정보 교체
+            service.loginUpdate(member, request);
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.internalServerError().build();
