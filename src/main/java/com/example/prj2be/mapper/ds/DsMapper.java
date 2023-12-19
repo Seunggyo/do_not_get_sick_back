@@ -213,5 +213,10 @@ public interface DsMapper {
     """)
     List<Ds> getListByCK(String keyword);
 
-
+    @Select("""
+        SELECT id
+        FROM business
+        WHERE memberId = #{memberId}
+        """)
+    Integer idGet(String memberId);
 }

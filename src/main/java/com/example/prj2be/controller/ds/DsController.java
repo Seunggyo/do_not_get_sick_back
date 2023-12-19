@@ -4,15 +4,22 @@ import com.example.prj2be.domain.ds.Ds;
 import com.example.prj2be.domain.ds.DsKakao;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.ds.DsService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -24,9 +31,9 @@ public class DsController {
 
     @PostMapping("add")
     public ResponseEntity add(Ds ds,
-                              @RequestParam(value = "holiday[]", required = false) String[] holidays,
-                              @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
-                              @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+        @RequestParam(value = "holiday[]", required = false) String[] holidays,
+        @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] files,
+        @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 기입
 
         if (login == null) {
@@ -49,14 +56,14 @@ public class DsController {
 //    TODO : 진료명 카테고리 추가 해야함
     @GetMapping("list")
     public Map<String, Object> list(@RequestParam(value = "p", defaultValue = "1") Integer page,
-                                    @RequestParam(value = "k", defaultValue = "") String keyword) {
+        @RequestParam(value = "k", defaultValue = "") String keyword) {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
         return service.list(page, keyword);
     }
 
     @GetMapping("listMap")
-    public Map<String, Object> list( @RequestParam(value = "k", defaultValue = "") String keyword) {
+    public Map<String, Object> list(@RequestParam(value = "k", defaultValue = "") String keyword) {
         // dsList 와 pageInfo를 같이 넘겨야 해서 map으로 작성
 
         return service.listMap(keyword);
@@ -86,10 +93,10 @@ public class DsController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Ds ds,
-                               @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
-                               @RequestParam(value = "uploadFile[]", required = false) MultipartFile[] uploadFile,
-                               @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds,
-                               @SessionAttribute(value = "login", required = false) Member login) throws IOException {
+        @RequestParam(value = "updateHolidays[]", required = false) String[] holidays,
+        @RequestParam(value = "uploadFile[]", required = false) MultipartFile[] uploadFile,
+        @RequestParam(value = "deleteFileIds[]", required = false) List<Integer> deleteFileIds,
+        @SessionAttribute(value = "login", required = false) Member login) throws IOException {
         // 약국 정보 수정
         if (login == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -113,7 +120,7 @@ public class DsController {
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity delete(@PathVariable Integer id,
-                                 @SessionAttribute(value = "login", required = false) Member login) {
+        @SessionAttribute(value = "login", required = false) Member login) {
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -127,6 +134,11 @@ public class DsController {
         } else {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("get")
+    public Ds idGet(@RequestParam("id") String memberId) {
+        return service.idGet(memberId);
     }
 
 }

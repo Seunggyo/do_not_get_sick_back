@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,7 +56,7 @@ public class HsService {
 
         Map<String, Object> map = new HashMap<>();
 
-        List<Hs> hsList = mapper.selectByKeyword(category, "%" +  keyword + "%" );
+        List<Hs> hsList = mapper.selectByKeyword(category, "%" + keyword + "%");
 
         for (Hs hs : hsList) {
             List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());

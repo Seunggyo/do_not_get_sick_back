@@ -45,8 +45,8 @@ public interface HsReservationMapper {
     int remove(Integer id);
 
     @Select("""
-        SELECT r.memberId, r.reservationDate, r.reservationHour, r.reservationMin,r.id,b.name,r.comment,r.isReservationCheck
-        FROM prj2.businessreservation r JOIN prj2.business b on b.id = r.businessId
+        SELECT r.memberId, r.reservationDate, r.reservationHour, r.reservationMin,r.id,b.name,r.comment,r.isReservationCheck,m.nickName
+        FROM prj2.businessreservation r JOIN prj2.business b on b.id = r.businessId JOIN prj2.member m on m.id = r.memberId
         WHERE r.memberId =#{memberId} AND r.isReservationCheck = false
         ORDER BY r.reservationDate
         """)
