@@ -1,6 +1,5 @@
 package com.example.prj2be.service.cs_qa;
 
-import com.example.prj2be.domain.board.BoardFile;
 import com.example.prj2be.domain.cs_qa.CustomerQA;
 import com.example.prj2be.domain.cs_qa.NoticeQaBoardFile;
 import com.example.prj2be.domain.member.Member;
@@ -87,11 +86,11 @@ public class QAService {
       return true;
    }
 
-   public Map<String, Object> qaList(Integer page, String keyword, String filter) {
+   public Map<String, Object> qaList(Integer page, String keyword, String filter, String qaWriter) {
       Map<String, Object> map = new HashMap<>();
       Map<String, Object> pageInfo = new HashMap<>();
 
-      int countAll = mapper.countAll("%" + keyword + "%", filter);
+      int countAll = mapper.countAll("%" + keyword + "%", filter, qaWriter);
       int lastPageNumber = (countAll - 1) / 10 + 1;
       int startPageNumber = (page - 1) / 10 * 10 + 1;
       int endPageNumber = startPageNumber + 9;
@@ -110,7 +109,7 @@ public class QAService {
       }
 
       int from = (page - 1) * 10;
-      map.put("qaList", mapper.selectAll(from, "%" + keyword + "%", filter));
+      map.put("qaList", mapper.selectAll(from, "%" + keyword + "%", filter, qaWriter));
       map.put("pageInfo", pageInfo);
       return map;
    }
@@ -204,5 +203,33 @@ public class QAService {
       CustomerQA qa = mapper.selectById(id);
 
       return qa.getQaWriter().equals(login.getId());
+   }
+
+   public Map<String, Object> adminQaList(Integer page, String keyword, String filter) {
+      Map<String, Object> map = new HashMap<>();
+      Map<String, Object> pageInfo = new HashMap<>();
+
+      int countAll = mapper.adminCountAll("%" + keyword + "%", filter);
+      int lastPageNumber = (countAll - 1) / 10 + 1;
+      int startPageNumber = (page - 1) / 10 * 10 + 1;
+      int endPageNumber = startPageNumber + 9;
+      endPageNumber = Math.min(endPageNumber, lastPageNumber);
+      int prevPageNumber = startPageNumber - 10;
+      int nextPageNumber = endPageNumber + 1;
+
+      pageInfo.put("currentPageNumber", page);
+      pageInfo.put("startPageNumber", startPageNumber);
+      pageInfo.put("endPageNumber", endPageNumber);
+      if (prevPageNumber > 0) {
+         pageInfo.put("prevPageNumber", prevPageNumber);
+      }
+      if (nextPageNumber <= lastPageNumber) {
+         pageInfo.put("nextPageNumber", nextPageNumber);
+      }
+
+      int from = (page - 1) * 10;
+      map.put("qaList", mapper.adminSelectAll(from, "%" + keyword + "%", filter));
+      map.put("pageInfo", pageInfo);
+      return map;
    }
 }
