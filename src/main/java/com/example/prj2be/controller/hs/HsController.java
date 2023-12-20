@@ -55,7 +55,6 @@ public class HsController {
         @RequestParam(value = "hsFiles[]", required = false)
         MultipartFile[] hsFile,
         @SessionAttribute(value = "login", required = false) Member login) throws IOException {
-        System.out.println("hs = " + hs);
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
