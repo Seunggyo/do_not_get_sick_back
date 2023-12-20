@@ -52,10 +52,23 @@ public class QAController {
    public Map<String, Object> list(
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String keyword,
-      @RequestParam(value = "f", defaultValue = "") String filter) {
+      @RequestParam(value = "f", defaultValue = "") String filter,
+      @RequestParam(value = "id") String qaWriter) {
 
 
-      return service.qaList(page, keyword, "%"+filter+"%");
+      return service.qaList(page, keyword, "%"+filter+"%", qaWriter);
+   }
+
+   @GetMapping("adminQaList")
+
+   public Map<String, Object> adminList(
+      @RequestParam(value = "p", defaultValue = "1") Integer page,
+      @RequestParam(value = "k", defaultValue = "") String keyword,
+      @RequestParam(value = "f", defaultValue = "") String filter
+) {
+
+
+      return service.adminQaList(page, keyword, "%"+filter+"%");
    }
 
    @GetMapping("id/{id}")

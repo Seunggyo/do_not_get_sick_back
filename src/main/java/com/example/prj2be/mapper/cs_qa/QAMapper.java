@@ -37,11 +37,12 @@ public interface QAMapper {
         WHERE (q.qaContent LIKE #{keyword}
            OR q.qaTitle LIKE #{keyword})
            AND q.qaCategory Like #{filter}
+           AND q.qaWriter = #{qaWriter}
         GROUP BY q.id
         ORDER BY q.id DESC
         LIMIT #{from}, 10
         """)
-   List<CustomerQA> selectAll(Integer from, String keyword, String filter);
+   List<CustomerQA> selectAll(Integer from, String keyword, String filter, String qaWriter);
 
    @Select("""
         SELECT q.id,
@@ -92,5 +93,36 @@ public interface QAMapper {
         WHERE qaTitle LIKE #{keyword}
            OR qaCategory LIKE #{keyword}
         """)
-   int countAll(String keyword, String filter);
+   int countAll(String keyword, String filter, String qaWriter);
+
+   @Select("""
+        SELECT q.id,
+               q.qaTitle,
+               q.qaContent,
+               q.qaWriter,
+               q.qaCategory,
+               m.nickName,
+               q.inserted,
+               COUNT(DISTINCT c.id) countComment,
+               COUNT(DISTINCT f.id) countFile
+        FROM customerqa q JOIN member m ON q.qaWriter = m.id
+        LEFT JOIN noticeQaBoardFile f ON q.id = f.fileId
+        LEFT JOIN boardComment c 
+        ON q.id = c.boardId
+        and c.category = "qa"
+        WHERE (q.qaContent LIKE #{keyword}
+           OR q.qaTitle LIKE #{keyword})
+           AND q.qaCategory Like #{filter}
+        GROUP BY q.id
+        ORDER BY q.id DESC
+        LIMIT #{from}, 10
+        """)
+   List<CustomerQA> adminSelectAll(int from, String keyword, String filter);
+
+   @Select("""
+        SELECT COUNT(*) FROM customerqa
+        WHERE qaTitle LIKE #{keyword}
+           OR qaCategory LIKE #{keyword}
+        """)
+   int adminCountAll(String keyword, String filter);
 }

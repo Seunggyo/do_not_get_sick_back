@@ -104,5 +104,10 @@ public interface MemberMapper {
        """)
     String getFileNameById(Integer id);
 
-    void insert(String id, String originalFilename);
+    @Update("""
+        UPDATE member
+         SET profile = #{originalFilename}
+         WHERE id = #{id}
+        """)
+    void updateProfile(String id, String originalFilename);
 }
