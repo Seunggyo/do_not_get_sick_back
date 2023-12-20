@@ -71,7 +71,6 @@ public class HsService {
 
         }
 
-
         map.put("list", hsList);
 
         return map;
@@ -79,15 +78,15 @@ public class HsService {
 
     public Map<String, Object> listAdmin(Integer page, String list, String keyword) {
         Map<String, Object> map = new HashMap<>();
-        Map<String,Object> pageInfo = new HashMap<>();
+        Map<String, Object> pageInfo = new HashMap<>();
 
         // 현재 페이지
-        int from = (page - 1 ) * 10 ;
+        int from = (page - 1) * 10;
         // 총 게시글이 몇개 인지, 어떤 키워드로 검색할 껏인지 등등 총 게시물에서 하는 키워드
         int countAll = mapper.countAll(list, "%" + keyword + "%");
 
-        int lastPageNumber = (countAll -1) / 10 + 1;
-        int startPageNumber = ((page -1) / 10 * 10) + 1;
+        int lastPageNumber = (countAll - 1) / 10 + 1;
+        int startPageNumber = ((page - 1) / 10 * 10) + 1;
         int endPageNumber = startPageNumber + 9;
         endPageNumber = Math.min(endPageNumber, lastPageNumber);
         int prevPageNumber = startPageNumber - 10;
@@ -106,7 +105,7 @@ public class HsService {
         pageInfo.put("startPageNumber", startPageNumber);
         pageInfo.put("endPageNumber", endPageNumber);
 
-        List<Hs> hsList = mapper.selectByPagingById(from ,list, "%" +  keyword + "%" );
+        List<Hs> hsList = mapper.selectByPagingById(from, list, "%" + keyword + "%");
 
         for (Hs hs : hsList) {
             List<HsFile> hsFiles = fileMapper.selectByHsId(hs.getId());
@@ -277,17 +276,19 @@ public class HsService {
 
     public Hs getId(String memberId) {
         Hs hs = mapper.selectBymemberId(memberId);
-        Integer id = mapper.selectIdByMemberId(memberId);
-        List<HsFile> hsFiles = fileMapper.selectByHsId(id);
-        for (HsFile hsFile : hsFiles) {
-            String url = urlPrefix + "prj2/hospital/" + id + "/" + hsFile.getName();
-            hsFile.setUrl(url);
+        if (hs != null) {
+            Integer id = mapper.selectIdByMemberId(memberId);
+            List<HsFile> hsFiles = fileMapper.selectByHsId(id);
+            for (HsFile hsFile : hsFiles) {
+                String url = urlPrefix + "prj2/hospital/" + id + "/" + hsFile.getName();
+                hsFile.setUrl(url);
+            }
+            hs.setFiles(hsFiles);
+            List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
+            List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
+            hs.setMedicalCourse(hsCourses);
+            hs.setHolidays(businessHolidays);
         }
-        hs.setFiles(hsFiles);
-        List<HsCourse> hsCourses = mapper.courseSelectByBusinessId(id);
-        List<BusinessHoliday> businessHolidays = mapper.holidaySelectByBusinessId(id);
-        hs.setMedicalCourse(hsCourses);
-        hs.setHolidays(businessHolidays);
         return hs;
     }
 
