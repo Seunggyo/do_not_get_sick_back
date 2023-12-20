@@ -1,6 +1,8 @@
 package com.example.prj2be.service.member;
 
 import com.example.prj2be.domain.member.Member;
+import com.example.prj2be.mapper.board.BoardCommentMapper;
+import com.example.prj2be.mapper.board.BoardMapper;
 import com.example.prj2be.mapper.member.MemberJoinMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,8 @@ public class MemberService {
 
    private final MemberMapper mapper;
    private final MemberJoinMapper memberJoinMapper;
+   private final BoardMapper boardMapper;
+   private final BoardCommentMapper boardCommentMapper;
 
    private final S3Client s3;
    @Value("${image.file.prefix}")
@@ -192,7 +196,19 @@ public class MemberService {
       return map;
    }
 
-   public Member selectById(String id) {
+   public Map<String, Object> selectById(String id) {
+      Map<String, Object> map = new HashMap<>();
+      Member member = mapper.selectById(id);
+
+      String profileUrl = urlPrefix + "prj2/profile/" + member.getId() + "/" + member.getProfile();
+      member.setProfile(profileUrl);
+      map.put("member", member);
+      map.put("boardList", boardMapper.selectByMemberId(id));
+      map.put("commentList", boardCommentMapper.selectByMemberId(id));
+      return map;
+   }
+
+   public Member selectById1(String id) {
       Member member = mapper.selectById(id);
 
       String profileUrl = urlPrefix + "prj2/profile/" + member.getId() + "/" + member.getProfile();

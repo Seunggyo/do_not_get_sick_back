@@ -108,4 +108,11 @@ public interface BoardMapper {
       """)
    void increaseHit(int id);
 
+   @Select("""
+      select * from board
+      where writer = #{memberId}
+      order by inserted desc
+      limit 0, 3
+""")
+   List<Board> selectByMemberId(String memberId);
 }
