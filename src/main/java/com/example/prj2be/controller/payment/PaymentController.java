@@ -30,7 +30,6 @@ public class PaymentController {
 
     @PostMapping("/toss")
     public ResponseEntity requestTossPayment(@RequestBody @Valid PaymentDto paymentReqDto) throws CustomLogicException {
-        System.out.println("paymentReqDto.getPaymentUid() = " + paymentReqDto.getPaymentUid());
         PaymentResDto paymentResDto = paymentService.requsetTossPayment(
                 paymentReqDto, paymentReqDto.getEmail());
         paymentResDto.setSuccessUrl(paymentReqDto.getSuccessUrl() == null ? paymentConfig.getSuccessUrl() : paymentReqDto.getSuccessUrl());
@@ -42,11 +41,9 @@ public class PaymentController {
     @PostMapping("/toss/success")
     public ResponseEntity tossPaymentSuccess(@RequestBody PaymentRequsetDto paymentRequsetDto,
                                              @SessionAttribute(value = "login", required = false)Member login) throws JsonEOFException {
-        System.out.println("PaymentController.tossPaymentSuccess");
         String paymentKey = paymentRequsetDto.getPaymentKey();
         String orderId = paymentRequsetDto.getPaymentUid();
         Long amount = paymentRequsetDto.getAmount();
-        System.out.println("orderId = " + orderId);
         return ResponseEntity.ok().body(paymentService.tossPaymentSuccess(paymentKey, orderId, amount, login));
     }
 
@@ -55,6 +52,5 @@ public class PaymentController {
                         @RequestParam String orderId,
                         @RequestParam Long amount,
                         @SessionAttribute(value = "login", required = false)Member login) {
-        System.out.println("PaymentController.method1");
     }
 }

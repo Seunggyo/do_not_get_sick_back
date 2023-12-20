@@ -258,7 +258,6 @@ public class MemberService {
       // 병원멤버와 약국멤버에 대한 코드를 이후에 수정해야할 것 같아요...
 
 
-      System.out.println("MemberService.update");
 
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {
