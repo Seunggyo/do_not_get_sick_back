@@ -3,9 +3,10 @@ package com.example.prj2be.service.drug;
 import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
 import com.example.prj2be.domain.member.Member;
-
 import com.example.prj2be.mapper.drug.DrugCommentMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +32,8 @@ public class DrugCommentService {
     @Value("${aws.s3.bucket.name}")
     private String bucket;
 
-    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login) throws IOException {
+    public boolean add(DrugComment drugComment, MultipartFile[] files, Member login)
+        throws IOException {
 
         drugComment.setMemberId(login.getId());
 
@@ -59,12 +58,13 @@ public class DrugCommentService {
         String key = "prj2/drug1/" + commentId + "/" + file.getOriginalFilename();
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(key)
-                .acl(ObjectCannedACL.PUBLIC_READ)
-                .build();
+            .bucket(bucket)
+            .key(key)
+            .acl(ObjectCannedACL.PUBLIC_READ)
+            .build();
 
-        s3.putObject(objectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        s3.putObject(objectRequest,
+            RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
 
     }
@@ -92,7 +92,8 @@ public class DrugCommentService {
             List<DrugFile> drugFiles = fileMapper.selectNamesByDrugComment(drugComment.getId());
 
             for (DrugFile drugFile : drugFiles) {
-                String url = urlPrefix + "prj2/drug1/" + drugComment.getId() + "/" + drugFile.getName();
+                String url =
+                    urlPrefix + "prj2/drug1/" + drugComment.getId() + "/" + drugFile.getName();
                 drugFile.setUrl(url);
             }
             drugComment.setFiles(drugFiles);
@@ -117,9 +118,9 @@ public class DrugCommentService {
             String key = "prj2/drug1/" + id + "/" + file.getName();
 
             DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(bucket)
-                    .build();
+                .bucket(bucket)
+                .key(bucket)
+                .build();
 
             s3.deleteObject(objectRequest);
         }
@@ -130,13 +131,20 @@ public class DrugCommentService {
 
 
     public boolean hasAccess(Integer id, Member login) {
+        if (login == null) {
+            return false;
+        }
+        if (login.getAuth().equals("admin")) {
+            return true;
+        }
         DrugComment drugComment = mapper.selectById(id);
 
         return drugComment.getMemberId().equals(login.getId());
     }
 
 
-    public boolean update(DrugComment comment, List<Integer> removeFileIsd, MultipartFile[] uploadFiles) throws IOException {
+    public boolean update(DrugComment comment, List<Integer> removeFileIsd,
+        MultipartFile[] uploadFiles) throws IOException {
 
         //파일 지우기
         if (removeFileIsd != null) {
@@ -147,9 +155,9 @@ public class DrugCommentService {
 
                     String key = "prj2/drug1/" + comment.getId() + "/" + file.getName();
                     DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
-                            .bucket(bucket)
-                            .key(key)
-                            .build();
+                        .bucket(bucket)
+                        .key(key)
+                        .build();
                     s3.deleteObject(objectRequest);
 
                     //db에서 지우기
@@ -160,10 +168,10 @@ public class DrugCommentService {
 
         //파일 추가히기
         if (uploadFiles != null) {
-            for (MultipartFile file : uploadFiles){
-            //s3에 올리기
-            upload(comment.getId(), file);
-            //db에 추가하기
+            for (MultipartFile file : uploadFiles) {
+                //s3에 올리기
+                upload(comment.getId(), file);
+                //db에 추가하기
 //            fileMapper.insert(comment.getId(), file.getOriginalFilename());
                 fileMapper.insertCommentFile(comment.getId(), file.getOriginalFilename());
             }
