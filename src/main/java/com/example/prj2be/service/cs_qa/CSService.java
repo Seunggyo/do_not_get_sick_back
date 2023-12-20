@@ -213,7 +213,7 @@ public class CSService {
          return false;
       }
 
-      if (login.isAdmin()) {
+      if (login.getAuth().equals("admin")) {
          return true;
       }
 

@@ -196,7 +196,7 @@ public class QAService {
          return false;
       }
 
-      if (login.isAdmin()) {
+      if (login.getAuth().equals("admin")) {
          return true;
       }
 

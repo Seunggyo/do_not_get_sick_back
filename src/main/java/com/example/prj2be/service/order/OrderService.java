@@ -44,4 +44,14 @@ public class OrderService {
         ordersMapper.deleteByOrderId(orderId);
         orderListMapper.deleteByOrderId(orderId);
     }
+
+    public List<Orders> selectByAll(String id) {
+        List<Orders> ordersList = ordersMapper.selectByAll(id);
+        for (Orders order : ordersList) {
+            String url = urlPrefix + "prj2/drug/" + order.getDrugId() + "/" + order.getFileName();
+            order.setUrl(url);
+        }
+
+        return ordersList;
+    }
 }

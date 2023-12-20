@@ -40,4 +40,9 @@ public class OrderController {
         orderService.deleteByOrderId(orderId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/historyAll")
+    public List<Orders> historyAll(@SessionAttribute(value = "login", required = false) Member login) {
+        return orderService.selectByAll(login.getId());
+    }
 }

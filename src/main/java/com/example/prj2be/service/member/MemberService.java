@@ -193,7 +193,11 @@ public class MemberService {
    }
 
    public Member selectById(String id) {
-      return mapper.selectById(id);
+      Member member = mapper.selectById(id);
+
+      String profileUrl = urlPrefix + "prj2/profile/" + member.getId() + "/" + member.getProfile();
+      member.setProfile(profileUrl);
+      return member;
    }
 
    public boolean login(Member member, WebRequest request) {
