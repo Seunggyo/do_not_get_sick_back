@@ -32,4 +32,9 @@ public class OrderController {
     public List<Cart> orderList(@RequestParam String orderId) {
         return orderService.orderLIst(orderId);
     }
+
+    @GetMapping("/historyAll")
+    public List<Orders> historyAll(@SessionAttribute(value = "login", required = false) Member login) {
+        return orderService.selectByAll(login.getId());
+    }
 }

@@ -30,4 +30,14 @@ public interface OrdersMapper {
         order by o.inserted desc
 """)
     List<Orders> selectById(String id);
+
+    @Select("""
+        select distinct o.*, (select name from drugFile where drugId = l.drugId limit 1) fileName, l.drugId
+            from orders o
+            join orderlist l
+            on o.orderId  = l.orderId
+        group by l.orderId
+        order by o.inserted desc
+""")
+    List<Orders> selectByAll(String id);
 }
