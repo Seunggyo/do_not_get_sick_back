@@ -81,8 +81,9 @@ public class DsCommentService {
         return mapper.update(comment) == 1;
     }
 
-    public void delete(Integer id) {
-        mapper.deleteById(id);
+    public boolean delete(Integer id) {
+
+        return  mapper.deleteById(id) == 1;
     }
 
     public List<DsComment> listName(Integer id) {
