@@ -1,6 +1,8 @@
 package com.example.prj2be.domain.board;
 
 import com.example.prj2be.utill.AppUtil;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
@@ -19,6 +21,7 @@ public class Board {
    private Integer countComment;
    private Integer countLike;
    private Integer countFile;
+   private LocalDate insert;
 
    private List<BoardFile> files;
 
@@ -26,4 +29,7 @@ public class Board {
       return AppUtil.getAgo(inserted);
    }
 
+   public LocalDate getInsert() {
+      return inserted.toLocalDate();
+   }
 }
