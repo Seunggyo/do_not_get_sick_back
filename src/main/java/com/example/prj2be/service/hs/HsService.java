@@ -273,8 +273,8 @@ public class HsService {
         if (login == null) {
             return false;
         }
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("admin") == true;
+        if (login.getAuth().equals("admin")) {
+            return true;
         }
         return hospital.getMemberId().equals(login.getId());
     }
