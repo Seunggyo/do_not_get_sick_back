@@ -53,7 +53,7 @@ public class QAController {
       @RequestParam(value = "p", defaultValue = "1") Integer page,
       @RequestParam(value = "k", defaultValue = "") String keyword,
       @RequestParam(value = "f", defaultValue = "") String filter,
-      @RequestParam(value = "id") String qaWriter) {
+      @RequestParam(value = "nickname") String qaWriter) {
 
 
       return service.qaList(page, keyword, "%"+filter+"%", qaWriter);

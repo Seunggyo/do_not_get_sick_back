@@ -23,8 +23,7 @@ public interface CSMapper {
       SELECT   c.id, 
                c.csTitle, 
                c.csCategory, 
-               c.csWriter, 
-               m.nickName, 
+               m.nickName csWriter, 
                c.inserted, 
                c.increaseHit,
                COUNT(DISTINCT f.id) countFile
@@ -48,7 +47,7 @@ public interface CSMapper {
       SELECT   c.id,
                c.csTitle, 
                c.csContent, 
-               c.csWriter, 
+               c.csWriter,
                m.nickName,
                c.csCategory,
                c.inserted
@@ -67,7 +66,6 @@ public interface CSMapper {
       UPDATE customerService
       SET   csTitle = #{csTitle},
             csContent = #{csContent},
-            csWriter = #{csWriter},
             csCategory = #{csCategory}
       WHERE id = #{id}
       """)

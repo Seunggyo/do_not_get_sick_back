@@ -15,7 +15,6 @@ public class CustomerService {
    private String csTitle;
    private String csContent;
    private String csWriter;
-   private String csNickName;
    private LocalDateTime inserted;
    private Integer increaseHit;
    private Integer countFile;

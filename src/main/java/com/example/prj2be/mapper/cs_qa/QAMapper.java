@@ -23,9 +23,8 @@ public interface QAMapper {
         SELECT q.id,
                q.qaTitle,
                q.qaContent,
-               q.qaWriter,
                q.qaCategory,
-               m.nickName,
+               m.nickName qaWriter,
                q.inserted,
                COUNT(DISTINCT c.id) countComment,
                COUNT(DISTINCT f.id) countFile
@@ -99,9 +98,8 @@ public interface QAMapper {
         SELECT q.id,
                q.qaTitle,
                q.qaContent,
-               q.qaWriter,
                q.qaCategory,
-               m.nickName,
+               m.nickName qaWriter,
                q.inserted,
                COUNT(DISTINCT c.id) countComment,
                COUNT(DISTINCT f.id) countFile
