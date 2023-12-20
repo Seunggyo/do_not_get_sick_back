@@ -47,4 +47,10 @@ public interface OrdersMapper {
         order by o.inserted desc
 """)
     List<Orders> selectByAll(String id);
+
+    @Delete("""
+        delete from orders
+        where ordererName = #{mamberId}
+""")
+    void deleteByMemberId(String memberId);
 }

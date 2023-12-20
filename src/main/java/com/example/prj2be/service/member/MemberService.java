@@ -1,10 +1,35 @@
 package com.example.prj2be.service.member;
 
+import com.example.prj2be.domain.board.Board;
+import com.example.prj2be.domain.board.BoardComment;
+import com.example.prj2be.domain.board.BoardLike;
+import com.example.prj2be.domain.cs_qa.CustomerQA;
+import com.example.prj2be.domain.cs_qa.CustomerService;
+import com.example.prj2be.domain.drug.DrugComment;
+import com.example.prj2be.domain.ds.Ds;
+import com.example.prj2be.domain.ds.DsComment;
+import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardCommentMapper;
+import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
+import com.example.prj2be.mapper.business.BusinessLikeMapper;
+import com.example.prj2be.mapper.cs_qa.CSMapper;
+import com.example.prj2be.mapper.cs_qa.QAMapper;
+import com.example.prj2be.mapper.drug.CartMapper;
+import com.example.prj2be.mapper.drug.DrugCommentMapper;
+import com.example.prj2be.mapper.drug.DrugLikeMapper;
+import com.example.prj2be.mapper.ds.DsCommentMapper;
+import com.example.prj2be.mapper.ds.DsMapper;
+import com.example.prj2be.mapper.hs.HsMapper;
 import com.example.prj2be.mapper.member.MemberJoinMapper;
 import com.example.prj2be.mapper.member.MemberMapper;
+import com.example.prj2be.mapper.order.OrderListMapper;
+import com.example.prj2be.mapper.order.OrderWaitMapper;
+import com.example.prj2be.mapper.order.OrdersMapper;
+import com.example.prj2be.mapper.payment.PaymentMapper;
+import com.example.prj2be.service.cs_qa.CSService;
+import com.example.prj2be.service.cs_qa.QAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +57,30 @@ public class MemberService {
    private final MemberJoinMapper memberJoinMapper;
    private final BoardMapper boardMapper;
    private final BoardCommentMapper boardCommentMapper;
+   private final DsCommentMapper dsCommentMapper;
+   private final DrugCommentMapper drugCommentMapper;
+
+   private final BoardLikeMapper boardLikeMapper;
+   private final BusinessLikeMapper businessLikeMapper;
+   private final DrugLikeMapper drugLikeMapper;
+
+
+   // 작성 글 삭제 보드 약국 병원 드러그 qa cs
+   private final DsMapper dsMapper;
+   private final HsMapper hsMapper;
+   private final QAMapper qaMapper;
+   private final CSMapper csMapper;
+
+   private final QAService qaService;
+   private final CSService csService;
+
+   // buy, drugCart, orderList, orders, orderWait, payment
+   private final CartMapper cartMapper;
+   private final OrderListMapper orderListMapper;
+   private final OrdersMapper ordersMapper;
+   private final OrderWaitMapper orderWaitMapper;
+   private final PaymentMapper paymentMapper;
+
 
    private final S3Client s3;
    @Value("${image.file.prefix}")
@@ -358,4 +407,69 @@ public class MemberService {
       }
 
    }
+
+   public void remove(String id) {
+      //보드 비즈니스, 드러그 코멘트 삭제
+      List<BoardComment> boardCommentList = boardCommentMapper.selectByMemberId(id);
+      for (BoardComment comment : boardCommentList) {
+         boardCommentMapper.deleteById(comment.getId());
+      }
+      List<DsComment> dsCommentList = dsCommentMapper.selectByMemberId(id);
+      for (DsComment comment : dsCommentList) {
+         dsCommentMapper.deleteById(comment.getId());
+      }
+      List<DrugComment> drugCommentList = drugCommentMapper.selectByMemberId(id);
+      for (DrugComment comment : drugCommentList) {
+         drugCommentMapper.deleteById(comment.getId());
+      }
+
+      //좋아요 삭제
+      boardLikeMapper.deleteByMemberId(id);
+      businessLikeMapper.deleteByMemberId(id);
+      drugLikeMapper.deleteByMemberId(id);
+
+      //qa 삭제
+
+
+      // 작성 글 삭제 보드 약국 병원 드러그 qa cs // drug는 일부러 삭제안함 (위험)
+      List<Board> boardList = boardMapper.selectByMemberId(id);
+      for (Board board : boardList) {
+         boardMapper.deleteById(board.getId());
+      }
+      Ds ds = dsMapper.selectByName(id);
+      dsMapper.deleteHolidayByDsId(ds.getId());
+      dsMapper.deleteById(ds.getId());
+      Hs hs = hsMapper.selectBymemberId(id);
+      hsMapper.holidayDeleteByBusinessId(hs.getId());
+      hsMapper.deleteById(hs.getId());
+
+      List<CustomerQA> qaList = qaMapper.selectByMemberId(id);
+      for (CustomerQA qa : qaList) {
+         qaService.remove(qa.getId());
+      }
+      List<CustomerService> csList = csMapper.selectByMemberId(id);
+      for (CustomerService cs : csList) {
+         csService.remove(cs.getId());
+      }
+
+      // buy, drugCart, orderList, orders, orderWait, payment
+      cartMapper.deleteByMemberId(id);
+      cartMapper.deleteBuyByMemberId(id);
+      orderListMapper.deleteByMemberId(id);
+      ordersMapper.deleteByMemberId(id);
+      orderWaitMapper.deleteByMemberId(id);
+      paymentMapper.deleteByMemberId(id);
+
+      //탈퇴
+
+
+   }
+
+//   private final CartMapper cartMapper;
+//   private final OrderListMapper orderListMapper;
+//   private final OrdersMapper ordersMapper;
+//   private final OrderWaitMapper orderWaitMapper;
+
+
+
 }

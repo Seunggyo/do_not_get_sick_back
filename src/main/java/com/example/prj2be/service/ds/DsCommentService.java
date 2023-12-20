@@ -86,7 +86,7 @@ public class DsCommentService {
         return  mapper.deleteById(id) == 1;
     }
 
-    public List<DsComment> listName(Integer id) {
+    public List<DsComment> listName(String id) {
         return mapper.selectByMemberId(id);
     }
 

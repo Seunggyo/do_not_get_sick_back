@@ -79,4 +79,10 @@ public interface CartMapper {
         where memberId = #{memberId}
 """)
     void deleteByMemberId(String memberId);
+
+    @Delete("""
+        delete from buy
+        where memberId = #{memberId}
+""")
+    void deleteBuyByMemberId(String memberId);
 }

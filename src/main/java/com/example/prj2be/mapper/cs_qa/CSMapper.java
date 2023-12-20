@@ -104,5 +104,17 @@ public interface CSMapper {
       WHERE id = #{id}
       """)
    void increaseHit(int id);
+
+   @Delete("""
+      delete from customerService
+      where csWriter = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
+
+   @Select("""
+      select * from customerService
+      where csWriter = #{memberId}
+""")
+   List<CustomerService> selectByMemberId(String memberId);
 }
 

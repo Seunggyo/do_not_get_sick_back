@@ -125,4 +125,16 @@ public interface QAMapper {
            OR qaCategory LIKE #{keyword}
         """)
    int adminCountAll(String keyword, String filter);
+
+   @Delete("""
+      delete from customerqa
+      where qaWriter = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
+
+   @Select("""
+      select * from customerqa
+      where qaWriter = #{memberId}
+""")
+   List<CustomerQA> selectByMemberId(String memberId);
 }
