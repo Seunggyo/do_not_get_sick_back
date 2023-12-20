@@ -2,7 +2,10 @@ package com.example.prj2be.service.drug;
 
 
 import com.example.prj2be.domain.drug.Drug;
+import com.example.prj2be.domain.drug.DrugComment;
 import com.example.prj2be.domain.drug.DrugFile.DrugFile;
+import com.example.prj2be.mapper.drug.DrugCommentMapper;
+import com.example.prj2be.mapper.drug.DrugLikeMapper;
 import com.example.prj2be.mapper.drug.DrugMapper;
 import com.example.prj2be.mapper.drug.FileMapper;
 import java.io.IOException;
@@ -27,6 +30,9 @@ public class DrugService {
 
     private final DrugMapper mapper;
     private final FileMapper fileMapper;
+    private final DrugCommentMapper drugCommentMapper;
+    private final DrugCommentService drugCommentService;
+    private final DrugLikeMapper drugLikeMapper;
 
     private final S3Client s3;
     @Value("${image.file.prefix}")
@@ -168,6 +174,15 @@ public class DrugService {
     }
 
     public boolean remove(Integer id) {
+        // 댓글 지우기
+        List<DrugComment> drugCommentList = drugCommentMapper.selectByDrugId(id);
+        for (DrugComment comment : drugCommentList) {
+            drugCommentService.remove(comment.getId());
+        }
+
+        // 좋아요 지우기
+        drugLikeMapper.deleteByDrugId(id);
+
 
         deleterFile(id);
 
