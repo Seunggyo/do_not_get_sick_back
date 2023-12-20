@@ -46,4 +46,5 @@ public interface DrugCommentMapper {
             WHERE id = #{id}
             """)
     int update(DrugComment comment);
+
 }

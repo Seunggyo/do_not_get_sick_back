@@ -58,7 +58,7 @@ public interface FileMapper {
 
     @Delete("""
             DELETE FROM drugCommentFile
-            WHERE id = #{commentId}
+            WHERE commentId = #{commentId}
             """)
     int deleteByCommentId(Integer commentId);
 

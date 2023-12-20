@@ -36,4 +36,10 @@ public interface DrugLikeMapper {
             AND memberId = #{memberId}
             """)
     Like selectByDrugIdAndMemberId(Integer drugId, String memberId);
+
+    @Delete("""
+        delete from drugLike
+        where drugId = #{drugId}
+""")
+    void deleteByDrugId(Integer drugId);
 }
