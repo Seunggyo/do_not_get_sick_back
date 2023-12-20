@@ -36,14 +36,13 @@ public class HsCommentService {
     }
 
     public boolean hasAccess(Integer id, Member login) {
+        HsComment comment = mapper.selectById(id);
         if (login == null) {
             return false;
         }
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("admin") == true;
+        if (login.getAuth().equals("admin")) {
+            return true;
         }
-        HsComment comment = mapper.selectById(id);
-
         return comment.getMemberId().equals(login.getId());
     }
 
@@ -70,4 +69,5 @@ public class HsCommentService {
 
         return mapper.deleteById(id) == 1;
     }
+
 }

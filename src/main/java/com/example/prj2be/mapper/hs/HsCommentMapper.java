@@ -22,6 +22,7 @@ public interface HsCommentMapper {
         bc.businessId,
         bc.comment,
         bc.inserted,
+        bc.memberId,
         m.nickName memberNickName
         FROM prj2.businesscomment bc JOIN prj2.member m on bc.memberId = m.id
         WHERE businessId = #{businessId}

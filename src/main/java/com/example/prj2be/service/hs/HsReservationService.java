@@ -46,8 +46,8 @@ public class HsReservationService {
         if (login == null) {
             return false;
         }
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("admin") == true;
+        if (login.getAuth().equals("admin")) {
+            return true;
         }
         return reservation.getMemberId().equals(login.getId());
     }
