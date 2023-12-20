@@ -40,7 +40,7 @@ public interface DsCommentMapper {
 
     @Delete("""
             DELETE FROM businesscomment
-            WHERE businessId = #{id}
+            WHERE id = #{id}
             """)
     int deleteById(Integer id);
 

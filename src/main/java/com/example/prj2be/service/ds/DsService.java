@@ -254,8 +254,8 @@ public class DsService {
             return false;
         }
 
-        if (login.getAuth() != null) {
-            return login.getAuth().equals("admin") == true;
+        if (login.getAuth().equals("admin")) {
+            return true;
         }
 
         Ds ds = mapper.selectById(id);
@@ -265,7 +265,23 @@ public class DsService {
 
     public Ds idGet(String memberId) {
         Integer id = mapper.idGet(memberId);
-        return mapper.selectById(id);
+
+        Ds ds = mapper.selectById(id);
+
+        List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(id);
+
+        for (DsPicture dsPicture : dsPictures) {
+            String url = urlPrefix + "prj2/Ds/" + id + "/" + dsPicture.getName();
+            dsPicture.setUrl(url);
+        }
+
+        List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(id);
+
+        ds.setFiles(dsPictures);
+        ds.setHolidays(businessHolidays);
+
+        return ds;
+
     }
 
 //    public List<Ds> getListByCK(String keyword, String category) {

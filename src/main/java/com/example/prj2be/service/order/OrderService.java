@@ -40,6 +40,11 @@ public class OrderService {
         return orderList;
     }
 
+    public void deleteByOrderId(String orderId) {
+        ordersMapper.deleteByOrderId(orderId);
+        orderListMapper.deleteByOrderId(orderId);
+    }
+
     public List<Orders> selectByAll(String id) {
         List<Orders> ordersList = ordersMapper.selectByAll(id);
         for (Orders order : ordersList) {

@@ -21,12 +21,16 @@ public interface HsCommentMapper {
         SELECT bc.id,
         bc.businessId,
         bc.comment,
+        bc.memberId,
         bc.inserted,
+        bc.memberId,
         m.nickName memberNickName
         FROM prj2.businesscomment bc JOIN prj2.member m on bc.memberId = m.id
         WHERE businessId = #{businessId}
+        ORDER BY id DESC
+        LIMIT #{from}, 5
         """)
-    List<HsComment> selectByBusinessId(Integer businessId);
+    List<HsComment> selectByBusinessId(Integer from, Integer businessId);
 
     @Select("""
         SELECT *
@@ -53,4 +57,10 @@ public interface HsCommentMapper {
         WHERE businessId = #{id}
         """)
     int deleteByBusinessId(Integer id);
+
+    @Select("""
+            SELECT COUNT(*) FROM businesscomment
+            WHERE businessId = #{businessId}
+            """)
+    int countAll(Integer businessId);
 }
