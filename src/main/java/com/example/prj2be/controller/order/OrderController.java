@@ -6,6 +6,8 @@ import com.example.prj2be.domain.order.Orders;
 import com.example.prj2be.service.order.OrderService;
 import com.example.prj2be.service.order.OrderWaitService;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,5 +33,11 @@ public class OrderController {
     @GetMapping("/orderList")
     public List<Cart> orderList(@RequestParam String orderId) {
         return orderService.orderLIst(orderId);
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity Remove(String orderId) {
+        orderService.deleteByOrderId(orderId);
+        return ResponseEntity.ok().build();
     }
 }

@@ -39,4 +39,9 @@ public class OrderService {
         }
         return orderList;
     }
+
+    public void deleteByOrderId(String orderId) {
+        ordersMapper.deleteByOrderId(orderId);
+        orderListMapper.deleteByOrderId(orderId);
+    }
 }

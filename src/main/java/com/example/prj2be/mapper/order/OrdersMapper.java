@@ -1,6 +1,7 @@
 package com.example.prj2be.mapper.order;
 
 import com.example.prj2be.domain.order.Orders;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -30,4 +31,10 @@ public interface OrdersMapper {
         order by o.inserted desc
 """)
     List<Orders> selectById(String id);
+
+    @Delete("""
+        delete from orders
+        where orderId = #{orderId}
+""")
+    void deleteByOrderId(String orderId);
 }
