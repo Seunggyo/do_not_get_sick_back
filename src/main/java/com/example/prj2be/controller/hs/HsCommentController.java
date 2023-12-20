@@ -4,6 +4,8 @@ import com.example.prj2be.domain.hs.HsComment;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.hs.HsCommentService;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +45,9 @@ public class HsCommentController {
     }
 
     @GetMapping("list")
-    public List<HsComment> list(@RequestParam("id") Integer businessId) {
-        return service.list(businessId);
+    public Map<String, Object> list(@RequestParam("id") Integer businessId,
+                                    @RequestParam(value = "p", defaultValue = "1") Integer page) {
+        return service.list(businessId, page);
     }
 
     @PutMapping("edit")

@@ -58,7 +58,19 @@ public class DsCommentController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Integer id){
-        service.delete(id);
+    public ResponseEntity<Object> delete(@PathVariable Integer id,
+                                         @SessionAttribute(value = "login", required = false) Member login){
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.hasAccess(id, login)) {
+            if ( service.delete(id)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }
