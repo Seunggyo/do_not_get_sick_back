@@ -11,6 +11,7 @@ import com.example.prj2be.domain.ds.DsComment;
 import com.example.prj2be.domain.hs.Hs;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.mapper.board.BoardCommentMapper;
+import com.example.prj2be.mapper.board.BoardFileMapper;
 import com.example.prj2be.mapper.board.BoardLikeMapper;
 import com.example.prj2be.mapper.board.BoardMapper;
 import com.example.prj2be.mapper.business.BusinessLikeMapper;
@@ -73,6 +74,8 @@ public class MemberService {
 
    private final QAService qaService;
    private final CSService csService;
+
+   private final BoardFileMapper boardFileMapper;
 
    // buy, drugCart, orderList, orders, orderWait, payment
    private final CartMapper cartMapper;
@@ -336,7 +339,7 @@ public class MemberService {
                .build();
             s3.deleteObject(objectRequest);
 
-            mapper.deleteById(id);
+//            mapper.deleteById(id);
          }
       }
 
@@ -408,7 +411,7 @@ public class MemberService {
 
    }
 
-   public void remove(String id) {
+   public boolean remove(String id) {
       //보드 비즈니스, 드러그 코멘트 삭제
       List<BoardComment> boardCommentList = boardCommentMapper.selectByMemberId(id);
       for (BoardComment comment : boardCommentList) {
@@ -434,14 +437,19 @@ public class MemberService {
       // 작성 글 삭제 보드 약국 병원 드러그 qa cs // drug는 일부러 삭제안함 (위험)
       List<Board> boardList = boardMapper.selectByMemberId(id);
       for (Board board : boardList) {
+         boardFileMapper.deleteByFileId(board.getId());
          boardMapper.deleteById(board.getId());
       }
       Ds ds = dsMapper.selectByName(id);
-      dsMapper.deleteHolidayByDsId(ds.getId());
-      dsMapper.deleteById(ds.getId());
+      if (ds != null) {
+         dsMapper.deleteHolidayByDsId(ds.getId());
+         dsMapper.deleteById(ds.getId());
+      }
       Hs hs = hsMapper.selectBymemberId(id);
-      hsMapper.holidayDeleteByBusinessId(hs.getId());
-      hsMapper.deleteById(hs.getId());
+      if (hs != null) {
+         hsMapper.holidayDeleteByBusinessId(hs.getId());
+         hsMapper.deleteById(hs.getId());
+      }
 
       List<CustomerQA> qaList = qaMapper.selectByMemberId(id);
       for (CustomerQA qa : qaList) {
@@ -461,6 +469,20 @@ public class MemberService {
       paymentMapper.deleteByMemberId(id);
 
       //탈퇴
+      Member member = mapper.selectById(id);
+      String delProfile = "prj2/profile" + id + "/" + member.getProfile();
+      String delFile = "prj2/license" + id + "/" + member.getFileName();
+      List<String> delList = List.of(delProfile, delFile);
+
+      for (String key : delList) {
+
+         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                 .bucket(bucket)
+                 .key(key)
+                 .build();
+         s3.deleteObject(deleteObjectRequest);
+      }
+      return mapper.deleteById(id) == 1;
 
 
    }

@@ -45,7 +45,7 @@ public interface DrugLikeMapper {
 
     @Delete("""
         delete from drugLike
-        where memberId = #{memberId
+        where memberId = #{memberId}
             """)
     void deleteByMemberId(String memberId);
 }

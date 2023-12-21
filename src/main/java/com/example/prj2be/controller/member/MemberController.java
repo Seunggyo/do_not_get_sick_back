@@ -156,7 +156,9 @@ public class MemberController {
     }
 
     @DeleteMapping("/remove")
-    public void remove(String id) {
+    public void remove(@RequestParam String id) {
+
+        //TODO: 본인 어드민 검증 로직 추가
         service.remove(id);
     }
 }
