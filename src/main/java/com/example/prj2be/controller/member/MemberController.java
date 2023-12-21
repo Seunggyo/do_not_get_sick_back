@@ -56,8 +56,6 @@ public class MemberController {
             if (service.add(member, file, profile)) {
                 return ResponseEntity.ok().build();
             } else {
-                System.out.println("MemberController.signup");
-                ;
                 return ResponseEntity.badRequest().build();
             }
         } else {
@@ -96,8 +94,6 @@ public class MemberController {
 
     @GetMapping("/info")
     public Map<String, Object> memberView(String id) {
-        //TODO 권한 설정
-        System.out.println("id = " + id);
         return service.selectById(id);
     }
 

@@ -128,9 +128,6 @@ public class DsService {
             }
         }
 
-//        System.out.println("Arrays.toString(holidays) = " + Arrays.toString(holidays));
-        //    업데이트를 하는것이 아니라 기존 데이터를 삭제한 후 다시 삽입 하는 식으로 코드 구성
-
         mapper.deleteHolidayByDsId(ds.getId());
         if (holidays != null) {
             for (String holiday : holidays) {

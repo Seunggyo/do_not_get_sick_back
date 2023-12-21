@@ -324,6 +324,12 @@ public class MemberService {
 
    public boolean update(Member member, List<Integer> removeFileIds, MultipartFile profile,
       MultipartFile file) throws IOException{
+      // TODO: file에 대한 코드가 이미 없음...
+      // 아마 병원멤버와 약국 멤버에 관한 코드인 것 같은데...
+      // 일단 profile이 동작하도록 코드를 작성할 테니
+      // 병원멤버와 약국멤버에 대한 코드를 이후에 수정해야할 것 같아요...
+
+
 
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {

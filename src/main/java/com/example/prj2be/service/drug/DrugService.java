@@ -233,7 +233,6 @@ public class DrugService {
             }
         }
 
-        System.out.println("drug = " + drug);
         return mapper.update(drug) == 1;
     }
 

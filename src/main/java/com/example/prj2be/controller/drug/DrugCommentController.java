@@ -50,8 +50,6 @@ public class DrugCommentController {
     @DeleteMapping("{id}")
     public ResponseEntity remove(@PathVariable Integer id,
                                  @SessionAttribute(value = "login", required = false) Member login) {
-//        TODO: 관리자 권한도 추가 해야함.
-        System.out.println("id = " + id);
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); //401

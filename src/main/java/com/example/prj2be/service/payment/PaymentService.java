@@ -63,7 +63,6 @@ public class PaymentService {
     }
 
     public PaymentSuccessDto tossPaymentSuccess(String paymentKey, String orderId, Long amount, Member login) {
-        System.out.println("orderId = " + orderId);
         Payment payment = verifyPayment(orderId, amount);
         PaymentSuccessDto result = requestPaymentAccept(paymentKey, orderId, amount);
         payment.setPaymentKey(paymentKey);
@@ -75,7 +74,6 @@ public class PaymentService {
     }
 
     public Payment verifyPayment(String orderId, Long amount) {
-        System.out.println("varify");
         if (paymentMapper.findByUid(orderId) != null ) {
             Payment payment = paymentMapper.findByUid(orderId);
 
@@ -99,11 +97,9 @@ public class PaymentService {
 
         PaymentSuccessDto result = null;
         try {
-            System.out.println("-------------");
             result = restTemplate.postForObject(paymentConfig.URL,
                     new HttpEntity<>(params, headers),
                     PaymentSuccessDto.class);
-            System.out.println("---1-1-1-1-1-1-");
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomLogicException(ExceptionCode.ALREADY_APPROVED);
