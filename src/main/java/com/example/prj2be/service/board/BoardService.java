@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -118,23 +119,31 @@ public class BoardService {
       boardList = mapper.selectAll(from, "%" + keyword + "%", popCount, filter);
 
       // 필요한 경우 정렬을 적용하기
-      if (orderByNum != null || orderByHit != null) {
+      if (orderByNum != null) {
          Comparator<Board> comparator = Comparator.comparing(Board::getId);
-         if (orderByNum != null && orderByNum) {
+         if (orderByNum) {
             comparator = comparator.reversed();
          }
-         if (orderByHit != null && orderByHit) {
-            comparator = comparator.thenComparing(Board::getIncreaseHit).reversed();
-         }
-         boardList = boardList.stream().sorted(comparator).toList();
+         boardList = boardList.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList());
       }
+
+      if (orderByHit != null) {
+         Comparator<Board> comparator = Comparator.comparing(Board::getIncreaseHit);
+         if (orderByHit) {
+            comparator = comparator.reversed();
+         }
+         boardList = boardList.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList());
+      }
+
 
       map.put("boardList", boardList);
       map.put("pageInfo", pageInfo);
 
       return map;
-//   public List<Board> list(Integer likeCount) {
-//      return mapper.selectAll(likeCount);
    }
 
    public Board get(Integer id) {

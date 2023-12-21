@@ -18,9 +18,9 @@ public interface MemberJoinMapper {
         values (
         #{member.id}, #{member.password}, #{member.nickName},
         #{member.phone}, #{member.email}, #{member.address},
-        #{member.auth}, #{fileName}, #{profileName})
+        #{member.auth}, #{fileName}, #{profile})
 """)
-    int insertMember(Member member, String fileName, String profileName);
+    int insertMember(Member member, String fileName, String profile);
 
     @Select("""
         select * from memberJoin

@@ -155,10 +155,14 @@ public class MemberService {
             return mapper.insertMember(member, "", "") == 1;
          }
       }
+
       if (member.getAuth().equals("hs") || member.getAuth().equals("ds")) {
          if (file != null) {
             upload(member.getId(), file);
-            return memberJoinMapper.insertMember(member, file.getOriginalFilename(), profile.getOriginalFilename()) == 1;
+            String profileFilename = (profile != null) ? profile.getOriginalFilename() : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+            return
+               memberJoinMapper.insertMember(member, file.getOriginalFilename(), profileFilename)
+                  == 1;
          }
       }
 
@@ -320,13 +324,6 @@ public class MemberService {
 
    public boolean update(Member member, List<Integer> removeFileIds, MultipartFile profile,
       MultipartFile file) throws IOException{
-      // TODO: file에 대한 코드가 이미 없음...
-      // 아마 병원멤버와 약국 멤버에 관한 코드인 것 같은데...
-      // 일단 profile이 동작하도록 코드를 작성할 테니
-      // 병원멤버와 약국멤버에 대한 코드를 이후에 수정해야할 것 같아요...
-
-
-      System.out.println("MemberService.update");
 
       if (removeFileIds != null) {
          for (Integer id : removeFileIds) {

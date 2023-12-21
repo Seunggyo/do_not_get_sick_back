@@ -23,7 +23,7 @@ public interface CSMapper {
       SELECT   c.id, 
                c.csTitle, 
                c.csCategory, 
-               c.csWriter, 
+               c.csWriter,
                m.nickName, 
                c.inserted, 
                c.increaseHit,
@@ -48,7 +48,7 @@ public interface CSMapper {
       SELECT   c.id,
                c.csTitle, 
                c.csContent, 
-               c.csWriter, 
+               c.csWriter,
                m.nickName,
                c.csCategory,
                c.inserted
@@ -67,32 +67,15 @@ public interface CSMapper {
       UPDATE customerService
       SET   csTitle = #{csTitle},
             csContent = #{csContent},
-            csWriter = #{csWriter},
             csCategory = #{csCategory}
       WHERE id = #{id}
       """)
    int update(CustomerService cs);
 
 
-//   @Delete("""
-//        DELETE FROM customerService
-//        WHERE csWriter = #{csWriter}
-//        """)
-//
-//   int deleteByWriter(String writer);
-//
-//   @Select("""
-//      SELECT id
-//      FROM customerService
-//      WHERE csWriter = #{id}
-//      """)
-//
-//   List<Integer> selectIdListByMemberId(String writer);
-
    @Select("""
       SELECT COUNT(*) FROM customerService 
       WHERE (csTitle LIKE #{keyword}
-         OR csContent LIKE #{keyword}
          OR csCategory LIKE #{keyword})
          AND csCategory Like #{filter}
       """)
