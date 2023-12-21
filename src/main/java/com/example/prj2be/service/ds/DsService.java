@@ -261,22 +261,22 @@ public class DsService {
     }
 
     public Ds idGet(String memberId) {
-        Integer id = mapper.idGet(memberId);
+        Ds ds = mapper.selectByMemberId(memberId);
+        if (ds != null) {
+            Integer id = mapper.idGet(memberId);
 
-        Ds ds = mapper.selectById(id);
+            List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(id);
 
-        List<DsPicture> dsPictures = businessFileMapper.selectNamesByDsId(id);
+            for (DsPicture dsPicture : dsPictures) {
+                String url = urlPrefix + "prj2/Ds/" + id + "/" + dsPicture.getName();
+                dsPicture.setUrl(url);
+            }
 
-        for (DsPicture dsPicture : dsPictures) {
-            String url = urlPrefix + "prj2/Ds/" + id + "/" + dsPicture.getName();
-            dsPicture.setUrl(url);
+            List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(id);
+
+            ds.setFiles(dsPictures);
+            ds.setHolidays(businessHolidays);
         }
-
-        List<BusinessHoliday> businessHolidays = mapper.selectHolidayById(id);
-
-        ds.setFiles(dsPictures);
-        ds.setHolidays(businessHolidays);
-
         return ds;
 
     }
