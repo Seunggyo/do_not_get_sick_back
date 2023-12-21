@@ -56,4 +56,10 @@ public interface BusinessLikeMapper {
         where name = #{name}
 """)
     Integer getIdByName(String name);
+
+    @Delete("""
+        delete from businessLike
+        where memberId = #{memberID}
+""")
+    void deleteByMemberId(String memberId);
 }

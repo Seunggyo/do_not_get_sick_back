@@ -47,4 +47,9 @@ public interface DrugCommentMapper {
             """)
     int update(DrugComment comment);
 
+    @Select("""
+        select * from drugComment
+        where memberId = #{memberId}
+""")
+    List<DrugComment> selectByMemberId(String memberID);
 }

@@ -34,4 +34,10 @@ public interface OrderListMapper {
         where orderId = #{orderId}
 """)
     void deleteByOrderId(String orderId);
+
+    @Delete("""
+        delete from orderList
+        where memberId = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
 }

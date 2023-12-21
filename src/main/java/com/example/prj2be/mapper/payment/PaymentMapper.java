@@ -2,10 +2,7 @@ package com.example.prj2be.mapper.payment;
 
 import com.example.prj2be.domain.Payment.Payment;
 import com.example.prj2be.dto.PaymentDto;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.Optional;
 
@@ -36,4 +33,10 @@ public interface PaymentMapper {
         where paymentUid = #{orderId}
 """)
     Payment findByUid(String orderId);
+
+    @Delete("""
+        delete from payment
+        where memberId = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
 }
