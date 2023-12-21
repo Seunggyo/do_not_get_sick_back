@@ -23,7 +23,8 @@ public interface CSMapper {
       SELECT   c.id, 
                c.csTitle, 
                c.csCategory, 
-               m.nickName csWriter, 
+               c.csWriter,
+               m.nickName, 
                c.inserted, 
                c.increaseHit,
                COUNT(DISTINCT f.id) countFile
@@ -72,25 +73,9 @@ public interface CSMapper {
    int update(CustomerService cs);
 
 
-//   @Delete("""
-//        DELETE FROM customerService
-//        WHERE csWriter = #{csWriter}
-//        """)
-//
-//   int deleteByWriter(String writer);
-//
-//   @Select("""
-//      SELECT id
-//      FROM customerService
-//      WHERE csWriter = #{id}
-//      """)
-//
-//   List<Integer> selectIdListByMemberId(String writer);
-
    @Select("""
       SELECT COUNT(*) FROM customerService 
       WHERE (csTitle LIKE #{keyword}
-         OR csContent LIKE #{keyword}
          OR csCategory LIKE #{keyword})
          AND csCategory Like #{filter}
       """)
