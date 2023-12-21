@@ -75,7 +75,6 @@ public interface BoardMapper {
       UPDATE board
       SET   title = #{title},
             content = #{content},
-            writer = #{writer},
             category = #{category}
       WHERE id = #{id}
       """)
@@ -92,7 +91,6 @@ public interface BoardMapper {
    @Select("""
         SELECT COUNT(b.id) FROM board b
         WHERE (b.title LIKE #{keyword}
-           OR b.content LIKE #{keyword}
            OR b.category Like #{keyword})
            and b.category like #{filter}
            and (select count(*) 
@@ -108,4 +106,11 @@ public interface BoardMapper {
       """)
    void increaseHit(int id);
 
+   @Select("""
+      select * from board
+      where writer = #{memberId}
+      order by inserted desc
+      limit 0, 3
+""")
+   List<Board> selectByMemberId(String memberId);
 }

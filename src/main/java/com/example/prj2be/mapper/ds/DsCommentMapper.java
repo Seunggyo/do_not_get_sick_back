@@ -55,7 +55,7 @@ public interface DsCommentMapper {
             SELECT * FROM businesscomment
             WHERE memberId = #{memberId}
             """)
-    List<DsComment> selectByMemberId(Integer memberId);
+    List<DsComment> selectByMemberId(String memberId);
 
     @Select("""
             SELECT id FROM business

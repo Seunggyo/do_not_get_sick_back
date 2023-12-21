@@ -90,11 +90,10 @@ public interface MemberMapper {
     int countAll(String id);
 
     @Delete("""
-       SELECT *
-       FROM member
-       WHERE id = #{id}
+       delete from member
+       where id = #{id}
        """)
-    void deleteById(Integer id);
+    int deleteById(String id);
 
 
     @Select("""

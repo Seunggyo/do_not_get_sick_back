@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -117,16 +118,26 @@ public class CSService {
       int from = (page - 1) * 10;
       csList = mapper.selectAll(from, "%" + keyword + "%", filter);
 
-      if (orderByNum != null || orderByHit != null) {
+      if (orderByNum != null) {
          Comparator<CustomerService> comparator = Comparator.comparing(CustomerService::getId);
-         if (orderByNum != null && orderByNum) {
+         if (orderByNum) {
             comparator = comparator.reversed();
          }
-         if (orderByHit != null && orderByHit) {
-            comparator = comparator.thenComparing(CustomerService::getIncreaseHit).reversed();
-         }
-         csList = csList.stream().sorted(comparator).toList();
+         csList = csList.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList());
       }
+
+      if (orderByHit != null) {
+         Comparator<CustomerService> comparator = Comparator.comparing(CustomerService::getIncreaseHit);
+         if (orderByHit) {
+            comparator = comparator.reversed();
+         }
+         csList = csList.stream()
+            .sorted(comparator)
+            .collect(Collectors.toList());
+      }
+
       map.put("csList", csList);
       map.put("pageInfo", pageInfo);
 

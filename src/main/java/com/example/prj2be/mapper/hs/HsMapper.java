@@ -15,29 +15,10 @@ import org.apache.ibatis.annotations.Update;
 public interface HsMapper {
 
     @Select("""
-            SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
-                    b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-                   b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
-                FROM prj2.business b
-                    left join prj2.businesslike b2
-                        on b.id = b2.businessId
-                    left join prj2.medicalcourse mc
-                        on b.id = mc.medicalCourseId
-                    left join prj2.businessholiday bh
-                        on b.id = bh.businessId
-            WHERE b.category = 'hospital'
-                AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword} OR mc.medicalCourseCategory LIKE #{keyword})
-            GROUP BY b.id
-            ORDER BY count(distinct b2.id) DESC
-            """)
-    List<Hs> selectByKeyword(String category, String keyword);
-
-    @Select("""
-            SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
-                    b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
-                   b.content,b.category,b.nightCare,b.phone,
-                    COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
+        SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+                b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
+               b.content,b.category,b.nightCare,b.phone,
+                COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday,b.memberId
             FROM prj2.business b
                 left join prj2.businesslike b2
                     on b.id = b2.businessId
@@ -45,11 +26,30 @@ public interface HsMapper {
                     on b.id = mc.medicalCourseId
                 left join prj2.businessholiday bh
                     on b.id = bh.businessId
-            WHERE b.category = 'hospital'
-                AND mc.medicalCourseCategory = #{course}
-            GROUP BY b.id
-            ORDER BY count(distinct b2.id) DESC
-            """)
+        WHERE b.category = 'hospital'
+            AND (b.name LIKE #{keyword} OR b.oldAddress LIKE #{keyword} OR mc.medicalCourseCategory LIKE #{keyword})
+        GROUP BY b.id
+        ORDER BY count(distinct b2.id) DESC
+        """)
+    List<Hs> selectByKeyword(String category, String keyword);
+
+    @Select("""
+        SELECT b.id,b.name,b.address,b.oldAddress,b.homePage,b.openHour,b.openMin,b.closeHour,b.closeMin,
+                b.restHour,b.restMin,b.restCloseHour,b.restCloseMin,
+               b.content,b.category,b.nightCare,b.phone,
+                COUNT(DISTINCT b2.id) countLike, mc.medicalCourseCategory, bh.holiday
+        FROM prj2.business b
+            left join prj2.businesslike b2
+                on b.id = b2.businessId
+            left join prj2.medicalcourse mc
+                on b.id = mc.medicalCourseId
+            left join prj2.businessholiday bh
+                on b.id = bh.businessId
+        WHERE b.category = 'hospital'
+            AND mc.medicalCourseCategory = #{course}
+        GROUP BY b.id
+        ORDER BY count(distinct b2.id) DESC
+        """)
     List<Hs> selectByCategory(String course);
 
     @Insert("""
@@ -148,80 +148,80 @@ public interface HsMapper {
     Integer selectIdByMemberId(String memberId);
 
     @Select("""
-            <script>
-            SELECT COUNT(*)
-            FROM business b
-                JOIN prj2.medicalcourse m on b.id = m.medicalCourseId
-                <where prefixOverrides="OR">
-                    <if test="list == 'all' or list == 'name'">
-                        OR b.name LIKE #{keyword}
-                    </if>
-                    <if test="list == 'all' or list == 'medicalCourse'">
-                        OR m.medicalCourseCategory LIKE #{keyword}
-                    </if>
-                    <if test="list == 'all' or list == 'address'">
-                        OR b.address LIKE #{keyword}
-                    </if>
-                </where>
-            </script>
-            """)
+        <script>
+        SELECT COUNT(*)
+        FROM business b
+            JOIN prj2.medicalcourse m on b.id = m.medicalCourseId
+            <where prefixOverrides="OR">
+                <if test="list == 'all' or list == 'name'">
+                    OR b.name LIKE #{keyword}
+                </if>
+                <if test="list == 'all' or list == 'medicalCourse'">
+                    OR m.medicalCourseCategory LIKE #{keyword}
+                </if>
+                <if test="list == 'all' or list == 'address'">
+                    OR b.address LIKE #{keyword}
+                </if>
+            </where>
+        </script>
+        """)
     int countAll(String list, String keyword);
 
     @Select("""
-            <script>
-            SELECT 
-                   b.id,
-                   b.name,
-                   b.phone,
-                   b.address,
-                   b.oldAddress,
-                   b.category,
-                   b.openHour,
-                   b.openMin,
-                   b.closeHour,
-                   b.closeMin,
-                   b.restHour,
-                   b.restMin,
-                   b.restCloseHour,
-                   b.restCloseMin,
-                   b.memberId,
-                   bh.holiday,
-                   m.medicalCourseCategory,
-                   COUNT(DISTINCT bl.id) `likeCount`,
-                   COUNT(DISTINCT bc.id) `commentCount`
-             FROM business b
-                LEFT JOIN businesslike bl
-                    ON b.id = bl.businessId
-                LEFT JOIN businesscomment bc
-                    ON b.id = bc.businessId
-                LEFT JOIN businessholiday bh
-                    ON b.id = bh.businessId
-                LEFT JOIN medicalcourse m
-                    ON b.id = m.medicalCourseId
-            WHERE
-                b.category = 'hospital' 
-                <trim prefixOverrides="OR" prefix="AND (" suffix=")" >
-                    <if test="list == 'all' or list == 'name'">
-                        OR name LIKE #{keyword}
-                    </if>
-                    <if test="list == 'all' or list == 'medicalCourse'">
-                        OR medicalCourseCategory LIKE #{keyword}
-                    </if>
-                    <if test="list == 'all' or list == 'address'">
-                        OR address LIKE #{keyword}
-                    </if>
-                </trim>
-            GROUP BY b.id
-            LIMIT #{from}, 10
-            </script>
-            """)
+        <script>
+        SELECT 
+               b.id,
+               b.name,
+               b.phone,
+               b.address,
+               b.oldAddress,
+               b.category,
+               b.openHour,
+               b.openMin,
+               b.closeHour,
+               b.closeMin,
+               b.restHour,
+               b.restMin,
+               b.restCloseHour,
+               b.restCloseMin,
+               b.memberId,
+               bh.holiday,
+               m.medicalCourseCategory,
+               COUNT(DISTINCT bl.id) `likeCount`,
+               COUNT(DISTINCT bc.id) `commentCount`
+         FROM business b
+            LEFT JOIN businesslike bl
+                ON b.id = bl.businessId
+            LEFT JOIN businesscomment bc
+                ON b.id = bc.businessId
+            LEFT JOIN businessholiday bh
+                ON b.id = bh.businessId
+            LEFT JOIN medicalcourse m
+                ON b.id = m.medicalCourseId
+        WHERE
+            b.category = 'hospital' 
+            <trim prefixOverrides="OR" prefix="AND (" suffix=")" >
+                <if test="list == 'all' or list == 'name'">
+                    OR name LIKE #{keyword}
+                </if>
+                <if test="list == 'all' or list == 'medicalCourse'">
+                    OR medicalCourseCategory LIKE #{keyword}
+                </if>
+                <if test="list == 'all' or list == 'address'">
+                    OR address LIKE #{keyword}
+                </if>
+            </trim>
+        GROUP BY b.id
+        LIMIT #{from}, 10
+        </script>
+        """)
     List<Hs> selectByPagingById(int from, String list, String keyword);
 
 
     @Select("""
-            SELECT * FROM medicalCourse
-            WHERE medicalCourseId = #{id}
-            """)
+        SELECT * FROM medicalCourse
+        WHERE medicalCourseId = #{id}
+        """)
     List<HsCourse> courseSelectByCategory(Integer id);
 
 }

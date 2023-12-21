@@ -4,6 +4,7 @@ import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.member.MemberService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,10 +47,10 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity signup( Member member,
-       @RequestParam(value = "uploadFileImg[]",required = false)MultipartFile profile,
+    public ResponseEntity signup(Member member,
+                                 @RequestParam(value = "uploadFileImg[]", required = false) MultipartFile profile,
 
-       @RequestParam(value = "uploadFile[]",required = false)MultipartFile file
+                                 @RequestParam(value = "uploadFile[]", required = false) MultipartFile file
     ) throws IOException {
         if (service.validate(member, file)) {
             if (service.add(member, file, profile)) {
@@ -79,20 +80,20 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> memberList(@RequestParam(value = "k",defaultValue = "") String keyword,
-                                          @RequestParam(value = "p",defaultValue = "1") Integer page) {
+    public Map<String, Object> memberList(@RequestParam(value = "k", defaultValue = "") String keyword,
+                                          @RequestParam(value = "p", defaultValue = "1") Integer page) {
 
         return service.selectAll(keyword, page);
     }
 
     @GetMapping("/joinList")
-    public Map<String, Object> memberJoinList(@RequestParam(value = "k",defaultValue = "") String keyword,
-                                              @RequestParam(value = "p",defaultValue = "1") Integer page) {
+    public Map<String, Object> memberJoinList(@RequestParam(value = "k", defaultValue = "") String keyword,
+                                              @RequestParam(value = "p", defaultValue = "1") Integer page) {
         return service.selectJoinAll(keyword, page);
     }
 
     @GetMapping("/info")
-    public Member memberView(String id) {
+    public Map<String, Object> memberView(String id) {
         return service.selectById(id);
     }
 
@@ -120,12 +121,12 @@ public class MemberController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Member member,
-       @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
-       @RequestParam(value = "profileFile", required = false) MultipartFile profile,
+                               @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
+                               @RequestParam(value = "profileFile", required = false) MultipartFile profile,
 
-       @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
-       @SessionAttribute(value = "login", required = false) Member login,
-       WebRequest request) throws IOException {
+                               @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
+                               @SessionAttribute(value = "login", required = false) Member login,
+                               WebRequest request) throws IOException {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -148,6 +149,13 @@ public class MemberController {
     @PostMapping("/findId")
     public String findId(@RequestBody Member member) {
         return service.findIdByEmail(member.getEmail());
+    }
+
+    @DeleteMapping("/remove")
+    public void remove(@RequestParam String id) {
+
+        //TODO: 본인 어드민 검증 로직 추가
+        service.remove(id);
     }
 }
 

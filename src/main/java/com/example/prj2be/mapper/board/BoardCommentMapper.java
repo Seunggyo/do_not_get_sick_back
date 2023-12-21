@@ -65,5 +65,13 @@ public interface BoardCommentMapper {
       """)
    void deleteByQaBoardId(Integer id);
 
-   // TODO: 멤버탈퇴시 쿼리 넣어야댐..
+   @Select("""
+      select * from boardComment
+      where memberId = #{memberId}
+      order by inserted desc
+      limit 0, 3
+""")
+    List<BoardComment> selectByMemberId(String memberId);
+
+    // TODO: 멤버탈퇴시 쿼리 넣어야댐..
 }

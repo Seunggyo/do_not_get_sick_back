@@ -23,8 +23,8 @@ public interface QAMapper {
         SELECT q.id,
                q.qaTitle,
                q.qaContent,
-               q.qaWriter,
                q.qaCategory,
+               q.qaWriter,
                m.nickName,
                q.inserted,
                COUNT(DISTINCT c.id) countComment,
@@ -34,7 +34,7 @@ public interface QAMapper {
         LEFT JOIN boardComment c 
         ON q.id = c.boardId
         and c.category = "qa"
-        WHERE (q.qaContent LIKE #{keyword}
+        WHERE (m.nickName LIKE #{keyword}
            OR q.qaTitle LIKE #{keyword})
            AND q.qaCategory Like #{filter}
            AND q.qaWriter = #{qaWriter}
@@ -67,26 +67,11 @@ public interface QAMapper {
       UPDATE customerqa
       SET qaTitle = #{qaTitle},
           qaContent = #{qaContent},
-          qaWriter = #{qaWriter},
           qaCategory = #{qaCategory}
       WHERE id = #{id}
       """)
    int update(CustomerQA qa);
 
-
-//   @Delete("""
-//        DELETE FROM customerqa
-//        WHERE qaWriter = #{qaWriter}
-//        """)
-//
-//   int deleteByWriter(String qaWriter);
-//
-//   @Select("""
-//        SELECT id
-//        FROM customerqa
-//        WHERE qaWriter = #{id}
-//        """)
-//   List<Integer> selectIdListByMemberId(String qaWriter);
 
    @Select("""
         SELECT COUNT(*) FROM customerqa
@@ -99,8 +84,8 @@ public interface QAMapper {
         SELECT q.id,
                q.qaTitle,
                q.qaContent,
-               q.qaWriter,
                q.qaCategory,
+               q.qaWriter,
                m.nickName,
                q.inserted,
                COUNT(DISTINCT c.id) countComment,
@@ -110,7 +95,7 @@ public interface QAMapper {
         LEFT JOIN boardComment c 
         ON q.id = c.boardId
         and c.category = "qa"
-        WHERE (q.qaContent LIKE #{keyword}
+        WHERE (m.nickName LIKE #{keyword}
            OR q.qaTitle LIKE #{keyword})
            AND q.qaCategory Like #{filter}
         GROUP BY q.id
@@ -125,4 +110,16 @@ public interface QAMapper {
            OR qaCategory LIKE #{keyword}
         """)
    int adminCountAll(String keyword, String filter);
+
+   @Delete("""
+      delete from customerqa
+      where qaWriter = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
+
+   @Select("""
+      select * from customerqa
+      where qaWriter = #{memberId}
+""")
+   List<CustomerQA> selectByMemberId(String memberId);
 }

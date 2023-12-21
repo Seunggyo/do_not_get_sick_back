@@ -31,4 +31,10 @@ public interface OrderWaitMapper {
         where orderId = #{orderId}
 """)
     void deleteByOrderId(String orderId);
+
+    @Delete("""
+        delete from orderWait
+        where ordererName = #{memberId}
+""")
+    void deleteByMemberId(String memberId);
 }

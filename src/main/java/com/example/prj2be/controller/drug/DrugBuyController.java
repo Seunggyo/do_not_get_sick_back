@@ -22,6 +22,6 @@ public class DrugBuyController {
     @GetMapping
     public Member buy(@SessionAttribute(value = "login", required = false) Member login) {
 
-        return memberService.selectById(login.getId());
+        return memberService.selectById1(login.getId());
     }
 }

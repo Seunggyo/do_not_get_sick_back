@@ -13,6 +13,7 @@ public class CustomerQA {
    private String qaTitle;
    private String qaContent;
    private String qaWriter;
+   private String nickName;
    private String qaCategory;
    private String category;
    private LocalDateTime inserted;
