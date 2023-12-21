@@ -3,17 +3,23 @@ package com.example.prj2be.controller.member;
 import com.example.prj2be.domain.member.Member;
 import com.example.prj2be.service.member.MemberService;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Delete;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -48,9 +54,9 @@ public class MemberController {
 
     @PostMapping("/signup")
     public ResponseEntity signup(Member member,
-                                 @RequestParam(value = "uploadFileImg[]", required = false) MultipartFile profile,
+        @RequestParam(value = "uploadFileImg[]", required = false) MultipartFile profile,
 
-                                 @RequestParam(value = "uploadFile[]", required = false) MultipartFile file
+        @RequestParam(value = "uploadFile[]", required = false) MultipartFile file
     ) throws IOException {
         if (service.validate(member, file)) {
             if (service.add(member, file, profile)) {
@@ -80,15 +86,17 @@ public class MemberController {
     }
 
     @GetMapping("/list")
-    public Map<String, Object> memberList(@RequestParam(value = "k", defaultValue = "") String keyword,
-                                          @RequestParam(value = "p", defaultValue = "1") Integer page) {
+    public Map<String, Object> memberList(
+        @RequestParam(value = "k", defaultValue = "") String keyword,
+        @RequestParam(value = "p", defaultValue = "1") Integer page) {
 
         return service.selectAll(keyword, page);
     }
 
     @GetMapping("/joinList")
-    public Map<String, Object> memberJoinList(@RequestParam(value = "k", defaultValue = "") String keyword,
-                                              @RequestParam(value = "p", defaultValue = "1") Integer page) {
+    public Map<String, Object> memberJoinList(
+        @RequestParam(value = "k", defaultValue = "") String keyword,
+        @RequestParam(value = "p", defaultValue = "1") Integer page) {
         return service.selectJoinAll(keyword, page);
     }
 
@@ -104,7 +112,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody Member member,
-                                WebRequest request) {
+        WebRequest request) {
         if (service.login(member, request)) {
             return ResponseEntity.ok().build();
         }
@@ -121,12 +129,12 @@ public class MemberController {
 
     @PutMapping("edit")
     public ResponseEntity edit(Member member,
-                               @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
-                               @RequestParam(value = "profileFile", required = false) MultipartFile profile,
+        @RequestParam(value = "fileSwitch[]", required = false) List<Integer> fileSwitch,
+        @RequestParam(value = "profileFile", required = false) MultipartFile profile,
 
-                               @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
-                               @SessionAttribute(value = "login", required = false) Member login,
-                               WebRequest request) throws IOException {
+        @RequestParam(value = "uploadFile[]", required = false) MultipartFile file,
+        @SessionAttribute(value = "login", required = false) Member login,
+        WebRequest request) throws IOException {
 
         if (login == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -152,10 +160,22 @@ public class MemberController {
     }
 
     @DeleteMapping("/remove")
-    public void remove(@RequestParam String id) {
+    public ResponseEntity remove(@RequestParam String id,
+        @SessionAttribute(value = "login", required = false) Member login) {
 
         //TODO: 본인 어드민 검증 로직 추가
-        service.remove(id);
+        if (login == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (service.isAccess(login.getId(), login)) {
+            if (service.remove(id)) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.internalServerError().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }
 
